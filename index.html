@@ -4,140 +4,190 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Royal Restaurant</title>
+<title>Restaurant</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+
 *{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-  font-family:Arial,sans-serif;
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,sans-serif;
 }
 
 body{
-  background:#f6f6f6;
-  color:#222;
+    background:#f5f5f5;
+    color:#222;
 }
 
 header{
-  background:#111;
-  color:white;
-  padding:25px 18px;
-  text-align:center;
+    background:#111;
+    color:white;
+    padding:25px 18px;
+    text-align:center;
 }
 
 header h1{
-  font-size:27px;
-  margin-bottom:8px;
+    font-size:28px;
+    margin-bottom:7px;
+}
+
+header p{
+    opacity:.8;
 }
 
 .container{
-  max-width:1000px;
-  margin:auto;
-  padding:18px;
+    max-width:1000px;
+    margin:auto;
+    padding:18px;
 }
 
-.welcome{
-  background:white;
-  padding:20px;
-  border-radius:15px;
-  text-align:center;
-  margin-bottom:20px;
+.restaurant-card{
+    background:white;
+    padding:20px;
+    border-radius:16px;
+    text-align:center;
+    margin-bottom:20px;
+    box-shadow:0 3px 12px rgba(0,0,0,.07);
 }
 
-.table{
-  display:inline-block;
-  margin-top:12px;
-  background:#eee;
-  padding:8px 15px;
-  border-radius:20px;
+.table-badge{
+    display:inline-block;
+    background:#eee;
+    padding:9px 16px;
+    border-radius:30px;
+    margin-top:12px;
+    font-weight:bold;
 }
 
 .menu{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:15px;
-  margin-top:15px;
+    display:grid;
+    grid-template-columns:
+    repeat(auto-fit,minmax(220px,1fr));
+    gap:16px;
+    margin-top:15px;
 }
 
 .food{
-  background:white;
-  border-radius:15px;
-  overflow:hidden;
-  box-shadow:0 3px 12px rgba(0,0,0,.08);
+    background:white;
+    border-radius:15px;
+    overflow:hidden;
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
 }
 
 .food img{
-  width:100%;
-  height:160px;
-  object-fit:cover;
+    width:100%;
+    height:160px;
+    object-fit:cover;
 }
 
-.food-info{
-  padding:15px;
+.food-content{
+    padding:15px;
 }
 
-.food-info p{
-  color:#666;
-  margin:7px 0;
-  font-size:14px;
+.food-content h3{
+    margin-bottom:7px;
+}
+
+.description{
+    color:#777;
+    font-size:14px;
+    min-height:35px;
 }
 
 .price{
-  font-size:19px;
-  font-weight:bold;
-  margin:10px 0;
+    font-size:20px;
+    font-weight:bold;
+    margin:12px 0;
 }
 
-button{
-  border:0;
-  border-radius:9px;
-  padding:11px 15px;
-  cursor:pointer;
-  font-weight:bold;
-}
-
-.add{
-  width:100%;
-  background:#111;
-  color:white;
+.add-btn{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:9px;
+    background:#111;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
 }
 
 .cart{
-  background:white;
-  padding:20px;
-  border-radius:15px;
-  margin-top:25px;
+    background:white;
+    padding:20px;
+    border-radius:16px;
+    margin-top:25px;
 }
 
 .cart-item{
-  display:flex;
-  justify-content:space-between;
-  padding:12px 0;
-  border-bottom:1px solid #eee;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 0;
+    border-bottom:1px solid #eee;
+}
+
+.qty{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.qty button{
+    border:none;
+    width:28px;
+    height:28px;
+    border-radius:6px;
+    cursor:pointer;
 }
 
 .total{
-  font-size:20px;
-  font-weight:bold;
-  margin:18px 0;
+    font-size:21px;
+    font-weight:bold;
+    margin:20px 0;
 }
 
-.order-btn{
-  width:100%;
-  background:#e63946;
-  color:white;
-  font-size:16px;
+.place-btn{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:10px;
+    background:#e63946;
+    color:white;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
 }
 
-.status{
-  margin-top:15px;
-  padding:15px;
-  background:#eef7ff;
-  border-radius:10px;
-  display:none;
+.message{
+    margin-top:15px;
+    padding:15px;
+    background:#eef8ff;
+    border-radius:10px;
+    display:none;
+}
+
+.loading{
+    text-align:center;
+    padding:30px;
+}
+
+@media(max-width:600px){
+
+    header h1{
+        font-size:23px;
+    }
+
+    .container{
+        padding:12px;
+    }
+
+    .menu{
+        grid-template-columns:1fr;
+    }
+
 }
 
 </style>
@@ -146,29 +196,44 @@ button{
 <body>
 
 <header>
-<h1>🍽️ Royal Restaurant</h1>
+
+<h1 id="restaurantName">
+🍽️ Restaurant
+</h1>
+
 <p>Fresh Food • Great Taste</p>
+
 </header>
+
 
 <div class="container">
 
-<div class="welcome">
 
-<h2>Welcome!</h2>
+<div class="restaurant-card">
 
-<p>Order directly from your table.</p>
+<h2>Welcome 👋</h2>
 
-<div class="table">
-🪑 Table No: <strong id="tableNumber">07</strong>
+<p>
+Order directly from your table
+</p>
+
+<div class="table-badge">
+
+🪑 Table No:
+<span id="tableNumber">Loading...</span>
+
 </div>
 
 </div>
+
 
 <h2>📋 Menu</h2>
 
 <div id="menu" class="menu">
 
-<p>Loading menu...</p>
+<div class="loading">
+Loading menu...
+</div>
 
 </div>
 
@@ -178,20 +243,32 @@ button{
 <h2>🛒 Your Cart</h2>
 
 <div id="cartItems">
+
 <p style="color:#777;margin-top:12px;">
 Your cart is empty.
 </p>
+
 </div>
 
 <div class="total">
+
 Total: ₹<span id="total">0</span>
+
 </div>
 
-<button class="order-btn" onclick="placeOrder()">
+<button
+class="place-btn"
+onclick="placeOrder()">
+
 📦 Place Order
+
 </button>
 
-<div id="orderStatus" class="status"></div>
+
+<div
+id="message"
+class="message">
+</div>
 
 </div>
 
@@ -200,401 +277,661 @@ Total: ₹<span id="total">0</span>
 
 <script>
 
-/* =========================
-   SUPABASE CONNECTION
-========================= */
+/* =================================
+   SUPABASE CONFIGURATION
+================================= */
 
 const SUPABASE_URL =
 "https://ltpjjckiaaonpetbzfvn.supabase.co";
 
+
 const SUPABASE_KEY =
-"sb_publishable_skzmVVxdVcKTQaUbwqEaIg_-KDmA-3L"
+"sb_publishable_skzmVVxdVcKTQaUbwqEaIg_-KDmA-3L;
+
 
 const supabaseClient =
 window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
+    SUPABASE_URL,
+    SUPABASE_KEY
 );
 
 
-/* =========================
-   RESTAURANT ID
-========================= */
+/* =================================
+   TABLE FROM QR / URL
+================================= */
+
+const urlParams =
+new URLSearchParams(
+    window.location.search
+);
+
+
+const tableNumber =
+Number(urlParams.get("table")) || 7;
+
+
+/* =================================
+   VARIABLES
+================================= */
 
 let restaurantId = null;
 
 let tableId = null;
 
-
-/* =========================
-   CART
-========================= */
-
 let cart = [];
 
-let total = 0;
 
-
-/* =========================
+/* =================================
    LOAD RESTAURANT
-========================= */
+================================= */
 
 async function loadRestaurant(){
 
-  const { data, error } =
-  await supabaseClient
-  .from("restaurants")
-  .select("*")
-  .limit(1)
-  .maybeSingle();
+    const {data,error} =
+    await supabaseClient
+    .from("restaurants")
+    .select("*")
+    .limit(1)
+    .maybeSingle();
 
-  if(error){
 
-    console.error(error);
+    if(error){
 
-    alert("Restaurant data load नहीं हो पाया.");
+        console.error(error);
 
-    return;
+        showMessage(
+            "Restaurant load नहीं हुआ."
+        );
 
-  }
+        return;
 
-  if(!data){
+    }
 
-    alert(
-      "Supabase में अभी restaurant बनाया नहीं गया है."
-    );
 
-    return;
+    if(!data){
 
-  }
+        showMessage(
+            "Restaurant database में नहीं मिला."
+        );
 
-  restaurantId = data.id;
+        return;
 
-  document.querySelector("header h1")
-  .innerText =
-  "🍽️ " + data.name;
+    }
 
-  loadMenu();
+
+    restaurantId = data.id;
+
+
+    document
+    .getElementById("restaurantName")
+    .innerText =
+    "🍽️ " + data.name;
+
+
+    await loadTable();
+
+    await loadMenu();
 
 }
 
 
-/* =========================
+/* =================================
+   LOAD TABLE
+================================= */
+
+async function loadTable(){
+
+    const {data,error} =
+    await supabaseClient
+    .from("restaurant_tables")
+    .select("id,table_number")
+    .eq(
+        "restaurant_id",
+        restaurantId
+    )
+    .eq(
+        "table_number",
+        tableNumber
+    )
+    .eq(
+        "active",
+        true
+    )
+    .maybeSingle();
+
+
+    if(error){
+
+        console.error(error);
+
+        showMessage(
+            "Table information load नहीं हुई."
+        );
+
+        return;
+
+    }
+
+
+    if(!data){
+
+        document
+        .getElementById("tableNumber")
+        .innerText =
+        "Not Found";
+
+        showMessage(
+            "यह table restaurant में registered नहीं है."
+        );
+
+        return;
+
+    }
+
+
+    tableId = data.id;
+
+
+    document
+    .getElementById("tableNumber")
+    .innerText =
+    data.table_number;
+
+}
+
+
+/* =================================
    LOAD MENU
-========================= */
+================================= */
 
 async function loadMenu(){
 
-  const { data, error } =
-  await supabaseClient
-  .from("menu_items")
-  .select("*")
-  .eq("restaurant_id",restaurantId)
-  .eq("is_available",true)
-  .order("created_at");
+    const {data,error} =
+    await supabaseClient
+    .from("menu_items")
+    .select("*")
+    .eq(
+        "restaurant_id",
+        restaurantId
+    )
+    .eq(
+        "is_available",
+        true
+    )
+    .order(
+        "created_at",
+        {
+            ascending:true
+        }
+    );
 
-  const menu =
-  document.getElementById("menu");
 
-  if(error){
+    const menu =
+    document.getElementById("menu");
 
-    console.error(error);
 
-    menu.innerHTML =
-    "<p>Menu load नहीं हो पाया.</p>";
+    if(error){
 
-    return;
+        console.error(error);
 
-  }
+        menu.innerHTML =
+        "<p>Menu load नहीं हुआ.</p>";
 
-  if(!data || data.length === 0){
+        return;
 
-    menu.innerHTML =
-    "<p>अभी menu available नहीं है.</p>";
+    }
 
-    return;
 
-  }
+    if(!data || data.length===0){
 
-  menu.innerHTML = "";
+        menu.innerHTML =
+        "<p>अभी कोई food available नहीं है.</p>";
 
-  data.forEach(item => {
+        return;
 
-    const card =
-    document.createElement("div");
+    }
 
-    card.className = "food";
 
-    card.innerHTML = `
+    menu.innerHTML = "";
 
-      <img
-        src="${item.image_url || 'https://via.placeholder.com/500x300?text=Food'}"
+
+    data.forEach(item=>{
+
+        const card =
+        document.createElement("div");
+
+        card.className =
+        "food";
+
+
+        const image =
+        item.image_url ||
+        "https://via.placeholder.com/600x400?text=Food";
+
+
+        card.innerHTML = `
+
+        <img
+        src="${image}"
         alt="${item.name}"
-      >
+        >
 
-      <div class="food-info">
+        <div class="food-content">
 
         <h3>${item.name}</h3>
 
-        <p>${item.description || ""}</p>
+        <p class="description">
+        ${item.description || ""}
+        </p>
 
         <div class="price">
-          ₹${item.price}
+        ₹${item.price}
         </div>
 
         <button
-          class="add"
-          onclick='addToCart(${JSON.stringify(item)})'
-        >
-          Add to Cart
+        class="add-btn"
+        onclick="addToCart('${item.id}')">
+
+        ➕ Add to Cart
+
         </button>
 
-      </div>
+        </div>
 
-    `;
-
-    menu.appendChild(card);
-
-  });
-
-}
+        `;
 
 
-/* =========================
-   ADD CART
-========================= */
+        card.dataset.item =
+        JSON.stringify(item);
 
-function addToCart(item){
 
-  cart.push(item);
+        menu.appendChild(card);
 
-  total += Number(item.price);
-
-  updateCart();
+    });
 
 }
 
 
-/* =========================
+/* =================================
+   ADD TO CART
+================================= */
+
+async function addToCart(itemId){
+
+    const {data,error} =
+    await supabaseClient
+    .from("menu_items")
+    .select("*")
+    .eq("id",itemId)
+    .single();
+
+
+    if(error){
+
+        alert(
+            "Food add नहीं हुआ."
+        );
+
+        return;
+
+    }
+
+
+    const existing =
+    cart.find(
+        item=>item.id===itemId
+    );
+
+
+    if(existing){
+
+        existing.quantity++;
+
+    }else{
+
+        cart.push({
+
+            id:data.id,
+
+            name:data.name,
+
+            price:Number(data.price),
+
+            quantity:1
+
+        });
+
+    }
+
+
+    updateCart();
+
+}
+
+
+/* =================================
    UPDATE CART
-========================= */
+================================= */
 
 function updateCart(){
 
-  const box =
-  document.getElementById("cartItems");
+    const box =
+    document.getElementById(
+        "cartItems"
+    );
 
-  box.innerHTML = "";
 
-  cart.forEach((item,index)=>{
+    box.innerHTML = "";
 
-    const row =
-    document.createElement("div");
 
-    row.className =
-    "cart-item";
+    if(cart.length===0){
 
-    row.innerHTML = `
+        box.innerHTML =
+        '<p style="color:#777;">Your cart is empty.</p>';
 
-      <span>
+        document
+        .getElementById("total")
+        .innerText="0";
+
+        return;
+
+    }
+
+
+    let total=0;
+
+
+    cart.forEach((item,index)=>{
+
+        total +=
+        item.price *
+        item.quantity;
+
+
+        const row =
+        document.createElement("div");
+
+
+        row.className =
+        "cart-item";
+
+
+        row.innerHTML = `
+
+        <div>
+
+        <strong>
         ${item.name}
-      </span>
+        </strong>
 
-      <span>
+        <br>
+
         ₹${item.price}
 
+        </div>
+
+
+        <div class="qty">
+
         <button
-          onclick="removeItem(${index})"
-          style="padding:5px 8px;margin-left:5px;"
-        >
-          ❌
+        onclick="changeQuantity(${index},-1)">
+        −
         </button>
 
-      </span>
+        <strong>
+        ${item.quantity}
+        </strong>
 
-    `;
+        <button
+        onclick="changeQuantity(${index},1)">
+        +
+        </button>
 
-    box.appendChild(row);
+        </div>
 
-  });
-
-
-  if(cart.length === 0){
-
-    box.innerHTML =
-    '<p style="color:#777;">Your cart is empty.</p>';
-
-  }
+        `;
 
 
-  document.getElementById("total")
-  .innerText = total;
+        box.appendChild(row);
 
-}
+    });
 
 
-/* =========================
-   REMOVE ITEM
-========================= */
-
-function removeItem(index){
-
-  total -= Number(cart[index].price);
-
-  cart.splice(index,1);
-
-  updateCart();
+    document
+    .getElementById("total")
+    .innerText =
+    total.toFixed(2);
 
 }
 
 
-/* =========================
+/* =================================
+   CHANGE QUANTITY
+================================= */
+
+function changeQuantity(index,value){
+
+    cart[index].quantity += value;
+
+
+    if(cart[index].quantity<=0){
+
+        cart.splice(index,1);
+
+    }
+
+
+    updateCart();
+
+}
+
+
+/* =================================
    PLACE ORDER
-========================= */
+================================= */
 
 async function placeOrder(){
 
-  if(cart.length === 0){
+    if(cart.length===0){
 
-    alert("पहले food को cart में add करो.");
+        alert(
+            "पहले food को cart में add करो."
+        );
 
-    return;
+        return;
 
-  }
-
-  if(!restaurantId){
-
-    alert("Restaurant load नहीं हुआ.");
-
-    return;
-
-  }
+    }
 
 
-  /* CREATE ORDER */
+    if(!restaurantId){
 
-  const { data: order, error } =
-  await supabaseClient
-  .from("orders")
-  .insert({
+        alert(
+            "Restaurant information missing."
+        );
 
-    restaurant_id:
-    restaurantId,
+        return;
 
-    table_id:
-    tableId,
-
-    status:
-    "new",
-
-    estimated_minutes:
-    15,
-
-    total:
-    total,
-
-    payment_method:
-    "cash",
-
-    payment_status:
-    "pending"
-
-  })
-  .select()
-  .single();
+    }
 
 
-  if(error){
+    if(!tableId){
 
-    console.error(error);
+        alert(
+            "Table information missing."
+        );
 
-    alert(
-      "Order place नहीं हुआ.\n" +
-      error.message
+        return;
+
+    }
+
+
+    let total=0;
+
+
+    cart.forEach(item=>{
+
+        total +=
+        item.price *
+        item.quantity;
+
+    });
+
+
+    /* CREATE ORDER */
+
+    const {data:order,error} =
+    await supabaseClient
+    .from("orders")
+    .insert({
+
+        restaurant_id:
+        restaurantId,
+
+        table_id:
+        tableId,
+
+        status:
+        "new",
+
+        estimated_minutes:
+        15,
+
+        total:
+        total,
+
+        payment_method:
+        "cash",
+
+        payment_status:
+        "pending"
+
+    })
+    .select()
+    .single();
+
+
+    if(error){
+
+        console.error(error);
+
+        alert(
+            "Order place नहीं हुआ.\n\n"+
+            error.message
+        );
+
+        return;
+
+    }
+
+
+    /* ORDER ITEMS */
+
+    const orderItems =
+    cart.map(item=>({
+
+        order_id:
+        order.id,
+
+        menu_item_id:
+        item.id,
+
+        quantity:
+        item.quantity,
+
+        price:
+        item.price
+
+    }));
+
+
+    const {error:itemError} =
+    await supabaseClient
+    .from("order_items")
+    .insert(
+        orderItems
     );
 
-    return;
 
-  }
+    if(itemError){
 
+        console.error(
+            itemError
+        );
 
-  /* CREATE ORDER ITEMS */
+        alert(
+            "Order बना लेकिन items save नहीं हुए."
+        );
 
-  const items =
-  cart.map(item => ({
+        return;
 
-    order_id:
-    order.id,
-
-    menu_item_id:
-    item.id,
-
-    quantity:
-    1,
-
-    price:
-    item.price
-
-  }));
+    }
 
 
-  const { error:itemError } =
-  await supabaseClient
-  .from("order_items")
-  .insert(items);
+    /* SUCCESS */
 
+    showMessage(`
 
-  if(itemError){
-
-    console.error(itemError);
-
-    alert(
-      "Order बना लेकिन items save नहीं हुए."
-    );
-
-    return;
-
-  }
-
-
-  document.getElementById("orderStatus")
-  .style.display = "block";
-
-  document.getElementById("orderStatus")
-  .innerHTML = `
-
-    <strong>✅ Order Placed!</strong>
+    <strong>✅ Order Successfully Placed!</strong>
 
     <br><br>
 
     Order ID:
+    <strong>
     ${order.id.substring(0,8)}
+    </strong>
 
-    <br>
+    <br><br>
+
+    Table:
+    <strong>
+    ${tableNumber}
+    </strong>
+
+    <br><br>
 
     Status:
-    <strong>🟡 Order Received</strong>
+    🟡 Order Received
 
-    <br>
+    <br><br>
 
     Estimated Time:
-    <strong>15 minutes</strong>
+    ⏱️ <strong>15 minutes</strong>
 
-  `;
+    `);
 
 
-  cart = [];
+    cart=[];
 
-  total = 0;
-
-  updateCart();
+    updateCart();
 
 }
 
 
-/* =========================
+/* =================================
+   MESSAGE
+================================= */
+
+function showMessage(text){
+
+    const box =
+    document.getElementById(
+        "message"
+    );
+
+
+    box.style.display =
+    "block";
+
+
+    box.innerHTML =
+    text;
+
+}
+
+
+/* =================================
    START
-========================= */
+================================= */
 
 loadRestaurant();
 
