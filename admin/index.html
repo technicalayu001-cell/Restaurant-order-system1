@@ -3,11 +3,13 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
 <title>Restaurant Admin</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <style>
 
@@ -117,7 +119,8 @@ background:#fff3cd;
 font-size:13px;
 }
 
-.actions button{
+.actions button,
+.qr-actions button{
 padding:9px 12px;
 margin:5px 3px 0 0;
 border:0;
@@ -144,13 +147,42 @@ background:#6c757d;
 color:white;
 }
 
-.refresh{
+.primary{
 background:#111;
 color:white;
-padding:10px 15px;
-border:0;
-border-radius:8px;
-margin-top:12px;
+}
+
+.tables-grid{
+display:grid;
+grid-template-columns:
+repeat(auto-fill,minmax(190px,1fr));
+gap:18px;
+margin-top:20px;
+}
+
+.table-card{
+background:white;
+border-radius:15px;
+padding:18px;
+text-align:center;
+box-shadow:0 3px 10px rgba(0,0,0,.08);
+}
+
+.table-card h3{
+margin-bottom:10px;
+}
+
+.qr{
+display:flex;
+justify-content:center;
+margin:15px 0;
+min-height:128px;
+}
+
+.table-link{
+font-size:11px;
+word-break:break-all;
+color:#777;
 }
 
 .empty{
@@ -160,6 +192,15 @@ margin-top:15px;
 border-radius:12px;
 text-align:center;
 color:#777;
+}
+
+.success{
+padding:12px;
+background:#d1e7dd;
+color:#0f5132;
+border-radius:9px;
+margin-top:15px;
+display:none;
 }
 
 @media(max-width:700px){
@@ -191,12 +232,17 @@ padding:12px;
 
 <body>
 
+
 <header>
 
 <h1>🍽️ Royal Restaurant — Admin</h1>
 
-<button onclick="loadOrders()">
+<button
+class="primary"
+onclick="loadOrders()">
+
 🔄 Refresh
+
 </button>
 
 </header>
@@ -215,12 +261,12 @@ padding:12px;
 🔔 Live Orders
 </button>
 
-<button onclick="showPage('menu')">
-📋 Menu
-</button>
-
 <button onclick="showPage('tables')">
 🪑 Tables + QR
+</button>
+
+<button onclick="showPage('menu')">
+📋 Menu
 </button>
 
 <button onclick="showPage('offers')">
@@ -263,30 +309,55 @@ padding:12px;
 
 <!-- DASHBOARD -->
 
-<section id="dashboard" class="page active">
+<section
+id="dashboard"
+class="page active">
 
 <h2>📊 Dashboard</h2>
 
 <div class="cards">
 
 <div class="card">
+
 <h3>Today's Orders</h3>
-<strong id="totalOrders">0</strong>
+
+<strong id="totalOrders">
+0
+</strong>
+
 </div>
 
+
 <div class="card">
+
 <h3>Pending Orders</h3>
-<strong id="pendingOrders">0</strong>
+
+<strong id="pendingOrders">
+0
+</strong>
+
 </div>
 
+
 <div class="card">
+
 <h3>Completed</h3>
-<strong id="completedOrders">0</strong>
+
+<strong id="completedOrders">
+0
+</strong>
+
 </div>
 
+
 <div class="card">
+
 <h3>Today's Sales</h3>
-<strong id="sales">₹0</strong>
+
+<strong id="sales">
+₹0
+</strong>
+
 </div>
 
 </div>
@@ -294,9 +365,11 @@ padding:12px;
 </section>
 
 
-<!-- LIVE ORDERS -->
+<!-- ORDERS -->
 
-<section id="orders" class="page">
+<section
+id="orders"
+class="page">
 
 <h2>🔔 Live Orders</h2>
 
@@ -311,29 +384,66 @@ Loading orders...
 </section>
 
 
-<!-- OTHER PANELS -->
+<!-- TABLES -->
 
-<section id="menu" class="page">
+<section
+id="tables"
+class="page">
 
-<h2>📋 Menu Management</h2>
+<h2>
+🪑 Table + QR Management
+</h2>
+
+<p style="margin-top:8px;color:#666">
+
+हर table का अलग QR है। QR scan होने पर
+order में सही table number save होगा।
+
+</p>
+
+
+<button
+class="primary"
+style="margin-top:15px;padding:12px;border:0;border-radius:8px;"
+onclick="createTables()">
+
+⚡ Create / Update Table 1–50
+
+</button>
+
+
+<div
+id="qrSuccess"
+class="success">
+
+Tables successfully तैयार हो गईं।
+
+</div>
+
+
+<div
+id="tablesGrid"
+class="tables-grid">
 
 <div class="empty">
 
-Menu management अगला module है।
+पहले ऊपर वाला button दबाएँ।
+
+</div>
 
 </div>
 
 </section>
 
 
-<section id="tables" class="page">
+<!-- OTHER PAGES -->
 
-<h2>🪑 Table + QR Management</h2>
+<section id="menu" class="page">
+
+<h2>📋 Menu Management</h2>
 
 <div class="empty">
-
-QR management अगला module है।
-
+Menu module बाद में बनाया जाएगा।
 </div>
 
 </section>
@@ -344,9 +454,7 @@ QR management अगला module है।
 <h2>🎁 Today's Offers</h2>
 
 <div class="empty">
-
-Offers management अगला module है।
-
+Offers module बाद में बनाया जाएगा।
 </div>
 
 </section>
@@ -357,9 +465,7 @@ Offers management अगला module है।
 <h2>⚠️ Complaints</h2>
 
 <div class="empty">
-
-Complaints management अगला module है।
-
+Complaints module बाद में बनाया जाएगा।
 </div>
 
 </section>
@@ -370,9 +476,7 @@ Complaints management अगला module है।
 <h2>⭐ Feedback</h2>
 
 <div class="empty">
-
-Feedback management अगला module है।
-
+Feedback module बाद में बनाया जाएगा।
 </div>
 
 </section>
@@ -383,9 +487,7 @@ Feedback management अगला module है।
 <h2>🧾 Billing</h2>
 
 <div class="empty">
-
-Billing module अगला बनाया जाएगा।
-
+Billing module बाद में बनाया जाएगा।
 </div>
 
 </section>
@@ -396,9 +498,7 @@ Billing module अगला बनाया जाएगा।
 <h2>💰 Payments</h2>
 
 <div class="empty">
-
-Payment settings अगला module है।
-
+Payment module बाद में बनाया जाएगा।
 </div>
 
 </section>
@@ -409,9 +509,7 @@ Payment settings अगला module है।
 <h2>👥 Staff</h2>
 
 <div class="empty">
-
-Staff management अगला module है।
-
+Staff module बाद में बनाया जाएगा।
 </div>
 
 </section>
@@ -422,9 +520,7 @@ Staff management अगला module है।
 <h2>📈 Analytics</h2>
 
 <div class="empty">
-
-Analytics अगला module है।
-
+Analytics module बाद में बनाया जाएगा।
 </div>
 
 </section>
@@ -435,9 +531,7 @@ Analytics अगला module है।
 <h2>⚙️ Settings</h2>
 
 <div class="empty">
-
-Restaurant settings अगला module है।
-
+Settings module बाद में बनाया जाएगा।
 </div>
 
 </section>
@@ -457,8 +551,10 @@ SUPABASE
 const SUPABASE_URL =
 "https://ltpjjckiaaonpetbzfvn.supabase.co";
 
+
 const SUPABASE_KEY =
 "sb_publishable_skzmVVxdVcKTQaUbwqEaIg_-KDmA-3L";
+
 
 const supabaseClient =
 window.supabase.createClient(
@@ -475,7 +571,15 @@ let restaurantId = null;
 
 
 /* ==============================
-RESTAURANT
+CUSTOMER WEBSITE
+============================== */
+
+const CUSTOMER_URL =
+"https://technicalayu001-cell.github.io/Restaurant-order-system1/";
+
+
+/* ==============================
+LOAD RESTAURANT
 ============================== */
 
 async function loadRestaurant(){
@@ -487,6 +591,7 @@ await supabaseClient
 .limit(1)
 .maybeSingle();
 
+
 if(error){
 
 console.error(error);
@@ -495,15 +600,421 @@ return;
 
 }
 
+
 if(!data){
 
 return;
 
 }
 
-restaurantId = data.id;
+
+restaurantId =
+data.id;
+
 
 loadOrders();
+
+}
+
+
+/* ==============================
+CREATE TABLE 1–50
+============================== */
+
+async function createTables(){
+
+if(!restaurantId){
+
+alert(
+"Restaurant अभी load नहीं हुआ।"
+);
+
+return;
+
+}
+
+
+const tables=[];
+
+
+for(
+let i=1;
+i<=50;
+i++
+){
+
+tables.push({
+
+restaurant_id:
+restaurantId,
+
+table_number:
+i,
+
+active:true
+
+});
+
+}
+
+
+/*
+ON CONFLICT तभी काम करेगा
+जब restaurant_id + table_number
+का UNIQUE constraint हो।
+*/
+
+const {error} =
+await supabaseClient
+.from("restaurant_tables")
+.upsert(
+tables,
+{
+onConflict:
+"restaurant_id,table_number"
+}
+);
+
+
+if(error){
+
+alert(
+"Tables create नहीं हुए:\n\n"+
+error.message
+);
+
+console.error(error);
+
+return;
+
+}
+
+
+document
+.getElementById("qrSuccess")
+.style.display =
+"block";
+
+
+loadTables();
+
+}
+
+
+/* ==============================
+LOAD TABLES
+============================== */
+
+async function loadTables(){
+
+if(!restaurantId){
+
+return;
+
+}
+
+
+const {data,error} =
+await supabaseClient
+.from("restaurant_tables")
+.select("*")
+.eq(
+"restaurant_id",
+restaurantId
+)
+.order(
+"table_number",
+{
+ascending:true
+}
+);
+
+
+if(error){
+
+console.error(error);
+
+document
+.getElementById("tablesGrid")
+.innerHTML = `
+
+<div class="empty">
+
+Tables load नहीं हुए।
+
+<br><br>
+
+${error.message}
+
+</div>
+
+`;
+
+return;
+
+}
+
+
+renderTables(data || []);
+
+}
+
+
+/* ==============================
+RENDER QR TABLES
+============================== */
+
+function renderTables(tables){
+
+const grid =
+document.getElementById(
+"tablesGrid"
+);
+
+
+grid.innerHTML = "";
+
+
+tables.forEach(table=>{
+
+const card =
+document.createElement(
+"div"
+);
+
+
+card.className =
+"table-card";
+
+
+const qrId =
+"qr-" +
+table.table_number;
+
+
+const url =
+CUSTOMER_URL +
+"?table=" +
+table.table_number;
+
+
+card.innerHTML = `
+
+<h3>
+🪑 Table ${table.table_number}
+</h3>
+
+<div
+id="${qrId}"
+class="qr">
+</div>
+
+<div class="table-link">
+${url}
+</div>
+
+<div class="qr-actions">
+
+<button
+class="primary"
+onclick="downloadQR(
+${table.table_number}
+)">
+
+⬇️ Download QR
+
+</button>
+
+<button
+onclick="printQR(
+${table.table_number}
+)">
+
+🖨️ Print
+
+</button>
+
+</div>
+
+`;
+
+
+grid.appendChild(card);
+
+
+/* GENERATE QR */
+
+new QRCode(
+document.getElementById(qrId),
+{
+
+text:url,
+
+width:128,
+
+height:128,
+
+correctLevel:
+QRCode.CorrectLevel.H
+
+}
+);
+
+});
+
+}
+
+
+/* ==============================
+DOWNLOAD QR
+============================== */
+
+function downloadQR(tableNumber){
+
+const container =
+document.getElementById(
+"qr-" + tableNumber
+);
+
+
+const canvas =
+container.querySelector(
+"canvas"
+);
+
+
+if(!canvas){
+
+alert(
+"QR अभी तैयार नहीं हुआ।"
+);
+
+return;
+
+}
+
+
+const link =
+document.createElement(
+"a"
+);
+
+
+link.download =
+"Table-" +
+tableNumber +
+"-QR.png";
+
+
+link.href =
+canvas.toDataURL(
+"image/png"
+);
+
+
+link.click();
+
+}
+
+
+/* ==============================
+PRINT QR
+============================== */
+
+function printQR(tableNumber){
+
+const container =
+document.getElementById(
+"qr-" + tableNumber
+);
+
+
+const canvas =
+container.querySelector(
+"canvas"
+);
+
+
+if(!canvas){
+
+alert(
+"QR अभी तैयार नहीं हुआ।"
+);
+
+return;
+
+}
+
+
+const image =
+canvas.toDataURL(
+"image/png"
+);
+
+
+const win =
+window.open(
+"",
+"_blank"
+);
+
+
+win.document.write(`
+
+<html>
+
+<head>
+
+<title>
+Table ${tableNumber} QR
+</title>
+
+<style>
+
+body{
+text-align:center;
+font-family:Arial;
+padding:40px;
+}
+
+img{
+width:300px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>
+🍽️ Royal Restaurant
+</h1>
+
+<h2>
+🪑 Table ${tableNumber}
+</h2>
+
+<img src="${image}">
+
+<p>
+Scan to Order
+</p>
+
+</body>
+
+</html>
+
+`);
+
+
+win.document.close();
+
+
+setTimeout(
+()=>win.print(),
+500
+);
 
 }
 
@@ -519,6 +1030,7 @@ if(!restaurantId){
 return;
 
 }
+
 
 const {data,error} =
 await supabaseClient
@@ -540,21 +1052,10 @@ ascending:false
 }
 );
 
+
 if(error){
 
 console.error(error);
-
-document.getElementById(
-"ordersList"
-).innerHTML=
-
-`
-<div class="empty">
-Orders load नहीं हुए.
-<br><br>
-${error.message}
-</div>
-`;
 
 return;
 
@@ -565,9 +1066,14 @@ const orders =
 data || [];
 
 
-updateDashboard(orders);
+updateDashboard(
+orders
+);
 
-renderOrders(orders);
+
+renderOrders(
+orders
+);
 
 }
 
@@ -576,7 +1082,9 @@ renderOrders(orders);
 DASHBOARD
 ============================== */
 
-function updateDashboard(orders){
+function updateDashboard(
+orders
+){
 
 document.getElementById(
 "totalOrders"
@@ -613,7 +1121,8 @@ completed;
 const sales =
 orders.reduce(
 (sum,o)=>
-sum + Number(o.total || 0),
+sum +
+Number(o.total || 0),
 0
 );
 
@@ -621,7 +1130,8 @@ sum + Number(o.total || 0),
 document.getElementById(
 "sales"
 ).innerText =
-"₹" + sales.toFixed(0);
+"₹" +
+sales.toFixed(0);
 
 }
 
@@ -630,7 +1140,9 @@ document.getElementById(
 RENDER ORDERS
 ============================== */
 
-function renderOrders(orders){
+function renderOrders(
+orders
+){
 
 const box =
 document.getElementById(
@@ -638,7 +1150,7 @@ document.getElementById(
 );
 
 
-if(orders.length === 0){
+if(orders.length===0){
 
 box.innerHTML = `
 
@@ -658,16 +1170,21 @@ return;
 box.innerHTML = "";
 
 
-orders.forEach(order => {
+orders.forEach(
+order=>{
 
 const table =
 order.restaurant_tables
-? order.restaurant_tables.table_number
-: "Unknown";
+?
+order.restaurant_tables.table_number
+:
+"Unknown";
 
 
 const div =
-document.createElement("div");
+document.createElement(
+"div"
+);
 
 
 div.className =
@@ -683,7 +1200,7 @@ Order #${order.id.substring(0,8)}
 </strong>
 
 <span class="status">
-${getStatusText(order.status)}
+${statusText(order.status)}
 </span>
 
 </div>
@@ -691,13 +1208,17 @@ ${getStatusText(order.status)}
 
 <p>
 🪑 Table:
-<strong>${table}</strong>
+<strong>
+${table}
+</strong>
 </p>
 
 
 <p>
 💰 Total:
-<strong>₹${order.total}</strong>
+<strong>
+₹${order.total}
+</strong>
 </p>
 
 
@@ -711,9 +1232,11 @@ minutes
 
 
 <p>
-🕐 ${new Date(
+🕐 ${
+new Date(
 order.created_at
-).toLocaleString()}
+).toLocaleString()
+}
 </p>
 
 
@@ -725,7 +1248,9 @@ onclick="changeStatus(
 'accepted',
 '${order.id}'
 )">
+
 Accept
+
 </button>
 
 
@@ -735,7 +1260,9 @@ onclick="changeStatus(
 'preparing',
 '${order.id}'
 )">
+
 Preparing
+
 </button>
 
 
@@ -745,7 +1272,9 @@ onclick="changeStatus(
 'ready',
 '${order.id}'
 )">
+
 Ready
+
 </button>
 
 
@@ -755,14 +1284,19 @@ onclick="changeStatus(
 'delivered',
 '${order.id}'
 )">
+
 Delivered
+
 </button>
 
 </div>
 
 `;
 
-box.appendChild(div);
+
+box.appendChild(
+div
+);
 
 });
 
@@ -770,12 +1304,12 @@ box.appendChild(div);
 
 
 /* ==============================
-STATUS
+STATUS TEXT
 ============================== */
 
-function getStatusText(status){
+function statusText(status){
 
-const map = {
+const map={
 
 new:"🆕 New",
 
@@ -788,6 +1322,7 @@ ready:"🔵 Ready",
 delivered:"🟢 Delivered"
 
 };
+
 
 return map[status] || status;
 
@@ -807,9 +1342,7 @@ const {error} =
 await supabaseClient
 .from("orders")
 .update({
-
 status:status
-
 })
 .eq(
 "id",
@@ -820,7 +1353,6 @@ orderId
 if(error){
 
 alert(
-"Status update नहीं हुआ:\n" +
 error.message
 );
 
@@ -844,16 +1376,27 @@ document
 .querySelectorAll(".page")
 .forEach(
 p =>
-p.classList.remove("active")
+p.classList.remove(
+"active"
+)
 );
 
 
 document
 .getElementById(page)
-.classList.add("active");
+.classList.add(
+"active"
+);
 
 
-if(page === "orders"){
+if(page==="tables"){
+
+loadTables();
+
+}
+
+
+if(page==="orders"){
 
 loadOrders();
 
@@ -863,24 +1406,25 @@ loadOrders();
 
 
 /* ==============================
-REALTIME
+REALTIME ORDERS
 ============================== */
 
 supabaseClient
-.channel("orders-live")
+.channel(
+"admin-orders"
+)
 .on(
 "postgres_changes",
 {
-event:"*",
-schema:"public",
-table:"orders"
-},
-payload => {
 
-console.log(
-"Order update:",
-payload
-);
+event:"*",
+
+schema:"public",
+
+table:"orders"
+
+},
+payload=>{
 
 loadOrders();
 
