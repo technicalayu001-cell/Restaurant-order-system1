@@ -1,1 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <title>Royal Restaurant</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f7f7f7;
+      color: #222;
+    }
+
+    header {
+      background: #111;
+      color: white;
+      padding: 25px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 28px;
+      margin-bottom: 7px;
+    }
+
+    header p {
+      color: #ddd;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .welcome {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .welcome h2 {
+      margin-bottom: 8px;
+    }
+
+    .table {
+      display: inline-block;
+      background: #eee;
+      padding: 8px 15px;
+      border-radius: 20px;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .menu-title {
+      margin: 20px 0 15px;
+    }
+
+    .menu {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 15px;
+    }
+
+    .food {
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+
+    .food img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+    }
+
+    .food-info {
+      padding: 15px;
+    }
+
+    .food-info h3 {
+      margin-bottom: 7px;
+    }
+
+    .food-info p {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .price {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+      border-radius: 10px;
+      padding: 11px 15px;
+      font-weight: bold;
+    }
+
+    .add-btn {
+      width: 100%;
+      background: #111;
+      color: white;
+    }
+
+    .cart {
+      margin-top: 25px;
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #eee;
+      padding: 12px 0;
+    }
+
+    .total {
+      font-size: 20px;
+      font-weight: bold;
+      margin: 18px 0;
+    }
+
+    .order-btn {
+      width: 100%;
+      background: #e63946;
+      color: white;
+      font-size: 16px;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+      margin-top: 25px;
+    }
+
+    .feature {
+      background: white;
+      padding: 18px 10px;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      color: #777;
+    }
+
+    @media(max-width:600px) {
+      header h1 {
+        font-size: 23px;
+      }
+
+      .container {
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>🍽️ Royal Restaurant</h1>
+  <p>Fresh Food • Great Taste • Happy Moments</p>
+</header>
+
+<div class="container">
+
+  <section class="welcome">
+    <h2>Welcome to Royal Restaurant</h2>
+    <p>Order your favourite food directly from your table.</p>
+
+    <div class="table">
+      🪑 Table No: <strong id="tableNumber">07</strong>
+    </div>
+  </section>
+
+  <h2 class="menu-title">📋 Our Menu</h2>
+
+  <section class="menu">
+
+    <div class="food">
+      <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80">
+
+      <div class="food-info">
+        <h3>🥟 Veg Momos</h3>
+        <p>Fresh steamed vegetable momos.</p>
+
+        <div class="price">₹120</div>
+
+        <button class="add-btn"
+          onclick="addToCart('Veg Momos',120)">
+          Add to Cart
+        </button>
+      </div>
+    </div>
+
+
+    <div class="food">
+      <img src="https://images.unsplash.com/photo-1563379091339-03246963d96c?auto=format&fit=crop&w=800&q=80">
+
+      <div class="food-info">
+        <h3>🍗 Chicken Biryani</h3>
+        <p>Delicious aromatic chicken biryani.</p>
+
+        <div class="price">₹180</div>
+
+        <button class="add-btn"
+          onclick="addToCart('Chicken Biryani',180)">
+          Add to Cart
+        </button>
+      </div>
+    </div>
+
+
+    <div class="food">
+      <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80">
+
+      <div class="food-info">
+        <h3>🍔 Chicken Burger</h3>
+        <p>Juicy chicken burger with fresh vegetables.</p>
+
+        <div class="price">₹149</div>
+
+        <button class="add-btn"
+          onclick="addToCart('Chicken Burger',149)">
+          Add to Cart
+        </button>
+      </div>
+    </div>
+
+
+    <div class="food">
+      <img src="https://images.unsplash.com/photo-1548365328-8b849e6f90e5?auto=format&fit=crop&w=800&q=80">
+
+      <div class="food-info">
+        <h3>🍕 Cheese Pizza</h3>
+        <p>Hot cheesy pizza with delicious toppings.</p>
+
+        <div class="price">₹249</div>
+
+        <button class="add-btn"
+          onclick="addToCart('Cheese Pizza',249)">
+          Add to Cart
+        </button>
+      </div>
+    </div>
+
+  </section>
+
+
+  <section class="features">
+
+    <div class="feature">📦<br>My Order</div>
+
+    <div class="feature">🎁<br>Today's Offers</div>
+
+    <div class="feature">⚠️<br>Complaint</div>
+
+    <div class="feature">🔔<br>Call Waiter</div>
+
+    <div class="feature">⭐<br>Feedback</div>
+
+    <div class="feature">🧾<br>My Bill</div>
+
+  </section>
+
+
+  <section class="cart">
+
+    <h2>🛒 Your Cart</h2>
+
+    <div id="cartItems">
+      <p style="margin-top:15px;color:#777;">
+        Your cart is empty.
+      </p>
+    </div>
+
+    <div class="total">
+      Total: ₹<span id="total">0</span>
+    </div>
+
+    <button class="order-btn" onclick="placeOrder()">
+      📦 Place Order
+    </button>
+
+  </section>
+
+</div>
+
+<footer>
+  © 2026 Royal Restaurant
+</footer>
+
+
+<script>
+
+  let cart = [];
+  let total = 0;
+
+
+  function addToCart(name, price) {
+
+    cart.push({
+      name: name,
+      price: price
+    });
+
+    total += price;
+
+    updateCart();
+
+  }
+
+
+  function updateCart() {
+
+    const cartItems = document.getElementById("cartItems");
+
+    cartItems.innerHTML = "";
+
+    cart.forEach((item, index) => {
+
+      const div = document.createElement("div");
+
+      div.className = "cart-item";
+
+      div.innerHTML = `
+        <span>${item.name}</span>
+
+        <span>
+          ₹${item.price}
+          <button
+            onclick="removeItem(${index})"
+            style="margin-left:8px;padding:5px 8px;">
+            ❌
+          </button>
+        </span>
+      `;
+
+      cartItems.appendChild(div);
+
+    });
+
+    if(cart.length === 0){
+
+      cartItems.innerHTML =
+      '<p style="color:#777;">Your cart is empty.</p>';
+
+    }
+
+    document.getElementById("total").innerText = total;
+
+  }
+
+
+  function removeItem(index){
+
+    total -= cart[index].price;
+
+    cart.splice(index,1);
+
+    updateCart();
+
+  }
+
+
+  function placeOrder(){
+
+    if(cart.length === 0){
+
+      alert("Please add food to your cart first.");
+
+      return;
+
+    }
+
+    alert(
+      "✅ Order placed successfully!\n\n" +
+      "Table: 07\n" +
+      "Total: ₹" + total +
+      "\n\nEstimated time: 15 minutes"
+    );
+
+  }
+
+</script>
+
+</body>
+</html>
