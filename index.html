@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Restaurant</title>
 
@@ -10,275 +10,293 @@
 
 <style>
 *{
-box-sizing:border-box;
-margin:0;
-padding:0;
-font-family:Arial,sans-serif;
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,sans-serif;
 }
 
 body{
-background:#f5f6f8;
-color:#222;
+  background:#f5f6f8;
+  color:#222;
 }
 
 button{
-cursor:pointer;
-border:0;
-font-weight:bold;
+  border:0;
+  cursor:pointer;
+  font-weight:bold;
 }
 
 header{
-background:#111;
-color:white;
-padding:22px 15px;
-text-align:center;
+  background:#111;
+  color:white;
+  padding:22px 15px;
+  text-align:center;
 }
 
 header h1{
-font-size:25px;
+  font-size:26px;
+  margin-bottom:6px;
 }
 
 .container{
-max-width:1000px;
-margin:auto;
-padding:15px;
+  max-width:1000px;
+  margin:auto;
+  padding:15px;
 }
 
 .card{
-background:white;
-border-radius:16px;
-padding:18px;
-margin-bottom:18px;
-box-shadow:0 3px 14px rgba(0,0,0,.07);
+  background:white;
+  border-radius:16px;
+  padding:18px;
+  margin-bottom:18px;
+  box-shadow:0 3px 14px rgba(0,0,0,.07);
+}
+
+.welcome{
+  text-align:center;
 }
 
 .table{
-display:inline-block;
-background:#eee;
-padding:9px 17px;
-border-radius:25px;
-margin-top:12px;
-font-weight:bold;
+  display:inline-block;
+  background:#eee;
+  padding:9px 17px;
+  border-radius:25px;
+  margin-top:12px;
+  font-weight:bold;
 }
 
 .section-title{
-margin:20px 0 12px;
+  margin:20px 0 12px;
 }
 
 .menu{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:15px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:15px;
 }
 
 .food{
-background:white;
-border-radius:15px;
-overflow:hidden;
-box-shadow:0 3px 14px rgba(0,0,0,.08);
+  background:white;
+  border-radius:15px;
+  overflow:hidden;
+  box-shadow:0 3px 14px rgba(0,0,0,.08);
 }
 
 .food img{
-width:100%;
-height:160px;
-object-fit:cover;
+  width:100%;
+  height:160px;
+  object-fit:cover;
 }
 
 .food-info{
-padding:14px;
+  padding:14px;
 }
 
 .food-info h3{
-margin-bottom:6px;
+  margin-bottom:6px;
 }
 
 .description{
-color:#777;
-font-size:14px;
-min-height:20px;
+  color:#777;
+  font-size:14px;
+  min-height:20px;
 }
 
 .price{
-font-size:20px;
-font-weight:bold;
-margin:12px 0;
+  font-size:20px;
+  font-weight:bold;
+  margin:12px 0;
 }
 
 .add{
-width:100%;
-background:#111;
-color:white;
-padding:12px;
-border-radius:9px;
+  width:100%;
+  background:#111;
+  color:white;
+  padding:12px;
+  border-radius:9px;
 }
 
 .cart-item{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:12px 0;
-border-bottom:1px solid #eee;
-gap:10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 0;
+  border-bottom:1px solid #eee;
+  gap:10px;
 }
 
 .qty{
-display:flex;
-align-items:center;
-gap:8px;
+  display:flex;
+  align-items:center;
+  gap:8px;
 }
 
 .qty button{
-width:30px;
-height:30px;
-border-radius:7px;
-background:#eee;
+  width:30px;
+  height:30px;
+  border-radius:7px;
+  background:#eee;
 }
 
 .total{
-font-size:21px;
-font-weight:bold;
-margin:18px 0;
+  font-size:21px;
+  font-weight:bold;
+  margin:18px 0;
 }
 
 .place{
-width:100%;
-background:#e63946;
-color:white;
-padding:14px;
-border-radius:10px;
-font-size:16px;
+  width:100%;
+  background:#e63946;
+  color:white;
+  padding:14px;
+  border-radius:10px;
+  font-size:16px;
+}
+
+.place:disabled{
+  opacity:.6;
 }
 
 .order-box{
-display:none;
+  display:none;
 }
 
 .order-id{
-background:#f1f1f1;
-padding:12px;
-border-radius:9px;
-margin:12px 0;
+  background:#f1f1f1;
+  padding:12px;
+  border-radius:9px;
+  margin:12px 0;
 }
 
 .status{
-background:#eef7ff;
-padding:16px;
-border-radius:12px;
+  background:#eef7ff;
+  padding:16px;
+  border-radius:12px;
 }
 
 .status-text{
-font-size:18px;
-font-weight:bold;
+  font-size:18px;
+  font-weight:bold;
 }
 
 .steps{
-display:flex;
-gap:5px;
-margin-top:18px;
+  display:flex;
+  gap:5px;
+  margin-top:18px;
 }
 
 .step{
-flex:1;
-text-align:center;
-padding:10px 3px;
-border-radius:8px;
-background:#ddd;
-font-size:12px;
+  flex:1;
+  text-align:center;
+  padding:10px 3px;
+  border-radius:8px;
+  background:#ddd;
+  font-size:12px;
 }
 
 .step.active{
-background:#111;
-color:white;
+  background:#111;
+  color:white;
 }
 
 .time{
-margin-top:15px;
-font-size:18px;
-font-weight:bold;
+  margin-top:15px;
+  font-size:18px;
+  font-weight:bold;
 }
 
 .actions{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-margin-top:18px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:18px;
 }
 
 .action-btn{
-padding:13px;
-border-radius:10px;
-color:white;
-font-size:14px;
+  padding:13px;
+  border-radius:10px;
+  color:white;
+  font-size:14px;
 }
 
 .waiter{
-background:#ff9800;
+  background:#ff9800;
 }
 
 .feedback{
-background:#6f42c1;
-}
-
-.message{
-display:none;
-background:#fff3cd;
-padding:13px;
-border-radius:10px;
-margin-top:12px;
+  background:#6f42c1;
 }
 
 .feedback-box{
-display:none;
-margin-top:15px;
+  display:none;
+  margin-top:15px;
 }
 
 .stars{
-display:flex;
-gap:7px;
-margin:10px 0;
+  display:flex;
+  gap:7px;
+  margin:10px 0;
 }
 
 .star{
-font-size:28px;
-background:none;
-color:#aaa;
+  font-size:28px;
+  background:none;
+  color:#aaa;
 }
 
 .star.selected{
-color:#ffb000;
+  color:#ffb000;
+}
+
+.feedback-text{
+  width:100%;
+  min-height:80px;
+  padding:12px;
+  border:1px solid #ddd;
+  border-radius:9px;
+  resize:none;
 }
 
 .submit-feedback{
-background:#6f42c1;
-color:white;
-padding:12px 18px;
-border-radius:9px;
+  background:#6f42c1;
+  color:white;
+  padding:12px 18px;
+  border-radius:9px;
+  margin-top:10px;
+}
+
+.message{
+  display:none;
+  padding:13px;
+  background:#fff3cd;
+  border-radius:10px;
+  margin-top:12px;
 }
 
 .loading{
-text-align:center;
-padding:25px;
-color:#777;
+  text-align:center;
+  padding:25px;
+  color:#777;
 }
 
 @media(max-width:600px){
 
-.container{
-padding:11px;
-}
+  .container{
+    padding:11px;
+  }
 
-.menu{
-grid-template-columns:1fr;
-}
+  .menu{
+    grid-template-columns:1fr;
+  }
 
-.steps{
-font-size:10px;
-}
+  .steps{
+    font-size:10px;
+  }
 
-.actions{
-grid-template-columns:1fr;
-}
-
+  .actions{
+    grid-template-columns:1fr;
+  }
 }
 </style>
 </head>
@@ -291,9 +309,7 @@ grid-template-columns:1fr;
 🍽️ Restaurant
 </h1>
 
-<p>
-Fresh Food • Great Taste
-</p>
+<p>Fresh Food • Great Taste</p>
 
 </header>
 
@@ -301,23 +317,23 @@ Fresh Food • Great Taste
 <div class="container">
 
 
-<!-- RESTAURANT / TABLE -->
+<!-- WELCOME -->
 
-<div class="card" style="text-align:center">
+<div class="card welcome">
 
-<h2>
-Welcome 👋
-</h2>
+<h2>Welcome 👋</h2>
 
 <p style="margin-top:7px">
 Order directly from your table
 </p>
 
 <div class="table">
+
 🪑 Table No:
 <strong id="tableNumber">
 Loading...
 </strong>
+
 </div>
 
 </div>
@@ -329,9 +345,7 @@ Loading...
 📋 Menu
 </h2>
 
-<div
-id="menu"
-class="menu">
+<div id="menu" class="menu">
 
 <div class="loading">
 Loading menu...
@@ -344,9 +358,7 @@ Loading menu...
 
 <div class="card">
 
-<h2>
-🛒 Your Cart
-</h2>
+<h2>🛒 Your Cart</h2>
 
 <div id="cartItems" style="margin-top:12px">
 
@@ -361,6 +373,7 @@ Total: ₹<span id="total">0</span>
 </div>
 
 <button
+id="placeButton"
 class="place"
 onclick="placeOrder()">
 
@@ -368,23 +381,16 @@ onclick="placeOrder()">
 
 </button>
 
-<div
-id="message"
-class="message">
-</div>
+<div id="message" class="message"></div>
 
 </div>
 
 
-<!-- MY ORDER -->
+<!-- ORDER -->
 
-<div
-id="orderBox"
-class="card order-box">
+<div id="orderBox" class="card order-box">
 
-<h2>
-📦 My Order
-</h2>
+<h2>📦 My Order</h2>
 
 <div class="order-id">
 
@@ -396,51 +402,27 @@ Order:
 
 <div class="status">
 
-<div
-id="statusText"
-class="status-text">
-
+<div id="statusText" class="status-text">
 🆕 Order Received
-
 </div>
 
 
 <div class="steps">
 
-<div
-id="stepNew"
-class="step active">
-
-🆕<br>
-Received
-
+<div id="stepNew" class="step active">
+🆕<br>Received
 </div>
 
-<div
-id="stepPreparing"
-class="step">
-
-👨‍🍳<br>
-Preparing
-
+<div id="stepPreparing" class="step">
+👨‍🍳<br>Preparing
 </div>
 
-<div
-id="stepReady"
-class="step">
-
-🔵<br>
-Ready
-
+<div id="stepReady" class="step">
+🔵<br>Ready
 </div>
 
-<div
-id="stepDelivered"
-class="step">
-
-✅<br>
-Delivered
-
+<div id="stepDelivered" class="step">
+✅<br>Delivered
 </div>
 
 </div>
@@ -449,9 +431,7 @@ Delivered
 <div class="time">
 
 ⏱️ Estimated:
-<span id="estimated">
-15
-</span>
+<span id="estimated">15</span>
 minutes
 
 </div>
@@ -459,7 +439,7 @@ minutes
 </div>
 
 
-<!-- CUSTOMER ACTIONS -->
+<!-- CUSTOMER OPTIONS -->
 
 <div class="actions">
 
@@ -473,7 +453,7 @@ onclick="callWaiter()">
 
 <button
 class="action-btn feedback"
-onclick="showFeedback()">
+onclick="toggleFeedback()">
 
 ⭐ Feedback
 
@@ -484,66 +464,29 @@ onclick="showFeedback()">
 
 <!-- FEEDBACK -->
 
-<div
-id="feedbackBox"
-class="feedback-box">
+<div id="feedbackBox" class="feedback-box">
 
-<h3>
-⭐ Give Feedback
-</h3>
+<h3>⭐ Give Feedback</h3>
 
 <div class="stars">
 
-<button
-class="star"
-onclick="setRating(1)"
-id="star1">
-★
-</button>
+<button class="star" id="star1" onclick="setRating(1)">★</button>
 
-<button
-class="star"
-onclick="setRating(2)"
-id="star2">
-★
-</button>
+<button class="star" id="star2" onclick="setRating(2)">★</button>
 
-<button
-class="star"
-onclick="setRating(3)"
-id="star3">
-★
-</button>
+<button class="star" id="star3" onclick="setRating(3)">★</button>
 
-<button
-class="star"
-onclick="setRating(4)"
-id="star4">
-★
-</button>
+<button class="star" id="star4" onclick="setRating(4)">★</button>
 
-<button
-class="star"
-onclick="setRating(5)"
-id="star5">
-★
-</button>
+<button class="star" id="star5" onclick="setRating(5)">★</button>
 
 </div>
 
 <textarea
 id="feedbackText"
-placeholder="आपका feedback लिखें..."
-style="
-width:100%;
-padding:12px;
-border:1px solid #ddd;
-border-radius:9px;
-min-height:80px;
-">
+class="feedback-text"
+placeholder="आपका feedback लिखें...">
 </textarea>
-
-<br><br>
 
 <button
 class="submit-feedback"
@@ -557,15 +500,14 @@ Submit Feedback
 
 </div>
 
-
 </div>
 
 
 <script>
 
-/* =================================
-SUPABASE
-================================= */
+/* =========================================
+   SUPABASE
+========================================= */
 
 const SUPABASE_URL =
 "https://ltpjjckiaaonpetbzfvn.supabase.co";
@@ -575,1013 +517,1237 @@ const SUPABASE_KEY =
 
 const supabaseClient =
 window.supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
+  SUPABASE_URL,
+  SUPABASE_KEY
 );
 
 
-/* =================================
-TABLE FROM QR
-================================= */
+/* =========================================
+   QR TABLE NUMBER
+========================================= */
 
 const params =
 new URLSearchParams(
-window.location.search
+  window.location.search
 );
 
 const tableNumber =
-Number(params.get("table")) || 7;
+Number(params.get("table")) || 1;
 
 
-/* =================================
-VARIABLES
-================================= */
+/* =========================================
+   VARIABLES
+========================================= */
 
-let restaurantId=null;
-let tableId=null;
-let cart=[];
-let currentOrderId=null;
-let selectedRating=0;
-let realtimeChannel=null;
+let restaurantId = null;
+let tableId = null;
+let cart = [];
+let currentOrderId = null;
+let selectedRating = 0;
+let realtimeChannel = null;
+let isPlacingOrder = false;
 
 
-/* =================================
-LOAD RESTAURANT
-================================= */
-
-async function loadRestaurant(){
-
-const {data,error}=
-await supabaseClient
-.from("restaurants")
-.select("*")
-.limit(1)
-.maybeSingle();
-
-if(error){
-
-console.error(error);
-
-showMessage(
-"Restaurant load नहीं हुआ."
-);
-
-return;
-}
-
-if(!data){
-
-showMessage(
-"Restaurant नहीं मिला."
-);
-
-return;
-}
-
-
-restaurantId=data.id;
-
-
-/*
-Restaurant name
-*/
-
-document
-.getElementById("restaurantName")
-.innerText=
-"🍽️ "+(
-data.name ||
-"Restaurant"
-);
-
-
-/*
-Load table + menu
-*/
-
-await loadTable();
-
-await loadMenu();
-
-
-/*
-Load previous order
-*/
-
-await loadOldOrder();
-
-}
-
-
-/* =================================
-LOAD TABLE
-================================= */
-
-async function loadTable(){
-
-const {data,error}=
-await supabaseClient
-.from("restaurant_tables")
-.select("id,table_number")
-.eq(
-"restaurant_id",
-restaurantId
-)
-.eq(
-"table_number",
-tableNumber
-)
-.eq(
-"active",
-true
-)
-.maybeSingle();
-
-if(error){
-
-console.error(error);
-
-return;
-}
-
-if(!data){
-
-document
-.getElementById("tableNumber")
-.innerText=
-"Not Found";
-
-return;
-}
-
-tableId=data.id;
-
-document
-.getElementById("tableNumber")
-.innerText=
-data.table_number;
-
-}
-
-
-/* =================================
-LOAD MENU
-================================= */
-
-async function loadMenu(){
-
-const {data,error}=
-await supabaseClient
-.from("menu_items")
-.select("*")
-.eq(
-"restaurant_id",
-restaurantId
-)
-.eq(
-"is_available",
-true
-)
-.order(
-"created_at",
-{
-ascending:true
-}
-);
-
-const menu=
-document.getElementById("menu");
-
-if(error){
-
-console.error(error);
-
-menu.innerHTML=
-"<div class='loading'>Menu load नहीं हुआ.</div>";
-
-return;
-}
-
-if(!data || !data.length){
-
-menu.innerHTML=
-"<div class='loading'>Menu अभी खाली है.</div>";
-
-return;
-}
-
-menu.innerHTML="";
-
-
-data.forEach(item=>{
-
-const card=
-document.createElement("div");
-
-card.className="food";
-
-card.innerHTML=`
-
-<img
-src="${
-item.image_url ||
-'https://via.placeholder.com/600x400?text=Food'
-}"
-onerror="
-this.src='https://via.placeholder.com/600x400?text=Food'
-">
-
-<div class="food-info">
-
-<h3>
-${escapeHTML(item.name)}
-</h3>
-
-<p class="description">
-${escapeHTML(item.description || "")}
-</p>
-
-<div class="price">
-₹${Number(item.price || 0).toFixed(0)}
-</div>
-
-<button
-class="add"
-onclick="addToCart('${item.id}')">
-
-➕ Add to Cart
-
-</button>
-
-</div>
-
-`;
-
-menu.appendChild(card);
-
-});
-
-}
-
-
-/* =================================
-ADD CART
-================================= */
-
-async function addToCart(id){
-
-const {data,error}=
-await supabaseClient
-.from("menu_items")
-.select("*")
-.eq("id",id)
-.single();
-
-if(error){
-
-alert("Food add नहीं हुआ.");
-
-return;
-}
-
-
-const existing=
-cart.find(
-x=>x.id===id
-);
-
-
-if(existing){
-
-existing.quantity++;
-
-}else{
-
-cart.push({
-
-id:data.id,
-
-name:data.name,
-
-price:Number(data.price),
-
-quantity:1
-
-});
-
-}
-
-updateCart();
-
-}
-
-
-/* =================================
-UPDATE CART
-================================= */
-
-function updateCart(){
-
-const box=
-document.getElementById("cartItems");
-
-box.innerHTML="";
-
-
-if(!cart.length){
-
-box.innerHTML=
-'<p style="color:#777">Your cart is empty.</p>';
-
-document.getElementById("total").innerText="0";
-
-return;
-}
-
-
-let total=0;
-
-
-cart.forEach((item,index)=>{
-
-total +=
-item.price*
-item.quantity;
-
-
-const row=
-document.createElement("div");
-
-row.className="cart-item";
-
-row.innerHTML=`
-
-<div>
-
-<strong>
-${escapeHTML(item.name)}
-</strong>
-
-<br>
-
-₹${item.price}
-
-</div>
-
-<div class="qty">
-
-<button
-onclick="changeQty(${index},-1)">
-−
-</button>
-
-<strong>
-${item.quantity}
-</strong>
-
-<button
-onclick="changeQty(${index},1)">
-+
-</button>
-
-</div>
-
-`;
-
-box.appendChild(row);
-
-});
-
-
-document.getElementById("total").innerText=
-total.toFixed(0);
-
-}
-
-
-/* =================================
-QUANTITY
-================================= */
-
-function changeQty(index,value){
-
-cart[index].quantity+=value;
-
-if(cart[index].quantity<=0){
-
-cart.splice(index,1);
-
-}
-
-updateCart();
-
-}
-
-
-/* =================================
-PLACE ORDER
-================================= */
-
-async function placeOrder(){
-
-if(!cart.length){
-
-alert(
-"पहले Menu से food add करो."
-);
-
-return;
-}
-
-if(!restaurantId || !tableId){
-
-alert(
-"Table information नहीं मिली."
-);
-
-return;
-}
-
-
-let total=0;
-
-cart.forEach(item=>{
-
-total +=
-item.price*
-item.quantity;
-
-});
-
-
-const {data:order,error}=
-await supabaseClient
-.from("orders")
-.insert({
-
-restaurant_id:
-restaurantId,
-
-table_id:
-tableId,
-
-status:"new",
-
-estimated_minutes:15,
-
-total:total,
-
-payment_method:"cash",
-
-payment_status:"pending"
-
-})
-.select()
-.single();
-
-
-if(error){
-
-alert(
-"Order place नहीं हुआ:\n"+
-error.message
-);
-
-return;
-}
-
-
-const orderItems=
-cart.map(item=>({
-
-order_id:order.id,
-
-menu_item_id:item.id,
-
-name:item.name,
-
-quantity:item.quantity,
-
-price:item.price
-
-}));
-
-
-const {error:itemError}=
-await supabaseClient
-.from("order_items")
-.insert(orderItems);
-
-
-if(itemError){
-
-alert(
-"Order items save नहीं हुए:\n"+
-itemError.message
-);
-
-return;
-}
-
-
-currentOrderId=
-order.id;
-
-
-localStorage.setItem(
-"currentOrderId",
-order.id
-);
-
-
-cart=[];
-
-updateCart();
-
-showOrder(order);
-
-subscribeToOrder(order.id);
-
-}
-
-
-/* =================================
-SHOW ORDER
-================================= */
-
-function showOrder(order){
-
-document
-.getElementById("orderBox")
-.style.display="block";
-
-
-document
-.getElementById("orderId")
-.innerText=
-String(order.id).substring(0,8);
-
-
-document
-.getElementById("estimated")
-.innerText=
-order.estimated_minutes || 15;
-
-
-updateStatus(
-order.status || "new"
-);
-
-
-/*
-Scroll to order
-*/
-
-setTimeout(()=>{
-
-document
-.getElementById("orderBox")
-.scrollIntoView({
-behavior:"smooth"
-});
-
-},100);
-
-}
-
-
-/* =================================
-STATUS
-================================= */
-
-function updateStatus(status){
-
-const steps=[
-"stepNew",
-"stepPreparing",
-"stepReady",
-"stepDelivered"
-];
-
-
-steps.forEach(id=>{
-
-document
-.getElementById(id)
-.classList.remove("active");
-
-});
-
-
-let index=0;
-
-
-if(
-status==="new" ||
-status==="accepted"
-){
-
-index=0;
-
-document
-.getElementById("statusText")
-.innerText=
-"🆕 Order Received";
-
-}
-
-
-else if(
-status==="preparing"
-){
-
-index=1;
-
-document
-.getElementById("statusText")
-.innerText=
-"👨‍🍳 Order is Preparing";
-
-}
-
-
-else if(
-status==="ready"
-){
-
-index=2;
-
-document
-.getElementById("statusText")
-.innerText=
-"🔵 Order is Ready";
-
-}
-
-
-else if(
-status==="delivered"
-){
-
-index=3;
-
-document
-.getElementById("statusText")
-.innerText=
-"✅ Order Delivered";
-
-}
-
-
-document
-.getElementById(
-steps[index]
-)
-.classList.add("active");
-
-}
-
-
-/* =================================
-LOAD OLD ORDER
-================================= */
-
-async function loadOldOrder(){
-
-const saved=
-localStorage.getItem(
-"currentOrderId"
-);
-
-if(!saved){
-
-return;
-}
-
-
-const {data,error}=
-await supabaseClient
-.from("orders")
-.select("*")
-.eq("id",saved)
-.maybeSingle();
-
-
-if(error || !data){
-
-localStorage.removeItem(
-"currentOrderId"
-);
-
-return;
-}
-
-
-currentOrderId=
-data.id;
-
-showOrder(data);
-
-subscribeToOrder(
-data.id
-);
-
-}
-
-
-/* =================================
-REALTIME ORDER
-================================= */
-
-function subscribeToOrder(orderId){
-
-/*
-Remove old channel
-*/
-
-if(realtimeChannel){
-
-supabaseClient.removeChannel(
-realtimeChannel
-);
-
-}
-
-
-realtimeChannel=
-supabaseClient
-.channel(
-"customer-order-"+orderId
-)
-.on(
-"postgres_changes",
-{
-event:"UPDATE",
-schema:"public",
-table:"orders",
-filter:
-"id=eq."+orderId
-},
-payload=>{
-
-console.log(
-"Live order update:",
-payload.new
-);
-
-showOrder(
-payload.new
-);
-
-}
-)
-.subscribe(
-status=>{
-
-console.log(
-"Realtime:",
-status
-);
-
-});
-
-}
-
-
-/* =================================
-CALL WAITER
-================================= */
-
-async function callWaiter(){
-
-if(!restaurantId){
-
-alert(
-"Restaurant information missing."
-);
-
-return;
-}
-
-
-const {error}=
-await supabaseClient
-.from("waiter_calls")
-.insert({
-
-restaurant_id:
-restaurantId,
-
-table_number:
-tableNumber,
-
-request_type:
-"Waiter",
-
-status:
-"pending"
-
-});
-
-
-if(error){
-
-alert(
-"Waiter request नहीं भेजा गया:\n"+
-error.message
-);
-
-return;
-}
-
-
-alert(
-"🔔 Waiter को बुला दिया गया है!"
-);
-
-}
-
-
-/* =================================
-FEEDBACK
-================================= */
-
-function showFeedback(){
-
-if(!currentOrderId){
-
-alert(
-"पहले order place करो."
-);
-
-return;
-}
-
-
-const box=
-document.getElementById(
-"feedbackBox"
-);
-
-box.style.display=
-box.style.display==="block"
-?"none"
-:"block";
-
-}
-
-
-function setRating(rating){
-
-selectedRating=
-rating;
-
-
-for(
-let i=1;
-i<=5;
-i++
-){
-
-const star=
-document.getElementById(
-"star"+i
-);
-
-if(i<=rating){
-
-star.classList.add(
-"selected"
-);
-
-}else{
-
-star.classList.remove(
-"selected"
-);
-
-}
-
-}
-
-}
-
-
-async function submitFeedback(){
-
-if(!currentOrderId){
-
-alert(
-"Order नहीं मिला."
-);
-
-return;
-}
-
-
-if(!selectedRating){
-
-alert(
-"पहले rating चुनो."
-);
-
-return;
-}
-
-
-const text=
-document
-.getElementById("feedbackText")
-.value
-.trim();
-
-
-const {error}=
-await supabaseClient
-.from("feedback")
-.insert({
-
-restaurant_id:
-restaurantId,
-
-order_id:
-currentOrderId,
-
-table_number:
-tableNumber,
-
-rating:
-selectedRating,
-
-message:
-text
-
-});
-
-
-if(error){
-
-alert(
-"Feedback submit नहीं हुआ:\n"+
-error.message
-);
-
-return;
-}
-
-
-alert(
-"⭐ Thank you for your feedback!"
-);
-
-
-document
-.getElementById("feedbackText")
-.value="";
-
-
-document
-.getElementById("feedbackBox")
-.style.display="none";
-
-}
-
-
-/* =================================
-MESSAGE
-================================= */
-
-function showMessage(text){
-
-const box=
-document.getElementById("message");
-
-box.style.display="block";
-
-box.innerText=text;
-
-}
-
-
-/* =================================
-ESCAPE
-================================= */
+/* =========================================
+   SAFE HTML
+========================================= */
 
 function escapeHTML(value){
 
-return String(value ?? "")
-.replace(/&/g,"&amp;")
-.replace(/</g,"&lt;")
-.replace(/>/g,"&gt;")
-.replace(/"/g,"&quot;")
-.replace(/'/g,"&#039;");
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 
 }
 
 
-/* =================================
-START
-================================= */
+/* =========================================
+   MESSAGE
+========================================= */
+
+function showMessage(text){
+
+  const box =
+  document.getElementById("message");
+
+  box.style.display = "block";
+  box.innerText = text;
+
+}
+
+
+/* =========================================
+   LOAD RESTAURANT
+========================================= */
+
+async function loadRestaurant(){
+
+  const {data,error} =
+  await supabaseClient
+    .from("restaurants")
+    .select("*")
+    .limit(1)
+    .maybeSingle();
+
+  if(error){
+
+    console.error(error);
+
+    showMessage(
+      "Restaurant load नहीं हुआ."
+    );
+
+    return;
+  }
+
+  if(!data){
+
+    showMessage(
+      "Restaurant नहीं मिला."
+    );
+
+    return;
+  }
+
+  restaurantId = data.id;
+
+  document
+    .getElementById("restaurantName")
+    .innerText =
+    "🍽️ " + (
+      data.name || "Restaurant"
+    );
+
+  await loadTable();
+
+  if(tableId){
+
+    await loadMenu();
+
+    await loadOldOrder();
+
+  }
+
+}
+
+
+/* =========================================
+   LOAD TABLE
+========================================= */
+
+async function loadTable(){
+
+  document
+    .getElementById("tableNumber")
+    .innerText =
+    tableNumber;
+
+
+  const {data,error} =
+  await supabaseClient
+    .from("restaurant_tables")
+    .select("id,table_number")
+    .eq(
+      "restaurant_id",
+      restaurantId
+    )
+    .eq(
+      "table_number",
+      tableNumber
+    )
+    .eq(
+      "active",
+      true
+    )
+    .maybeSingle();
+
+
+  if(error){
+
+    console.error(error);
+
+    document
+      .getElementById("tableNumber")
+      .innerText =
+      "Error";
+
+    return;
+  }
+
+
+  if(!data){
+
+    document
+      .getElementById("tableNumber")
+      .innerText =
+      "Not Found";
+
+    showMessage(
+      "यह table active नहीं है."
+    );
+
+    return;
+  }
+
+
+  tableId = data.id;
+
+  document
+    .getElementById("tableNumber")
+    .innerText =
+    data.table_number;
+
+}
+
+
+/* =========================================
+   LOAD MENU
+========================================= */
+
+async function loadMenu(){
+
+  const menu =
+  document.getElementById("menu");
+
+  menu.innerHTML =
+  '<div class="loading">Loading menu...</div>';
+
+
+  const {data,error} =
+  await supabaseClient
+    .from("menu_items")
+    .select("*")
+    .eq(
+      "restaurant_id",
+      restaurantId
+    )
+    .eq(
+      "is_available",
+      true
+    )
+    .order(
+      "created_at",
+      {
+        ascending:true
+      }
+    );
+
+
+  if(error){
+
+    console.error(error);
+
+    menu.innerHTML =
+    '<div class="loading">Menu load नहीं हुआ.</div>';
+
+    return;
+  }
+
+
+  if(!data || data.length === 0){
+
+    menu.innerHTML =
+    '<div class="loading">Menu अभी खाली है.</div>';
+
+    return;
+  }
+
+
+  menu.innerHTML = "";
+
+
+  data.forEach(item => {
+
+    const card =
+    document.createElement("div");
+
+    card.className = "food";
+
+
+    const image =
+    item.image_url ||
+    "https://via.placeholder.com/600x400?text=Food";
+
+
+    card.innerHTML = `
+
+      <img
+        src="${escapeHTML(image)}"
+        onerror="
+          this.src='https://via.placeholder.com/600x400?text=Food'
+        "
+      >
+
+      <div class="food-info">
+
+        <h3>
+          ${escapeHTML(item.name)}
+        </h3>
+
+        <p class="description">
+          ${escapeHTML(item.description || "")}
+        </p>
+
+        <div class="price">
+          ₹${Number(item.price || 0).toFixed(0)}
+        </div>
+
+        <button
+          class="add"
+          onclick="addToCart('${item.id}')">
+
+          ➕ Add to Cart
+
+        </button>
+
+      </div>
+    `;
+
+
+    menu.appendChild(card);
+
+  });
+
+}
+
+
+/* =========================================
+   ADD TO CART
+========================================= */
+
+async function addToCart(id){
+
+  const {data,error} =
+  await supabaseClient
+    .from("menu_items")
+    .select("id,name,price")
+    .eq("id",id)
+    .single();
+
+
+  if(error){
+
+    console.error(error);
+
+    alert(
+      "Food add नहीं हुआ."
+    );
+
+    return;
+  }
+
+
+  const existing =
+  cart.find(
+    item => item.id === id
+  );
+
+
+  if(existing){
+
+    existing.quantity++;
+
+  }else{
+
+    cart.push({
+
+      id:data.id,
+
+      name:data.name,
+
+      price:Number(data.price),
+
+      quantity:1
+
+    });
+
+  }
+
+
+  updateCart();
+
+}
+
+
+/* =========================================
+   UPDATE CART
+========================================= */
+
+function updateCart(){
+
+  const box =
+  document.getElementById("cartItems");
+
+  box.innerHTML = "";
+
+
+  if(cart.length === 0){
+
+    box.innerHTML =
+    '<p style="color:#777">Your cart is empty.</p>';
+
+    document
+      .getElementById("total")
+      .innerText = "0";
+
+    return;
+  }
+
+
+  let total = 0;
+
+
+  cart.forEach(
+    (item,index) => {
+
+      total +=
+      item.price *
+      item.quantity;
+
+
+      const row =
+      document.createElement("div");
+
+      row.className =
+      "cart-item";
+
+
+      row.innerHTML = `
+
+        <div>
+
+          <strong>
+            ${escapeHTML(item.name)}
+          </strong>
+
+          <br>
+
+          ₹${item.price}
+
+        </div>
+
+
+        <div class="qty">
+
+          <button
+            onclick="changeQty(${index},-1)">
+            −
+          </button>
+
+          <strong>
+            ${item.quantity}
+          </strong>
+
+          <button
+            onclick="changeQty(${index},1)">
+            +
+          </button>
+
+        </div>
+
+      `;
+
+
+      box.appendChild(row);
+
+    }
+  );
+
+
+  document
+    .getElementById("total")
+    .innerText =
+    total.toFixed(0);
+
+}
+
+
+/* =========================================
+   CHANGE QUANTITY
+========================================= */
+
+function changeQty(index,value){
+
+  if(!cart[index]){
+    return;
+  }
+
+
+  cart[index].quantity += value;
+
+
+  if(cart[index].quantity <= 0){
+
+    cart.splice(index,1);
+
+  }
+
+
+  updateCart();
+
+}
+
+
+/* =========================================
+   PLACE ORDER
+========================================= */
+
+async function placeOrder(){
+
+  if(isPlacingOrder){
+    return;
+  }
+
+
+  if(cart.length === 0){
+
+    alert(
+      "पहले Menu से food add करो."
+    );
+
+    return;
+  }
+
+
+  if(!restaurantId || !tableId){
+
+    alert(
+      "Restaurant/Table information missing."
+    );
+
+    return;
+  }
+
+
+  isPlacingOrder = true;
+
+
+  const button =
+  document.getElementById(
+    "placeButton"
+  );
+
+  button.disabled = true;
+
+  button.innerText =
+  "⏳ Placing Order...";
+
+
+  try{
+
+    let total = 0;
+
+
+    cart.forEach(item => {
+
+      total +=
+      item.price *
+      item.quantity;
+
+    });
+
+
+    /* CREATE ORDER */
+
+    const {
+      data:order,
+      error:orderError
+    } =
+    await supabaseClient
+      .from("orders")
+      .insert({
+
+        restaurant_id:
+        restaurantId,
+
+        table_id:
+        tableId,
+
+        status:
+        "new",
+
+        estimated_minutes:
+        15,
+
+        total:
+        total,
+
+        payment_method:
+        "cash",
+
+        payment_status:
+        "pending"
+
+      })
+      .select()
+      .single();
+
+
+    if(orderError){
+
+      throw new Error(
+        "Order create नहीं हुआ: " +
+        orderError.message
+      );
+
+    }
+
+
+    /* CREATE ORDER ITEMS */
+
+    const orderItems =
+    cart.map(item => ({
+
+      order_id:
+      order.id,
+
+      menu_item_id:
+      item.id,
+
+      quantity:
+      item.quantity,
+
+      price:
+      item.price
+
+    }));
+
+
+    const {
+      error:itemError
+    } =
+    await supabaseClient
+      .from("order_items")
+      .insert(
+        orderItems
+      );
+
+
+    if(itemError){
+
+      /*
+       If items fail, remove the empty order
+       so an incomplete order is not left behind.
+      */
+
+      await supabaseClient
+        .from("orders")
+        .delete()
+        .eq(
+          "id",
+          order.id
+        );
+
+
+      throw new Error(
+        "Order items save नहीं हुए: " +
+        itemError.message
+      );
+
+    }
+
+
+    /* SAVE CURRENT ORDER */
+
+    currentOrderId =
+    order.id;
+
+
+    localStorage.setItem(
+      "currentOrderId",
+      order.id
+    );
+
+
+    cart = [];
+
+    updateCart();
+
+
+    showOrder(order);
+
+
+    /*
+     IMPORTANT:
+     Realtime starts AFTER
+     currentOrderId exists.
+    */
+
+    subscribeToOrder(
+      order.id
+    );
+
+
+    button.innerText =
+    "✅ Order Placed";
+
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(error.message);
+
+    button.disabled = false;
+
+    button.innerText =
+    "📦 Place Order";
+
+    return;
+
+  }
+
+
+  isPlacingOrder = false;
+
+}
+
+
+/* =========================================
+   SHOW ORDER
+========================================= */
+
+function showOrder(order){
+
+  document
+    .getElementById("orderBox")
+    .style.display =
+    "block";
+
+
+  document
+    .getElementById("orderId")
+    .innerText =
+    String(order.id)
+      .substring(0,8);
+
+
+  document
+    .getElementById("estimated")
+    .innerText =
+    order.estimated_minutes || 15;
+
+
+  updateStatus(
+    order.status || "new"
+  );
+
+}
+
+
+/* =========================================
+   UPDATE STATUS
+========================================= */
+
+function updateStatus(status){
+
+  const steps = [
+
+    "stepNew",
+
+    "stepPreparing",
+
+    "stepReady",
+
+    "stepDelivered"
+
+  ];
+
+
+  steps.forEach(id => {
+
+    document
+      .getElementById(id)
+      .classList.remove(
+        "active"
+      );
+
+  });
+
+
+  let activeIndex = 0;
+
+
+  if(
+    status === "new" ||
+    status === "accepted"
+  ){
+
+    activeIndex = 0;
+
+    document
+      .getElementById("statusText")
+      .innerText =
+      "🆕 Order Received";
+
+  }
+
+
+  else if(
+    status === "preparing"
+  ){
+
+    activeIndex = 1;
+
+    document
+      .getElementById("statusText")
+      .innerText =
+      "👨‍🍳 Order is Preparing";
+
+  }
+
+
+  else if(
+    status === "ready"
+  ){
+
+    activeIndex = 2;
+
+    document
+      .getElementById("statusText")
+      .innerText =
+      "🔵 Order is Ready";
+
+  }
+
+
+  else if(
+    status === "delivered"
+  ){
+
+    activeIndex = 3;
+
+    document
+      .getElementById("statusText")
+      .innerText =
+      "✅ Order Delivered";
+
+  }
+
+
+  document
+    .getElementById(
+      steps[activeIndex]
+    )
+    .classList.add(
+      "active"
+    );
+
+}
+
+
+/* =========================================
+   LOAD OLD ORDER
+========================================= */
+
+async function loadOldOrder(){
+
+  const saved =
+  localStorage.getItem(
+    "currentOrderId"
+  );
+
+
+  if(!saved){
+    return;
+  }
+
+
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+    .from("orders")
+    .select("*")
+    .eq(
+      "id",
+      saved
+    )
+    .maybeSingle();
+
+
+  if(error || !data){
+
+    localStorage.removeItem(
+      "currentOrderId"
+    );
+
+    return;
+  }
+
+
+  /*
+   Make sure old order belongs
+   to this restaurant/table.
+  */
+
+  if(
+    data.restaurant_id !==
+    restaurantId ||
+    data.table_id !==
+    tableId
+  ){
+
+    return;
+  }
+
+
+  currentOrderId =
+  data.id;
+
+
+  showOrder(data);
+
+
+  subscribeToOrder(
+    data.id
+  );
+
+}
+
+
+/* =========================================
+   REALTIME
+========================================= */
+
+function subscribeToOrder(orderId){
+
+  if(!orderId){
+    return;
+  }
+
+
+  /*
+   Remove previous channel
+  */
+
+  if(realtimeChannel){
+
+    supabaseClient
+      .removeChannel(
+        realtimeChannel
+      );
+
+    realtimeChannel = null;
+
+  }
+
+
+  realtimeChannel =
+  supabaseClient
+    .channel(
+      "customer-order-" +
+      orderId +
+      "-" +
+      Date.now()
+    )
+    .on(
+      "postgres_changes",
+      {
+        event:"UPDATE",
+        schema:"public",
+        table:"orders",
+        filter:
+        "id=eq." + orderId
+      },
+      payload => {
+
+        console.log(
+          "LIVE ORDER UPDATE",
+          payload.new
+        );
+
+
+        showOrder(
+          payload.new
+        );
+
+      }
+    )
+    .subscribe(
+      status => {
+
+        console.log(
+          "Realtime status:",
+          status
+        );
+
+      }
+    );
+
+}
+
+
+/* =========================================
+   CALL WAITER
+========================================= */
+
+async function callWaiter(){
+
+  if(!restaurantId){
+
+    alert(
+      "Restaurant information missing."
+    );
+
+    return;
+  }
+
+
+  if(!tableId){
+
+    alert(
+      "Table information missing."
+    );
+
+    return;
+  }
+
+
+  const {
+    error
+  } =
+  await supabaseClient
+    .from("waiter_calls")
+    .insert({
+
+      restaurant_id:
+      restaurantId,
+
+      table_number:
+      tableNumber,
+
+      request_type:
+      "Waiter",
+
+      status:
+      "pending"
+
+    });
+
+
+  if(error){
+
+    console.error(error);
+
+    alert(
+      "Waiter request नहीं भेजा गया:\n" +
+      error.message
+    );
+
+    return;
+  }
+
+
+  alert(
+    "🔔 Waiter को बुला दिया गया है!"
+  );
+
+}
+
+
+/* =========================================
+   FEEDBACK
+========================================= */
+
+function toggleFeedback(){
+
+  if(!currentOrderId){
+
+    alert(
+      "पहले order place करो."
+    );
+
+    return;
+  }
+
+
+  const box =
+  document.getElementById(
+    "feedbackBox"
+  );
+
+
+  if(box.style.display === "block"){
+
+    box.style.display = "none";
+
+  }else{
+
+    box.style.display = "block";
+
+  }
+
+}
+
+
+/* =========================================
+   RATING
+========================================= */
+
+function setRating(rating){
+
+  selectedRating =
+  rating;
+
+
+  for(
+    let i=1;
+    i<=5;
+    i++
+  ){
+
+    const star =
+    document.getElementById(
+      "star" + i
+    );
+
+
+    if(i <= rating){
+
+      star.classList.add(
+        "selected"
+      );
+
+    }else{
+
+      star.classList.remove(
+        "selected"
+      );
+
+    }
+
+  }
+
+}
+
+
+/* =========================================
+   FEEDBACK SUBMIT
+========================================= */
+
+async function submitFeedback(){
+
+  if(!currentOrderId){
+
+    alert(
+      "पहले order place करो."
+    );
+
+    return;
+  }
+
+
+  if(!selectedRating){
+
+    alert(
+      "पहले rating चुनो."
+    );
+
+    return;
+  }
+
+
+  const text =
+  document
+    .getElementById(
+      "feedbackText"
+    )
+    .value
+    .trim();
+
+
+  /*
+   Feedback table may have
+   different columns in your database.
+   We use only the most common
+   fields here.
+  */
+
+  const {
+    error
+  } =
+  await supabaseClient
+    .from("feedback")
+    .insert({
+
+      restaurant_id:
+      restaurantId,
+
+      order_id:
+      currentOrderId,
+
+      rating:
+      selectedRating,
+
+      message:
+      text
+
+    });
+
+
+  if(error){
+
+    console.error(error);
+
+    alert(
+      "Feedback submit नहीं हुआ:\n" +
+      error.message
+    );
+
+    return;
+  }
+
+
+  alert(
+    "⭐ Thank you for your feedback!"
+  );
+
+
+  document
+    .getElementById(
+      "feedbackText"
+    )
+    .value = "";
+
+
+  selectedRating = 0;
+
+
+  for(
+    let i=1;
+    i<=5;
+    i++
+  ){
+
+    document
+      .getElementById(
+        "star" + i
+      )
+      .classList.remove(
+        "selected"
+      );
+
+  }
+
+
+  document
+    .getElementById(
+      "feedbackBox"
+    )
+    .style.display =
+    "none";
+
+}
+
+
+/* =========================================
+   START
+========================================= */
 
 loadRestaurant();
 
