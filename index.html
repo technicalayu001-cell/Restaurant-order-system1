@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Restaurant</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -29,7 +28,7 @@ button{
 
 header{
   background:#111;
-  color:white;
+  color:#fff;
   padding:22px 15px;
   text-align:center;
 }
@@ -46,7 +45,7 @@ header h1{
 }
 
 .card{
-  background:white;
+  background:#fff;
   border-radius:16px;
   padding:18px;
   margin-bottom:18px;
@@ -77,7 +76,7 @@ header h1{
 }
 
 .food{
-  background:white;
+  background:#fff;
   border-radius:15px;
   overflow:hidden;
   box-shadow:0 3px 14px rgba(0,0,0,.08);
@@ -112,7 +111,7 @@ header h1{
 .add{
   width:100%;
   background:#111;
-  color:white;
+  color:#fff;
   padding:12px;
   border-radius:9px;
 }
@@ -148,7 +147,7 @@ header h1{
 .place{
   width:100%;
   background:#e63946;
-  color:white;
+  color:#fff;
   padding:14px;
   border-radius:10px;
   font-size:16px;
@@ -197,7 +196,7 @@ header h1{
 
 .step.active{
   background:#111;
-  color:white;
+  color:#fff;
 }
 
 .time{
@@ -216,7 +215,7 @@ header h1{
 .action-btn{
   padding:13px;
   border-radius:10px;
-  color:white;
+  color:#fff;
   font-size:14px;
 }
 
@@ -260,7 +259,7 @@ header h1{
 
 .submit-feedback{
   background:#6f42c1;
-  color:white;
+  color:#fff;
   padding:12px 18px;
   border-radius:9px;
   margin-top:10px;
@@ -304,52 +303,39 @@ header h1{
 <body>
 
 <header>
-
-<h1 id="restaurantName">
-🍽️ Restaurant
-</h1>
-
-<p>Fresh Food • Great Taste</p>
-
+  <h1 id="restaurantName">🍽️ Restaurant</h1>
+  <p>Fresh Food • Great Taste</p>
 </header>
-
 
 <div class="container">
 
-
-<!-- WELCOME -->
+<!-- TABLE -->
 
 <div class="card welcome">
 
-<h2>Welcome 👋</h2>
+  <h2>Welcome 👋</h2>
 
-<p style="margin-top:7px">
-Order directly from your table
-</p>
+  <p style="margin-top:7px">
+    Order directly from your table
+  </p>
 
-<div class="table">
-
-🪑 Table No:
-<strong id="tableNumber">
-Loading...
-</strong>
-
-</div>
+  <div class="table">
+    🪑 Table No:
+    <strong id="tableNumber">Loading...</strong>
+  </div>
 
 </div>
 
 
 <!-- MENU -->
 
-<h2 class="section-title">
-📋 Menu
-</h2>
+<h2 class="section-title">📋 Menu</h2>
 
 <div id="menu" class="menu">
 
-<div class="loading">
-Loading menu...
-</div>
+  <div class="loading">
+    Loading menu...
+  </div>
 
 </div>
 
@@ -358,30 +344,28 @@ Loading menu...
 
 <div class="card">
 
-<h2>🛒 Your Cart</h2>
+  <h2>🛒 Your Cart</h2>
 
-<div id="cartItems" style="margin-top:12px">
+  <div id="cartItems" style="margin-top:12px">
+    <p style="color:#777">
+      Your cart is empty.
+    </p>
+  </div>
 
-<p style="color:#777">
-Your cart is empty.
-</p>
+  <div class="total">
+    Total: ₹<span id="total">0</span>
+  </div>
 
-</div>
+  <button
+    id="placeButton"
+    class="place"
+    onclick="placeOrder()">
 
-<div class="total">
-Total: ₹<span id="total">0</span>
-</div>
+    📦 Place Order
 
-<button
-id="placeButton"
-class="place"
-onclick="placeOrder()">
+  </button>
 
-📦 Place Order
-
-</button>
-
-<div id="message" class="message"></div>
+  <div id="message" class="message"></div>
 
 </div>
 
@@ -390,113 +374,131 @@ onclick="placeOrder()">
 
 <div id="orderBox" class="card order-box">
 
-<h2>📦 My Order</h2>
+  <h2>📦 My Order</h2>
 
-<div class="order-id">
+  <div class="order-id">
+    Order:
+    <strong id="orderId">-</strong>
+  </div>
 
-Order:
-<strong id="orderId">-</strong>
+  <div class="status">
 
-</div>
+    <div id="statusText" class="status-text">
+      🆕 Order Received
+    </div>
 
+    <div class="steps">
 
-<div class="status">
+      <div id="stepNew" class="step active">
+        🆕<br>Received
+      </div>
 
-<div id="statusText" class="status-text">
-🆕 Order Received
-</div>
+      <div id="stepPreparing" class="step">
+        👨‍🍳<br>Preparing
+      </div>
 
+      <div id="stepReady" class="step">
+        🔵<br>Ready
+      </div>
 
-<div class="steps">
+      <div id="stepDelivered" class="step">
+        ✅<br>Delivered
+      </div>
 
-<div id="stepNew" class="step active">
-🆕<br>Received
-</div>
+    </div>
 
-<div id="stepPreparing" class="step">
-👨‍🍳<br>Preparing
-</div>
+    <div class="time">
+      ⏱️ Estimated:
+      <span id="estimated">15</span>
+      minutes
+    </div>
 
-<div id="stepReady" class="step">
-🔵<br>Ready
-</div>
-
-<div id="stepDelivered" class="step">
-✅<br>Delivered
-</div>
-
-</div>
-
-
-<div class="time">
-
-⏱️ Estimated:
-<span id="estimated">15</span>
-minutes
-
-</div>
-
-</div>
+  </div>
 
 
-<!-- CUSTOMER OPTIONS -->
+  <!-- CUSTOMER OPTIONS -->
 
-<div class="actions">
+  <div class="actions">
 
-<button
-class="action-btn waiter"
-onclick="callWaiter()">
+    <button
+      class="action-btn waiter"
+      onclick="callWaiter()">
 
-📞 Call Waiter
+      📞 Call Waiter
 
-</button>
+    </button>
 
-<button
-class="action-btn feedback"
-onclick="toggleFeedback()">
+    <button
+      class="action-btn feedback"
+      onclick="toggleFeedback()">
 
-⭐ Feedback
+      ⭐ Feedback
 
-</button>
+    </button>
 
-</div>
+  </div>
 
 
-<!-- FEEDBACK -->
+  <!-- FEEDBACK -->
 
-<div id="feedbackBox" class="feedback-box">
+  <div id="feedbackBox" class="feedback-box">
 
-<h3>⭐ Give Feedback</h3>
+    <h3>⭐ Give Feedback</h3>
 
-<div class="stars">
+    <div class="stars">
 
-<button class="star" id="star1" onclick="setRating(1)">★</button>
+      <button
+        class="star"
+        id="star1"
+        onclick="setRating(1)">
+        ★
+      </button>
 
-<button class="star" id="star2" onclick="setRating(2)">★</button>
+      <button
+        class="star"
+        id="star2"
+        onclick="setRating(2)">
+        ★
+      </button>
 
-<button class="star" id="star3" onclick="setRating(3)">★</button>
+      <button
+        class="star"
+        id="star3"
+        onclick="setRating(3)">
+        ★
+      </button>
 
-<button class="star" id="star4" onclick="setRating(4)">★</button>
+      <button
+        class="star"
+        id="star4"
+        onclick="setRating(4)">
+        ★
+      </button>
 
-<button class="star" id="star5" onclick="setRating(5)">★</button>
+      <button
+        class="star"
+        id="star5"
+        onclick="setRating(5)">
+        ★
+      </button>
 
-</div>
+    </div>
 
-<textarea
-id="feedbackText"
-class="feedback-text"
-placeholder="आपका feedback लिखें...">
-</textarea>
+    <textarea
+      id="feedbackText"
+      class="feedback-text"
+      placeholder="आपका feedback लिखें...">
+    </textarea>
 
-<button
-class="submit-feedback"
-onclick="submitFeedback()">
+    <button
+      class="submit-feedback"
+      onclick="submitFeedback()">
 
-Submit Feedback
+      Submit Feedback
 
-</button>
+    </button>
 
-</div>
+  </div>
 
 </div>
 
@@ -523,7 +525,7 @@ window.supabase.createClient(
 
 
 /* =========================================
-   QR TABLE NUMBER
+   TABLE FROM QR
 ========================================= */
 
 const params =
@@ -549,7 +551,7 @@ let isPlacingOrder = false;
 
 
 /* =========================================
-   SAFE HTML
+   ESCAPE HTML
 ========================================= */
 
 function escapeHTML(value){
@@ -571,7 +573,7 @@ function escapeHTML(value){
 function showMessage(text){
 
   const box =
-  document.getElementById("message");
+    document.getElementById("message");
 
   box.style.display = "block";
   box.innerText = text;
@@ -585,16 +587,16 @@ function showMessage(text){
 
 async function loadRestaurant(){
 
-  const {data,error} =
-  await supabaseClient
-    .from("restaurants")
-    .select("*")
-    .limit(1)
-    .maybeSingle();
+  const result =
+    await supabaseClient
+      .from("restaurants")
+      .select("*")
+      .limit(1)
+      .maybeSingle();
 
-  if(error){
+  if(result.error){
 
-    console.error(error);
+    console.error(result.error);
 
     showMessage(
       "Restaurant load नहीं हुआ."
@@ -603,7 +605,7 @@ async function loadRestaurant(){
     return;
   }
 
-  if(!data){
+  if(!result.data){
 
     showMessage(
       "Restaurant नहीं मिला."
@@ -612,24 +614,24 @@ async function loadRestaurant(){
     return;
   }
 
-  restaurantId = data.id;
+  restaurantId =
+    result.data.id;
 
   document
     .getElementById("restaurantName")
     .innerText =
-    "🍽️ " + (
-      data.name || "Restaurant"
-    );
+    "🍽️ " +
+    (result.data.name || "Restaurant");
 
   await loadTable();
 
-  if(tableId){
-
-    await loadMenu();
-
-    await loadOldOrder();
-
+  if(!tableId){
+    return;
   }
+
+  await loadMenu();
+
+  await loadOldOrder();
 
 }
 
@@ -645,29 +647,29 @@ async function loadTable(){
     .innerText =
     tableNumber;
 
+  const result =
+    await supabaseClient
+      .from("restaurant_tables")
+      .select(
+        "id,table_number"
+      )
+      .eq(
+        "restaurant_id",
+        restaurantId
+      )
+      .eq(
+        "table_number",
+        tableNumber
+      )
+      .eq(
+        "active",
+        true
+      )
+      .maybeSingle();
 
-  const {data,error} =
-  await supabaseClient
-    .from("restaurant_tables")
-    .select("id,table_number")
-    .eq(
-      "restaurant_id",
-      restaurantId
-    )
-    .eq(
-      "table_number",
-      tableNumber
-    )
-    .eq(
-      "active",
-      true
-    )
-    .maybeSingle();
+  if(result.error){
 
-
-  if(error){
-
-    console.error(error);
+    console.error(result.error);
 
     document
       .getElementById("tableNumber")
@@ -677,8 +679,7 @@ async function loadTable(){
     return;
   }
 
-
-  if(!data){
+  if(!result.data){
 
     document
       .getElementById("tableNumber")
@@ -692,13 +693,13 @@ async function loadTable(){
     return;
   }
 
-
-  tableId = data.id;
+  tableId =
+    result.data.id;
 
   document
     .getElementById("tableNumber")
     .innerText =
-    data.table_number;
+    result.data.table_number;
 
 }
 
@@ -710,67 +711,63 @@ async function loadTable(){
 async function loadMenu(){
 
   const menu =
-  document.getElementById("menu");
+    document.getElementById("menu");
 
   menu.innerHTML =
-  '<div class="loading">Loading menu...</div>';
+    '<div class="loading">Loading menu...</div>';
 
+  const result =
+    await supabaseClient
+      .from("menu_items")
+      .select("*")
+      .eq(
+        "restaurant_id",
+        restaurantId
+      )
+      .eq(
+        "is_available",
+        true
+      )
+      .order(
+        "created_at",
+        {
+          ascending:true
+        }
+      );
 
-  const {data,error} =
-  await supabaseClient
-    .from("menu_items")
-    .select("*")
-    .eq(
-      "restaurant_id",
-      restaurantId
-    )
-    .eq(
-      "is_available",
-      true
-    )
-    .order(
-      "created_at",
-      {
-        ascending:true
-      }
-    );
+  if(result.error){
 
-
-  if(error){
-
-    console.error(error);
+    console.error(result.error);
 
     menu.innerHTML =
-    '<div class="loading">Menu load नहीं हुआ.</div>';
+      '<div class="loading">Menu load नहीं हुआ.</div>';
 
     return;
   }
 
-
-  if(!data || data.length === 0){
+  if(
+    !result.data ||
+    result.data.length === 0
+  ){
 
     menu.innerHTML =
-    '<div class="loading">Menu अभी खाली है.</div>';
+      '<div class="loading">Menu अभी खाली है.</div>';
 
     return;
   }
-
 
   menu.innerHTML = "";
 
-
-  data.forEach(item => {
+  result.data.forEach(item => {
 
     const card =
-    document.createElement("div");
+      document.createElement("div");
 
     card.className = "food";
 
-
     const image =
-    item.image_url ||
-    "https://via.placeholder.com/600x400?text=Food";
-
+      item.image_url ||
+      "https://via.placeholder.com/600x400?text=Food";
 
     card.innerHTML = `
 
@@ -806,7 +803,6 @@ async function loadMenu(){
       </div>
     `;
 
-
     menu.appendChild(card);
 
   });
@@ -820,17 +816,21 @@ async function loadMenu(){
 
 async function addToCart(id){
 
-  const {data,error} =
-  await supabaseClient
-    .from("menu_items")
-    .select("id,name,price")
-    .eq("id",id)
-    .single();
+  const result =
+    await supabaseClient
+      .from("menu_items")
+      .select(
+        "id,name,price"
+      )
+      .eq(
+        "id",
+        id
+      )
+      .single();
 
+  if(result.error){
 
-  if(error){
-
-    console.error(error);
+    console.error(result.error);
 
     alert(
       "Food add नहीं हुआ."
@@ -839,12 +839,10 @@ async function addToCart(id){
     return;
   }
 
-
   const existing =
-  cart.find(
-    item => item.id === id
-  );
-
+    cart.find(
+      item => item.id === id
+    );
 
   if(existing){
 
@@ -854,11 +852,13 @@ async function addToCart(id){
 
     cart.push({
 
-      id:data.id,
+      id:result.data.id,
 
-      name:data.name,
+      name:result.data.name,
 
-      price:Number(data.price),
+      price:Number(
+        result.data.price
+      ),
 
       quantity:1
 
@@ -866,28 +866,28 @@ async function addToCart(id){
 
   }
 
-
   updateCart();
 
 }
 
 
 /* =========================================
-   UPDATE CART
+   CART
 ========================================= */
 
 function updateCart(){
 
   const box =
-  document.getElementById("cartItems");
+    document.getElementById(
+      "cartItems"
+    );
 
   box.innerHTML = "";
-
 
   if(cart.length === 0){
 
     box.innerHTML =
-    '<p style="color:#777">Your cart is empty.</p>';
+      '<p style="color:#777">Your cart is empty.</p>';
 
     document
       .getElementById("total")
@@ -896,24 +896,22 @@ function updateCart(){
     return;
   }
 
-
   let total = 0;
-
 
   cart.forEach(
     (item,index) => {
 
       total +=
-      item.price *
-      item.quantity;
-
+        item.price *
+        item.quantity;
 
       const row =
-      document.createElement("div");
+        document.createElement(
+          "div"
+        );
 
       row.className =
-      "cart-item";
-
+        "cart-item";
 
       row.innerHTML = `
 
@@ -928,7 +926,6 @@ function updateCart(){
           ₹${item.price}
 
         </div>
-
 
         <div class="qty">
 
@@ -950,12 +947,10 @@ function updateCart(){
 
       `;
 
-
       box.appendChild(row);
 
     }
   );
-
 
   document
     .getElementById("total")
@@ -966,7 +961,7 @@ function updateCart(){
 
 
 /* =========================================
-   CHANGE QUANTITY
+   QUANTITY
 ========================================= */
 
 function changeQty(index,value){
@@ -975,16 +970,16 @@ function changeQty(index,value){
     return;
   }
 
-
   cart[index].quantity += value;
-
 
   if(cart[index].quantity <= 0){
 
-    cart.splice(index,1);
+    cart.splice(
+      index,
+      1
+    );
 
   }
-
 
   updateCart();
 
@@ -1001,7 +996,6 @@ async function placeOrder(){
     return;
   }
 
-
   if(cart.length === 0){
 
     alert(
@@ -1010,7 +1004,6 @@ async function placeOrder(){
 
     return;
   }
-
 
   if(!restaurantId || !tableId){
 
@@ -1021,116 +1014,121 @@ async function placeOrder(){
     return;
   }
 
-
   isPlacingOrder = true;
 
-
   const button =
-  document.getElementById(
-    "placeButton"
-  );
+    document.getElementById(
+      "placeButton"
+    );
 
   button.disabled = true;
 
   button.innerText =
-  "⏳ Placing Order...";
+    "⏳ Placing Order...";
 
 
   try{
 
     let total = 0;
 
-
     cart.forEach(item => {
 
       total +=
-      item.price *
-      item.quantity;
+        item.price *
+        item.quantity;
 
     });
 
 
     /* CREATE ORDER */
 
-    const {
-      data:order,
-      error:orderError
-    } =
-    await supabaseClient
-      .from("orders")
-      .insert({
+    const orderResult =
+      await supabaseClient
+        .from("orders")
+        .insert({
 
-        restaurant_id:
-        restaurantId,
+          restaurant_id:
+            restaurantId,
 
-        table_id:
-        tableId,
+          table_id:
+            tableId,
 
-        status:
-        "new",
+          status:
+            "new",
 
-        estimated_minutes:
-        15,
+          estimated_minutes:
+            15,
 
-        total:
-        total,
+          total:
+            total,
 
-        payment_method:
-        "cash",
+          payment_method:
+            "cash",
 
-        payment_status:
-        "pending"
+          payment_status:
+            "pending"
 
-      })
-      .select()
-      .single();
+        })
+        .select()
+        .single();
 
 
-    if(orderError){
+    if(orderResult.error){
 
       throw new Error(
-        "Order create नहीं हुआ: " +
-        orderError.message
+        "Order create नहीं हुआ:\n" +
+        orderResult.error.message
       );
 
     }
 
 
-    /* CREATE ORDER ITEMS */
+    const order =
+      orderResult.data;
+
+
+    /* =====================================
+       IMPORTANT:
+       order_items ONLY uses these columns:
+
+       order_id
+       menu_item_id
+       quantity
+       price
+
+       NO name column.
+    ===================================== */
 
     const orderItems =
-    cart.map(item => ({
+      cart.map(item => ({
 
-      order_id:
-      order.id,
+        order_id:
+          order.id,
 
-      menu_item_id:
-      item.id,
+        menu_item_id:
+          item.id,
 
-      quantity:
-      item.quantity,
+        quantity:
+          item.quantity,
 
-      price:
-      item.price
+        price:
+          item.price
 
-    }));
-
-
-    const {
-      error:itemError
-    } =
-    await supabaseClient
-      .from("order_items")
-      .insert(
-        orderItems
-      );
+      }));
 
 
-    if(itemError){
+    const itemResult =
+      await supabaseClient
+        .from("order_items")
+        .insert(
+          orderItems
+        );
+
+
+    if(itemResult.error){
 
       /*
-       If items fail, remove the empty order
-       so an incomplete order is not left behind.
+       Delete incomplete order.
       */
 
       await supabaseClient
@@ -1143,18 +1141,17 @@ async function placeOrder(){
 
 
       throw new Error(
-        "Order items save नहीं हुए: " +
-        itemError.message
+        "Order item save नहीं हुआ:\n" +
+        itemResult.error.message
       );
 
     }
 
 
-    /* SAVE CURRENT ORDER */
+    /* SAVE ORDER */
 
     currentOrderId =
-    order.id;
-
+      order.id;
 
     localStorage.setItem(
       "currentOrderId",
@@ -1166,15 +1163,7 @@ async function placeOrder(){
 
     updateCart();
 
-
     showOrder(order);
-
-
-    /*
-     IMPORTANT:
-     Realtime starts AFTER
-     currentOrderId exists.
-    */
 
     subscribeToOrder(
       order.id
@@ -1182,21 +1171,21 @@ async function placeOrder(){
 
 
     button.innerText =
-    "✅ Order Placed";
+      "✅ Order Placed";
 
 
   }catch(error){
 
     console.error(error);
 
-    alert(error.message);
+    alert(
+      error.message
+    );
 
     button.disabled = false;
 
     button.innerText =
-    "📦 Place Order";
-
-    return;
+      "📦 Place Order";
 
   }
 
@@ -1217,19 +1206,16 @@ function showOrder(order){
     .style.display =
     "block";
 
-
   document
     .getElementById("orderId")
     .innerText =
     String(order.id)
       .substring(0,8);
 
-
   document
     .getElementById("estimated")
     .innerText =
     order.estimated_minutes || 15;
-
 
   updateStatus(
     order.status || "new"
@@ -1239,23 +1225,17 @@ function showOrder(order){
 
 
 /* =========================================
-   UPDATE STATUS
+   STATUS
 ========================================= */
 
 function updateStatus(status){
 
   const steps = [
-
     "stepNew",
-
     "stepPreparing",
-
     "stepReady",
-
     "stepDelivered"
-
   ];
-
 
   steps.forEach(id => {
 
@@ -1267,9 +1247,7 @@ function updateStatus(status){
 
   });
 
-
   let activeIndex = 0;
-
 
   if(
     status === "new" ||
@@ -1285,7 +1263,6 @@ function updateStatus(status){
 
   }
 
-
   else if(
     status === "preparing"
   ){
@@ -1298,7 +1275,6 @@ function updateStatus(status){
       "👨‍🍳 Order is Preparing";
 
   }
-
 
   else if(
     status === "ready"
@@ -1313,7 +1289,6 @@ function updateStatus(status){
 
   }
 
-
   else if(
     status === "delivered"
   ){
@@ -1327,7 +1302,6 @@ function updateStatus(status){
 
   }
 
-
   document
     .getElementById(
       steps[activeIndex]
@@ -1340,37 +1314,31 @@ function updateStatus(status){
 
 
 /* =========================================
-   LOAD OLD ORDER
+   OLD ORDER
 ========================================= */
 
 async function loadOldOrder(){
 
   const saved =
-  localStorage.getItem(
-    "currentOrderId"
-  );
-
+    localStorage.getItem(
+      "currentOrderId"
+    );
 
   if(!saved){
     return;
   }
 
+  const result =
+    await supabaseClient
+      .from("orders")
+      .select("*")
+      .eq(
+        "id",
+        saved
+      )
+      .maybeSingle();
 
-  const {
-    data,
-    error
-  } =
-  await supabaseClient
-    .from("orders")
-    .select("*")
-    .eq(
-      "id",
-      saved
-    )
-    .maybeSingle();
-
-
-  if(error || !data){
+  if(result.error || !result.data){
 
     localStorage.removeItem(
       "currentOrderId"
@@ -1379,32 +1347,26 @@ async function loadOldOrder(){
     return;
   }
 
-
-  /*
-   Make sure old order belongs
-   to this restaurant/table.
-  */
+  const order =
+    result.data;
 
   if(
-    data.restaurant_id !==
-    restaurantId ||
-    data.table_id !==
-    tableId
+    order.restaurant_id !==
+      restaurantId ||
+    order.table_id !==
+      tableId
   ){
 
     return;
   }
 
-
   currentOrderId =
-  data.id;
+    order.id;
 
-
-  showOrder(data);
-
+  showOrder(order);
 
   subscribeToOrder(
-    data.id
+    order.id
   );
 
 }
@@ -1420,11 +1382,6 @@ function subscribeToOrder(orderId){
     return;
   }
 
-
-  /*
-   Remove previous channel
-  */
-
   if(realtimeChannel){
 
     supabaseClient
@@ -1433,51 +1390,37 @@ function subscribeToOrder(orderId){
       );
 
     realtimeChannel = null;
-
   }
 
-
   realtimeChannel =
-  supabaseClient
-    .channel(
-      "customer-order-" +
-      orderId +
-      "-" +
-      Date.now()
-    )
-    .on(
-      "postgres_changes",
-      {
-        event:"UPDATE",
-        schema:"public",
-        table:"orders",
-        filter:
-        "id=eq." + orderId
-      },
-      payload => {
+    supabaseClient
+      .channel(
+        "customer-order-" +
+        orderId
+      )
+      .on(
+        "postgres_changes",
+        {
+          event:"UPDATE",
+          schema:"public",
+          table:"orders",
+          filter:
+            "id=eq." + orderId
+        },
+        payload => {
 
-        console.log(
-          "LIVE ORDER UPDATE",
-          payload.new
-        );
+          console.log(
+            "LIVE UPDATE:",
+            payload.new
+          );
 
+          showOrder(
+            payload.new
+          );
 
-        showOrder(
-          payload.new
-        );
-
-      }
-    )
-    .subscribe(
-      status => {
-
-        console.log(
-          "Realtime status:",
-          status
-        );
-
-      }
-    );
+        }
+      )
+      .subscribe();
 
 }
 
@@ -1497,7 +1440,6 @@ async function callWaiter(){
     return;
   }
 
-
   if(!tableId){
 
     alert(
@@ -1507,41 +1449,39 @@ async function callWaiter(){
     return;
   }
 
+  const result =
+    await supabaseClient
+      .from("waiter_calls")
+      .insert({
 
-  const {
-    error
-  } =
-  await supabaseClient
-    .from("waiter_calls")
-    .insert({
+        restaurant_id:
+          restaurantId,
 
-      restaurant_id:
-      restaurantId,
+        table_number:
+          tableNumber,
 
-      table_number:
-      tableNumber,
+        request_type:
+          "Waiter",
 
-      request_type:
-      "Waiter",
+        status:
+          "pending"
 
-      status:
-      "pending"
-
-    });
+      });
 
 
-  if(error){
+  if(result.error){
 
-    console.error(error);
+    console.error(
+      result.error
+    );
 
     alert(
       "Waiter request नहीं भेजा गया:\n" +
-      error.message
+      result.error.message
     );
 
     return;
   }
-
 
   alert(
     "🔔 Waiter को बुला दिया गया है!"
@@ -1565,22 +1505,15 @@ function toggleFeedback(){
     return;
   }
 
-
   const box =
-  document.getElementById(
-    "feedbackBox"
-  );
+    document.getElementById(
+      "feedbackBox"
+    );
 
-
-  if(box.style.display === "block"){
-
-    box.style.display = "none";
-
-  }else{
-
-    box.style.display = "block";
-
-  }
+  box.style.display =
+    box.style.display === "block"
+      ? "none"
+      : "block";
 
 }
 
@@ -1592,8 +1525,7 @@ function toggleFeedback(){
 function setRating(rating){
 
   selectedRating =
-  rating;
-
+    rating;
 
   for(
     let i=1;
@@ -1602,10 +1534,9 @@ function setRating(rating){
   ){
 
     const star =
-    document.getElementById(
-      "star" + i
-    );
-
+      document.getElementById(
+        "star" + i
+      );
 
     if(i <= rating){
 
@@ -1641,7 +1572,6 @@ async function submitFeedback(){
     return;
   }
 
-
   if(!selectedRating){
 
     alert(
@@ -1651,62 +1581,52 @@ async function submitFeedback(){
     return;
   }
 
-
   const text =
-  document
-    .getElementById(
-      "feedbackText"
-    )
-    .value
-    .trim();
+    document
+      .getElementById(
+        "feedbackText"
+      )
+      .value
+      .trim();
 
 
-  /*
-   Feedback table may have
-   different columns in your database.
-   We use only the most common
-   fields here.
-  */
+  const result =
+    await supabaseClient
+      .from("feedback")
+      .insert({
 
-  const {
-    error
-  } =
-  await supabaseClient
-    .from("feedback")
-    .insert({
+        restaurant_id:
+          restaurantId,
 
-      restaurant_id:
-      restaurantId,
+        order_id:
+          currentOrderId,
 
-      order_id:
-      currentOrderId,
+        rating:
+          selectedRating,
 
-      rating:
-      selectedRating,
+        message:
+          text
 
-      message:
-      text
-
-    });
+      });
 
 
-  if(error){
+  if(result.error){
 
-    console.error(error);
+    console.error(
+      result.error
+    );
 
     alert(
       "Feedback submit नहीं हुआ:\n" +
-      error.message
+      result.error.message
     );
 
     return;
   }
 
-
   alert(
     "⭐ Thank you for your feedback!"
   );
-
 
   document
     .getElementById(
@@ -1714,9 +1634,7 @@ async function submitFeedback(){
     )
     .value = "";
 
-
   selectedRating = 0;
-
 
   for(
     let i=1;
@@ -1733,7 +1651,6 @@ async function submitFeedback(){
       );
 
   }
-
 
   document
     .getElementById(
