@@ -3,19 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>Restaurant Admin</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <style>
-*{box-sizing:border-box}
+*{
+box-sizing:border-box;
+}
 
 body{
 margin:0;
 font-family:Arial,sans-serif;
 background:#f5f6f8;
-color:#222
+color:#222;
 }
 
 button{
@@ -23,7 +26,7 @@ border:0;
 border-radius:8px;
 padding:10px 14px;
 cursor:pointer;
-font-weight:600
+font-weight:bold;
 }
 
 input,textarea,select{
@@ -31,123 +34,155 @@ width:100%;
 padding:11px;
 border:1px solid #ddd;
 border-radius:8px;
-margin:6px 0 12px
+margin:6px 0 12px;
 }
 
-textarea{min-height:90px}
+textarea{
+min-height:90px;
+}
 
 .login{
 min-height:100vh;
 display:flex;
 align-items:center;
 justify-content:center;
-padding:20px
+padding:20px;
 }
 
 .loginbox{
 width:100%;
 max-width:390px;
-background:#fff;
+background:white;
 padding:28px;
 border-radius:18px;
-box-shadow:0 5px 25px #0001
+box-shadow:0 5px 25px #0002;
 }
 
-.loginbox h1{text-align:center}
+.loginbox h1{
+text-align:center;
+}
 
-.primary{background:#111;color:#fff}
-.green{background:#198754;color:#fff}
-.red{background:#dc3545;color:#fff}
-.yellow{background:#ffc107;color:#111}
-.blue{background:#0d6efd;color:#fff}
+.primary{
+background:#111;
+color:white;
+}
+
+.green{
+background:#198754;
+color:white;
+}
+
+.red{
+background:#dc3545;
+color:white;
+}
+
+.yellow{
+background:#ffc107;
+color:#111;
+}
+
+.blue{
+background:#0d6efd;
+color:white;
+}
 
 .top{
 height:64px;
 background:#111;
-color:#fff;
+color:white;
 display:flex;
 align-items:center;
 justify-content:space-between;
 padding:0 18px;
 position:sticky;
 top:0;
-z-index:100
+z-index:100;
 }
 
 .topLeft{
 display:flex;
 align-items:center;
-gap:10px
+gap:10px;
 }
 
 .menuBtn{
 display:none;
 background:#333;
-color:#fff
+color:white;
 }
 
 .layout{
 display:flex;
-min-height:calc(100vh - 64px)
+min-height:calc(100vh - 64px);
 }
 
 .sidebar{
 width:240px;
 background:#1b1b1b;
 padding:14px;
-flex-shrink:0
+flex-shrink:0;
 }
 
 .nav{
 display:block;
 width:100%;
 background:transparent;
-color:#fff;
+color:white;
 text-align:left;
-margin:3px 0
+margin:3px 0;
 }
 
-.nav.active,.nav:hover{
-background:#333
+.nav.active,
+.nav:hover{
+background:#333;
 }
 
 .main{
 flex:1;
 padding:20px;
-overflow:auto
+overflow:auto;
 }
 
-.page{display:none}
-.page.active{display:block}
+.page{
+display:none;
+}
+
+.page.active{
+display:block;
+}
 
 .cards{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+grid-template-columns:
+repeat(auto-fit,minmax(170px,1fr));
 gap:15px;
-margin-top:18px
+margin-top:18px;
 }
 
 .card{
-background:#fff;
+background:white;
 border-radius:14px;
 padding:18px;
-box-shadow:0 3px 14px #0000000d
+box-shadow:0 3px 14px #0001;
 }
 
-.card small{color:#777}
+.card small{
+color:#777;
+}
 
 .card b{
 font-size:27px;
 display:block;
-margin-top:8px
+margin-top:8px;
 }
 
 .panel{
-background:#fff;
+background:white;
 border-radius:14px;
 padding:18px;
 margin-top:18px;
-box-shadow:0 3px 14px #0000000d
+box-shadow:0 3px 14px #0001;
 }
 
 .panelHead{
@@ -155,7 +190,7 @@ display:flex;
 justify-content:space-between;
 align-items:center;
 gap:10px;
-flex-wrap:wrap
+flex-wrap:wrap;
 }
 
 .order{
@@ -163,180 +198,168 @@ border:1px solid #eee;
 border-radius:12px;
 padding:15px;
 margin:12px 0;
-transition:.2s
 }
 
 .order.new-alert{
-border:3px solid #dc3545;
-background:#fff1f1;
-box-shadow:0 0 15px #dc354555
+border:2px solid #dc3545;
+background:#fff5f5;
 }
 
 .orderHead{
 display:flex;
 justify-content:space-between;
 gap:10px;
-flex-wrap:wrap
+flex-wrap:wrap;
 }
 
 .badge{
 background:#eee;
 padding:6px 10px;
 border-radius:20px;
-font-size:12px
-}
-
-.badge.new{
-background:#dc3545;
-color:#fff
+font-size:12px;
 }
 
 .actions{
 display:flex;
 gap:7px;
 flex-wrap:wrap;
-margin-top:12px
+margin-top:12px;
 }
 
 .time{
 background:#f0f6ff;
 padding:12px;
 border-radius:10px;
-margin-top:12px
+margin-top:12px;
 }
 
 .timeRow{
 display:flex;
 align-items:center;
-gap:7px
+gap:7px;
 }
 
 .timeRow input{
 max-width:100px;
-margin:5px 0
+margin:5px 0;
 }
 
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
-gap:15px
+grid-template-columns:
+repeat(auto-fit,minmax(210px,1fr));
+gap:15px;
 }
 
-.tableCard,.foodCard,.itemCard{
-background:#fff;
+.tableCard,
+.foodCard,
+.itemCard{
+background:white;
 border-radius:14px;
 padding:15px;
-box-shadow:0 3px 14px #0000000d
+box-shadow:0 3px 14px #0001;
 }
 
-.tableCard{text-align:center}
+.tableCard{
+text-align:center;
+}
 
 .qr{
 display:flex;
 justify-content:center;
-margin:12px
+margin:12px;
 }
 
 .foodCard img{
 width:100%;
 height:150px;
 object-fit:cover;
-border-radius:9px
+border-radius:9px;
 }
 
-.foodBody{padding-top:10px}
+.foodBody{
+padding-top:10px;
+}
 
 .empty{
 text-align:center;
 padding:30px;
-color:#777
+color:#777;
 }
 
 .stat{
 font-size:13px;
-color:#666
+color:#666;
+}
+
+.notification{
+position:fixed;
+right:15px;
+top:80px;
+width:min(360px,calc(100% - 30px));
+background:#dc3545;
+color:white;
+padding:15px;
+border-radius:12px;
+box-shadow:0 5px 25px #0004;
+z-index:9999;
+display:none;
+animation:pop .25s ease;
+}
+
+.notification.show{
+display:block;
+}
+
+.notification h3{
+margin:0 0 7px;
+}
+
+.notification button{
+background:white;
+color:#111;
+margin-top:8px;
 }
 
 .waiter-alert{
-border:3px solid #dc3545!important;
-background:#fff1f1!important;
-box-shadow:0 0 15px #dc354555
+border:2px solid #dc3545;
+background:#fff0f0;
+animation:pulse 1s infinite;
+}
+
+@keyframes pulse{
+50%{
+box-shadow:0 0 0 5px #dc354533;
+}
+}
+
+@keyframes pop{
+from{
+transform:translateY(-15px);
+opacity:0;
+}
+to{
+transform:translateY(0);
+opacity:1;
+}
 }
 
 .bill{
-max-width:700px;
-margin:auto;
-background:#fff;
-padding:25px;
-border-radius:12px
-}
-
-.billHeader{
-text-align:center;
-border-bottom:1px solid #ddd;
-padding-bottom:15px;
-margin-bottom:15px
-}
-
-.billRow{
-display:flex;
-justify-content:space-between;
-padding:7px 0;
-border-bottom:1px solid #eee
-}
-
-.billTotal{
-font-size:21px;
-font-weight:bold;
-border-top:2px solid #111;
-margin-top:12px;
-padding-top:12px
-}
-
-.alertBox{
-position:fixed;
-right:15px;
-top:75px;
-z-index:9999;
-background:#dc3545;
-color:#fff;
-padding:15px 18px;
+border:1px solid #ddd;
+padding:15px;
 border-radius:12px;
-box-shadow:0 5px 20px #0003;
-display:none;
-max-width:330px
+margin-bottom:12px;
 }
 
-.modal{
-position:fixed;
-inset:0;
-background:#0008;
-display:none;
-align-items:center;
-justify-content:center;
-z-index:500
-}
-
-.modalBox{
-background:#fff;
-width:95%;
-max-width:750px;
-max-height:90vh;
-overflow:auto;
-padding:20px;
-border-radius:15px
-}
-
-.modalActions{
-display:flex;
-gap:8px;
-flex-wrap:wrap;
-margin-top:15px
+.bill strong{
+font-size:18px;
 }
 
 @media(max-width:800px){
 
-.menuBtn{display:block}
+.menuBtn{
+display:block;
+}
 
 .sidebar{
 position:fixed;
@@ -344,36 +367,38 @@ left:-250px;
 top:64px;
 bottom:0;
 z-index:90;
-transition:.2s
+transition:.2s;
 }
 
-.sidebar.open{left:0}
+.sidebar.open{
+left:0;
+}
 
-.main{padding:12px}
+.main{
+padding:12px;
+}
 
 .grid{
-grid-template-columns:repeat(2,minmax(0,1fr))
+grid-template-columns:repeat(2,minmax(0,1fr));
 }
-
-.tableCard{padding:10px}
-
 }
 
 @media(max-width:500px){
 
 .grid{
-grid-template-columns:1fr
+grid-template-columns:1fr;
 }
 
 .cards{
-grid-template-columns:1fr 1fr
+grid-template-columns:1fr 1fr;
 }
-
 }
 </style>
 </head>
 
 <body>
+
+<!-- ================= LOGIN ================= -->
 
 <div id="loginScreen" class="login">
 
@@ -382,28 +407,75 @@ grid-template-columns:1fr 1fr
 <h1>🔐 Restaurant Admin</h1>
 
 <label>Email</label>
-<input id="email" type="email" placeholder="Admin email">
+
+<input
+id="email"
+type="email"
+placeholder="Admin email"
+>
 
 <label>Password</label>
-<input id="password" type="password" placeholder="Password">
 
-<button class="primary" style="width:100%" onclick="login()">
+<input
+id="password"
+type="password"
+placeholder="Password"
+>
+
+<button
+class="primary"
+style="width:100%"
+onclick="login()"
+>
 Login
 </button>
 
-<p id="loginError" style="color:red;text-align:center"></p>
+<p
+id="loginError"
+style="color:red;text-align:center"
+></p>
 
 </div>
 </div>
 
 
-<div id="app" style="display:none">
+<!-- ================= NOTIFICATION ================= -->
+
+<div
+id="notification"
+class="notification"
+>
+
+<h3 id="notificationTitle">
+🔔 Notification
+</h3>
+
+<div id="notificationText"></div>
+
+<button onclick="closeNotification()">
+Close
+</button>
+
+</div>
+
+
+<!-- ================= APP ================= -->
+
+<div
+id="app"
+style="display:none"
+>
 
 <header class="top">
 
 <div class="topLeft">
 
-<button class="menuBtn" onclick="toggleSidebar()">☰</button>
+<button
+class="menuBtn"
+onclick="toggleSidebar()"
+>
+☰
+</button>
 
 <h2 id="restaurantTitle">
 Restaurant Admin
@@ -411,81 +483,121 @@ Restaurant Admin
 
 </div>
 
-<div style="display:flex;gap:8px">
-
-<button class="yellow" onclick="enableAlerts()">
-🔔 Enable Alerts
-</button>
-
-<button class="red" onclick="logout()">
+<button
+class="red"
+onclick="logout()"
+>
 Logout
 </button>
-
-</div>
 
 </header>
 
 
-<div id="alertBox" class="alertBox"></div>
-
-
 <div class="layout">
 
-<aside id="sidebar" class="sidebar">
 
-<button class="nav active" onclick="page('dashboard',this)">
+<!-- ================= SIDEBAR ================= -->
+
+<aside
+id="sidebar"
+class="sidebar"
+>
+
+<button
+class="nav active"
+onclick="page('dashboard',this)"
+>
 📊 Dashboard
 </button>
 
-<button class="nav" onclick="page('orders',this)">
+<button
+class="nav"
+onclick="page('orders',this)"
+>
 🔔 Live Orders
 </button>
 
-<button class="nav" onclick="page('menu',this)">
+<button
+class="nav"
+onclick="page('menu',this)"
+>
 📋 Menu
 </button>
 
-<button class="nav" onclick="page('tables',this)">
+<button
+class="nav"
+onclick="page('tables',this)"
+>
 🪑 Tables + QR
 </button>
 
-<button class="nav" onclick="page('offers',this)">
+<button
+class="nav"
+onclick="page('offers',this)"
+>
 🎁 Offers
 </button>
 
-<button class="nav" onclick="page('waiter',this)">
+<button
+class="nav"
+onclick="page('waiter',this)"
+>
 🔔 Waiter Calls
 </button>
 
-<button class="nav" onclick="page('complaints',this)">
+<button
+class="nav"
+onclick="page('complaints',this)"
+>
 ⚠️ Complaints
 </button>
 
-<button class="nav" onclick="page('feedback',this)">
+<button
+class="nav"
+onclick="page('feedback',this)"
+>
 ⭐ Feedback
 </button>
 
-<button class="nav" onclick="page('billing',this)">
+<button
+class="nav"
+onclick="page('billing',this)"
+>
 🧾 Billing
 </button>
 
-<button class="nav" onclick="page('payments',this)">
+<button
+class="nav"
+onclick="page('payments',this)"
+>
 💰 Payments
 </button>
 
-<button class="nav" onclick="page('profile',this)">
+<button
+class="nav"
+onclick="page('profile',this)"
+>
 🏪 Restaurant Profile
 </button>
 
-<button class="nav" onclick="page('staff',this)">
+<button
+class="nav"
+onclick="page('staff',this)"
+>
 👥 Staff
 </button>
 
-<button class="nav" onclick="page('analytics',this)">
+<button
+class="nav"
+onclick="page('analytics',this)"
+>
 📈 Analytics
 </button>
 
-<button class="nav" onclick="page('settings',this)">
+<button
+class="nav"
+onclick="page('settings',this)"
+>
 ⚙️ Settings
 </button>
 
@@ -495,7 +607,12 @@ Logout
 <main class="main">
 
 
-<section id="dashboard" class="page active">
+<!-- ================= DASHBOARD ================= -->
+
+<section
+id="dashboard"
+class="page active"
+>
 
 <h1>📊 Dashboard</h1>
 
@@ -527,24 +644,30 @@ Logout
 </div>
 
 <div class="card">
-<small>Pending Complaints</small>
-<b id="dComplaints">0</b>
-</div>
-
-<div class="card">
 <small>Pending Waiter Calls</small>
 <b id="dWaiter">0</b>
 </div>
 
+<div class="card">
+<small>Pending Complaints</small>
+<b id="dComplaints">0</b>
 </div>
+
+</div>
+
 
 <div class="panel">
 
 <div class="panelHead">
 
-<h2>🔔 Latest Orders</h2>
+<h2>
+🔔 Latest Orders
+</h2>
 
-<button class="primary" onclick="loadOrders()">
+<button
+class="primary"
+onclick="loadOrders()"
+>
 Refresh
 </button>
 
@@ -557,7 +680,12 @@ Refresh
 </section>
 
 
-<section id="orders" class="page">
+<!-- ================= ORDERS ================= -->
+
+<section
+id="orders"
+class="page"
+>
 
 <h1>🔔 Live Order Management</h1>
 
@@ -567,7 +695,10 @@ Refresh
 
 <h2>Orders</h2>
 
-<button class="primary" onclick="loadOrders()">
+<button
+class="primary"
+onclick="loadOrders()"
+>
 🔄 Refresh
 </button>
 
@@ -580,33 +711,61 @@ Refresh
 </section>
 
 
-<section id="menu" class="page">
+<!-- ================= MENU ================= -->
+
+<section
+id="menu"
+class="page"
+>
 
 <h1>📋 Menu Management</h1>
 
 <div class="panel">
 
-<h2>➕ Add New Food</h2>
+<h2>➕ Add Food</h2>
 
-<input id="foodName" placeholder="Food name">
+<input
+id="foodName"
+placeholder="Food name"
+>
 
-<input id="foodPrice" type="number" placeholder="Price">
+<input
+id="foodPrice"
+type="number"
+placeholder="Price"
+>
 
-<input id="foodCategory" placeholder="Category">
+<input
+id="foodCategory"
+placeholder="Category"
+>
 
-<input id="foodImage" placeholder="Image URL">
+<input
+id="foodImage"
+placeholder="Image URL"
+>
 
-<textarea id="foodDescription" placeholder="Description"></textarea>
+<textarea
+id="foodDescription"
+placeholder="Description"
+></textarea>
 
 <select id="foodVeg">
 
-<option value="true">🥗 Veg</option>
+<option value="true">
+🥗 Veg
+</option>
 
-<option value="false">🍗 Non-Veg</option>
+<option value="false">
+🍗 Non-Veg
+</option>
 
 </select>
 
-<button class="primary" onclick="addFood()">
+<button
+class="primary"
+onclick="addFood()"
+>
 Add Food
 </button>
 
@@ -616,50 +775,83 @@ Add Food
 
 <h2>🍽️ Menu Items</h2>
 
-<div id="menuList" class="grid"></div>
+<div
+id="menuList"
+class="grid"
+></div>
 
 </div>
 
 </section>
 
 
-<section id="tables" class="page">
+<!-- ================= TABLES ================= -->
 
-<h1>🪑 Table + QR Management</h1>
+<section
+id="tables"
+class="page"
+>
+
+<h1>🪑 Tables + QR</h1>
 
 <div class="panel">
 
 <p>
-Create all restaurant tables from <b>1 to 50</b>.
-Every table gets its own QR.
+Create Table 1 to 50. Every table gets a separate QR.
 </p>
 
-<button class="primary" onclick="createTables()">
+<button
+class="primary"
+onclick="createTables()"
+>
 ⚡ Create Table 1–50
 </button>
 
 </div>
 
-<div id="tableList" class="grid"></div>
+<div
+id="tableList"
+class="grid"
+></div>
 
 </section>
 
 
-<section id="offers" class="page">
+<!-- ================= OFFERS ================= -->
 
-<h1>🎁 Today's Offers</h1>
+<section
+id="offers"
+class="page"
+>
+
+<h1>🎁 Offers</h1>
 
 <div class="panel">
 
-<input id="offerTitle" placeholder="Offer title">
+<input
+id="offerTitle"
+placeholder="Offer title"
+>
 
-<textarea id="offerDesc" placeholder="Description"></textarea>
+<textarea
+id="offerDesc"
+placeholder="Description"
+></textarea>
 
-<input id="offerDiscount" placeholder="Discount e.g. 20% OFF">
+<input
+id="offerDiscount"
+placeholder="Discount e.g. 20% OFF"
+>
 
-<input id="offerImage" placeholder="Image URL">
+<input
+id="offerImage"
+placeholder="Image URL"
+>
 
-<button class="primary" onclick="addOffer()">
+<button
+class="primary"
+onclick="addOffer()"
+>
 ➕ Add Offer
 </button>
 
@@ -674,9 +866,14 @@ Every table gets its own QR.
 </section>
 
 
-<section id="waiter" class="page">
+<!-- ================= WAITER ================= -->
 
-<h1>🔔 Call Waiter</h1>
+<section
+id="waiter"
+class="page"
+>
+
+<h1>🔔 Waiter Calls</h1>
 
 <div class="panel">
 
@@ -687,7 +884,12 @@ Every table gets its own QR.
 </section>
 
 
-<section id="complaints" class="page">
+<!-- ================= COMPLAINTS ================= -->
+
+<section
+id="complaints"
+class="page"
+>
 
 <h1>⚠️ Complaints</h1>
 
@@ -700,7 +902,12 @@ Every table gets its own QR.
 </section>
 
 
-<section id="feedback" class="page">
+<!-- ================= FEEDBACK ================= -->
+
+<section
+id="feedback"
+class="page"
+>
 
 <h1>⭐ Feedback</h1>
 
@@ -708,7 +915,9 @@ Every table gets its own QR.
 
 <div class="card">
 
-<small>Average Rating</small>
+<small>
+Average Rating
+</small>
 
 <b>
 ⭐ <span id="averageRating">0</span>/5
@@ -727,7 +936,12 @@ Every table gets its own QR.
 </section>
 
 
-<section id="billing" class="page">
+<!-- ================= BILLING ================= -->
+
+<section
+id="billing"
+class="page"
+>
 
 <h1>🧾 Billing</h1>
 
@@ -740,7 +954,12 @@ Every table gets its own QR.
 </section>
 
 
-<section id="payments" class="page">
+<!-- ================= PAYMENTS ================= -->
+
+<section
+id="payments"
+class="page"
+>
 
 <h1>💰 Payment Settings</h1>
 
@@ -756,14 +975,23 @@ Every table gets its own QR.
 
 <label>Tax Percentage</label>
 
-<input id="tax" type="number">
+<input
+id="tax"
+type="number"
+>
 
 <label>Service Charge Percentage</label>
 
-<input id="service" type="number">
+<input
+id="service"
+type="number"
+>
 
-<button class="primary" onclick="savePayments()">
-💾 Save Payment Settings
+<button
+class="primary"
+onclick="savePayments()"
+>
+💾 Save
 </button>
 
 </div>
@@ -771,37 +999,63 @@ Every table gets its own QR.
 </section>
 
 
-<section id="profile" class="page">
+<!-- ================= PROFILE ================= -->
+
+<section
+id="profile"
+class="page"
+>
 
 <h1>🏪 Restaurant Profile</h1>
 
 <div class="panel">
 
 <label>Restaurant Name</label>
+
 <input id="pName">
 
 <label>Logo URL</label>
+
 <input id="pLogo">
 
-<label>Cover Image URL</label>
+<label>Cover URL</label>
+
 <input id="pCover">
 
 <label>Address</label>
+
 <textarea id="pAddress"></textarea>
 
 <label>Phone</label>
+
 <input id="pPhone">
 
 <label>Opening Time</label>
-<input id="pOpen" type="time">
+
+<input
+id="pOpen"
+type="time"
+>
 
 <label>Closing Time</label>
-<input id="pClose" type="time">
 
-<label>About Restaurant</label>
+<input
+id="pClose"
+type="time"
+>
+
+<label>Maps URL</label>
+
+<input id="pMaps">
+
+<label>About</label>
+
 <textarea id="pAbout"></textarea>
 
-<button class="primary" onclick="saveProfile()">
+<button
+class="primary"
+onclick="saveProfile()"
+>
 💾 Save Profile
 </button>
 
@@ -810,27 +1064,47 @@ Every table gets its own QR.
 </section>
 
 
-<section id="staff" class="page">
+<!-- ================= STAFF ================= -->
 
-<h1>👥 Staff Accounts</h1>
+<section
+id="staff"
+class="page"
+>
+
+<h1>👥 Staff</h1>
 
 <div class="panel">
 
-<input id="staffName" placeholder="Staff name">
+<input
+id="staffName"
+placeholder="Staff name"
+>
 
-<input id="staffEmail" placeholder="Staff email">
+<input
+id="staffEmail"
+placeholder="Staff email"
+>
 
 <select id="staffRole">
 
-<option value="manager">Manager</option>
+<option value="manager">
+Manager
+</option>
 
-<option value="waiter">Waiter</option>
+<option value="waiter">
+Waiter
+</option>
 
-<option value="kitchen">Kitchen</option>
+<option value="kitchen">
+Kitchen
+</option>
 
 </select>
 
-<button class="primary" onclick="addStaff()">
+<button
+class="primary"
+onclick="addStaff()"
+>
 ➕ Add Staff
 </button>
 
@@ -845,34 +1119,30 @@ Every table gets its own QR.
 </section>
 
 
-<section id="analytics" class="page">
+<!-- ================= ANALYTICS ================= -->
 
-<h1>📈 Sales & Analytics</h1>
+<section
+id="analytics"
+class="page"
+>
+
+<h1>📈 Analytics</h1>
 
 <div class="cards">
 
 <div class="card">
-
 <small>Total Orders</small>
-
 <b id="aOrders">0</b>
-
 </div>
 
 <div class="card">
-
 <small>Total Sales</small>
-
 <b>₹<span id="aSales">0</span></b>
-
 </div>
 
 <div class="card">
-
 <small>Average Order</small>
-
 <b>₹<span id="aAverage">0</span></b>
-
 </div>
 
 </div>
@@ -880,31 +1150,57 @@ Every table gets its own QR.
 </section>
 
 
-<section id="settings" class="page">
+<!-- ================= SETTINGS ================= -->
+
+<section
+id="settings"
+class="page"
+>
 
 <h1>⚙️ Settings</h1>
 
 <div class="panel">
 
-<label>Default Estimated Time</label>
+<label>
+Default Estimated Time
+</label>
 
-<input id="settingTime" type="number" value="15">
+<input
+id="settingTime"
+type="number"
+value="15"
+>
 
-<label>Minimum Order</label>
+<label>
+Minimum Order
+</label>
 
-<input id="settingMinimum" type="number" value="0">
+<input
+id="settingMinimum"
+type="number"
+value="0"
+>
 
-<label>Restaurant Status</label>
+<label>
+Restaurant Status
+</label>
 
 <select id="settingOpen">
 
-<option value="true">🟢 Open</option>
+<option value="true">
+🟢 Open
+</option>
 
-<option value="false">🔴 Closed</option>
+<option value="false">
+🔴 Closed
+</option>
 
 </select>
 
-<button class="primary" onclick="saveSettings()">
+<button
+class="primary"
+onclick="saveSettings()"
+>
 💾 Save Settings
 </button>
 
@@ -917,34 +1213,11 @@ Every table gets its own QR.
 </div>
 
 
-<div id="billModal" class="modal">
-
-<div class="modalBox">
-
-<div id="billContent"></div>
-
-<div class="modalActions">
-
-<button class="primary" onclick="printBill()">
-🖨️ Print Bill
-</button>
-
-<button class="green" onclick="markBillPaid()">
-✅ Mark Paid
-</button>
-
-<button class="red" onclick="closeBill()">
-Close
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-
 <script>
+
+/* =====================================================
+SUPABASE
+===================================================== */
 
 const SUPABASE_URL =
 "https://ltpjjckiaaonpetbzfvn.supabase.co";
@@ -958,25 +1231,33 @@ SUPABASE_URL,
 SUPABASE_KEY
 );
 
-let restaurantId=null;
-let orderChannel=null;
-let waiterChannel=null;
-let currentBillOrder=null;
-let alertsEnabled=false;
-let audioContext=null;
+
+let restaurantId = null;
+
+let orderChannel = null;
+
+let waiterChannel = null;
+
+let notificationAudio = null;
+
+let billingOrders = [];
 
 
-/* LOGIN */
+/* =====================================================
+LOGIN
+===================================================== */
 
 async function login(){
 
-const email=
-document.getElementById("email").value.trim();
+const email =
+document.getElementById("email")
+.value.trim();
 
-const password=
-document.getElementById("password").value;
+const password =
+document.getElementById("password")
+.value;
 
-const {error}=
+const {error} =
 await db.auth.signInWithPassword({
 email,
 password
@@ -984,10 +1265,12 @@ password
 
 if(error){
 
-document.getElementById("loginError").innerText=
-"❌ "+error.message;
+document.getElementById("loginError")
+.innerText =
+"❌ " + error.message;
 
 return;
+
 }
 
 location.reload();
@@ -1004,111 +1287,42 @@ location.reload();
 }
 
 
-/* ALERTS */
+/* =====================================================
+START
+===================================================== */
 
-async function enableAlerts(){
+async function start(){
 
-alertsEnabled=true;
+const {data} =
+await db.auth.getSession();
 
-try{
+if(!data.session){
 
-if("Notification" in window){
-
-const permission=
-await Notification.requestPermission();
-
-if(permission==="granted"){
-
-showToast("🔔 Notifications enabled");
+return;
 
 }
 
-}
+document.getElementById(
+"loginScreen"
+).style.display="none";
 
-}catch(e){
-
-console.log(e);
-
-}
-
-try{
-
-audioContext=
-new (window.AudioContext||
-window.webkitAudioContext)();
-
-if(audioContext.state==="suspended"){
-await audioContext.resume();
-}
-
-beep();
-
-}catch(e){
-
-console.log(e);
-
-}
-
-}
+document.getElementById(
+"app"
+).style.display="block";
 
 
-function beep(){
-
-if(!audioContext)return;
-
-const oscillator=
-audioContext.createOscillator();
-
-const gain=
-audioContext.createGain();
-
-oscillator.connect(gain);
-
-gain.connect(audioContext.destination);
-
-oscillator.frequency.value=880;
-
-gain.gain.value=.08;
-
-oscillator.start();
-
-setTimeout(()=>{
-oscillator.frequency.value=660;
-},120);
-
-setTimeout(()=>{
-oscillator.stop();
-},250);
-
-}
-
-
-function notifyAdmin(title,message){
-
-showToast(
-title+" — "+message
-);
-
-if(alertsEnabled){
-
-beep();
-
-}
+/*
+Browser notification permission
+*/
 
 if(
-alertsEnabled &&
 "Notification" in window &&
-Notification.permission==="granted"
+Notification.permission === "default"
 ){
 
 try{
 
-new Notification(
-title,
-{
-body:message
-}
-);
+await Notification.requestPermission();
 
 }catch(e){
 
@@ -1118,39 +1332,6 @@ console.log(e);
 
 }
 
-}
-
-
-function showToast(text){
-
-const box=
-document.getElementById("alertBox");
-
-box.innerText=text;
-
-box.style.display="block";
-
-setTimeout(()=>{
-
-box.style.display="none";
-
-},6000);
-
-}
-
-
-/* START */
-
-async function start(){
-
-const {data}=
-await db.auth.getSession();
-
-if(!data.session)return;
-
-document.getElementById("loginScreen").style.display="none";
-
-document.getElementById("app").style.display="block";
 
 await loadRestaurant();
 
@@ -1159,9 +1340,13 @@ await startRealtime();
 }
 
 
+/* =====================================================
+RESTAURANT
+===================================================== */
+
 async function loadRestaurant(){
 
-let {data,error}=
+const {data,error} =
 await db
 .from("restaurants")
 .select("*")
@@ -1171,42 +1356,33 @@ await db
 if(error){
 
 alert(error.message);
+
 return;
 
 }
 
 if(!data){
 
-const {data:newRestaurant,error:createError}=
-await db
-.from("restaurants")
-.insert({
-name:"My Restaurant"
-})
-.select()
-.single();
-
-if(createError){
-
 alert(
-"Restaurant create error: "+
-createError.message
+"Restaurant नहीं मिला."
 );
 
 return;
 
 }
 
-data=newRestaurant;
+restaurantId =
+data.id;
 
-}
 
-restaurantId=data.id;
+document.getElementById(
+"restaurantTitle"
+).innerText =
+data.name || "Restaurant Admin";
 
-document.getElementById("restaurantTitle").innerText=
-data.name||"Restaurant Admin";
 
 fillProfile(data);
+
 fillPayments(data);
 
 await loadDashboard();
@@ -1214,119 +1390,275 @@ await loadDashboard();
 }
 
 
-/* NAV */
+/* =====================================================
+NAVIGATION
+===================================================== */
 
 function page(id,btn){
 
-document.querySelectorAll(".page")
-.forEach(x=>x.classList.remove("active"));
+document
+.querySelectorAll(".page")
+.forEach(x=>
+x.classList.remove("active")
+);
 
-document.getElementById(id).classList.add("active");
+const target =
+document.getElementById(id);
 
-document.querySelectorAll(".nav")
-.forEach(x=>x.classList.remove("active"));
+if(target){
 
-if(btn)btn.classList.add("active");
+target.classList.add("active");
 
-if(id==="dashboard")loadDashboard();
-if(id==="orders")loadOrders();
-if(id==="menu")loadMenu();
-if(id==="tables")loadTables();
-if(id==="offers")loadOffers();
-if(id==="waiter")loadWaiter();
-if(id==="complaints")loadComplaints();
-if(id==="feedback")loadFeedback();
-if(id==="billing")loadBilling();
-if(id==="profile")loadProfile();
-if(id==="staff")loadStaff();
-if(id==="analytics")loadAnalytics();
+}
+
+document
+.querySelectorAll(".nav")
+.forEach(x=>
+x.classList.remove("active")
+);
+
+if(btn){
+
+btn.classList.add("active");
 
 }
 
 
-/* ORDERS */
+if(id==="dashboard")
+loadDashboard();
+
+if(id==="orders")
+loadOrders();
+
+if(id==="menu")
+loadMenu();
+
+if(id==="tables")
+loadTables();
+
+if(id==="offers")
+loadOffers();
+
+if(id==="waiter")
+loadWaiter();
+
+if(id==="complaints")
+loadComplaints();
+
+if(id==="feedback")
+loadFeedback();
+
+if(id==="billing")
+loadBilling();
+
+if(id==="profile")
+loadProfile();
+
+if(id==="staff")
+loadStaff();
+
+if(id==="analytics")
+loadAnalytics();
+
+}
+
+
+/* =====================================================
+GET ORDERS
+===================================================== */
 
 async function getOrders(){
 
-const {data,error}=
+const {data,error} =
 await db
 .from("orders")
 .select("*")
-.eq("restaurant_id",restaurantId)
-.order("created_at",{ascending:false});
+.eq(
+"restaurant_id",
+restaurantId
+)
+.order(
+"created_at",
+{
+ascending:false
+}
+);
 
 if(error){
 
 console.error(error);
+
 return [];
 
 }
 
-return data||[];
+return data || [];
 
 }
 
 
-async function loadDashboard(){
+/* =====================================================
+GET TABLE NUMBER
+===================================================== */
 
-const orders=await getOrders();
+async function getTableNumber(tableId){
 
-const sales=
-orders.reduce(
-(a,o)=>a+Number(o.total||0),0
-);
+if(!tableId){
 
-const pending=
-orders.filter(
-o=>!["delivered","cancelled"].includes(o.status)
-).length;
+return "-";
 
-const completed=
-orders.filter(
-o=>o.status==="delivered"
-).length;
+}
 
-document.getElementById("dOrders").innerText=
-orders.length;
-
-document.getElementById("dPending").innerText=
-pending;
-
-document.getElementById("dCompleted").innerText=
-completed;
-
-document.getElementById("dSales").innerText=
-sales.toFixed(0);
-
-const {count:tables}=
+const {data,error} =
 await db
 .from("restaurant_tables")
-.select("id",{count:"exact",head:true})
-.eq("restaurant_id",restaurantId)
-.eq("active",true);
+.select("table_number")
+.eq("id",tableId)
+.maybeSingle();
 
-document.getElementById("dTables").innerText=
-tables||0;
+if(error){
 
-const {count:complaints}=
+console.error(error);
+
+return "-";
+
+}
+
+return data?.table_number ?? "-";
+
+}
+
+
+/* =====================================================
+DASHBOARD
+===================================================== */
+
+async function loadDashboard(){
+
+const orders =
+await getOrders();
+
+
+const sales =
+orders.reduce(
+(a,o)=>
+a + Number(o.total || 0),
+0
+);
+
+
+const pending =
+orders.filter(
+o =>
+![
+"delivered",
+"cancelled"
+].includes(o.status)
+).length;
+
+
+const completed =
+orders.filter(
+o =>
+o.status==="delivered"
+).length;
+
+
+document.getElementById(
+"dOrders"
+).innerText =
+orders.length;
+
+document.getElementById(
+"dPending"
+).innerText =
+pending;
+
+document.getElementById(
+"dCompleted"
+).innerText =
+completed;
+
+document.getElementById(
+"dSales"
+).innerText =
+sales.toFixed(0);
+
+
+const {count:tables} =
+await db
+.from("restaurant_tables")
+.select(
+"id",
+{
+count:"exact",
+head:true
+}
+)
+.eq(
+"restaurant_id",
+restaurantId
+)
+.eq(
+"active",
+true
+);
+
+document.getElementById(
+"dTables"
+).innerText =
+tables || 0;
+
+
+const {count:complaints} =
 await db
 .from("complaints")
-.select("id",{count:"exact",head:true})
-.eq("restaurant_id",restaurantId)
-.neq("status","resolved");
+.select(
+"id",
+{
+count:"exact",
+head:true
+}
+)
+.eq(
+"restaurant_id",
+restaurantId
+)
+.neq(
+"status",
+"resolved"
+);
 
-document.getElementById("dComplaints").innerText=
-complaints||0;
+document.getElementById(
+"dComplaints"
+).innerText =
+complaints || 0;
 
-const {count:waiter}=
+
+const {count:waiter} =
 await db
 .from("waiter_calls")
-.select("id",{count:"exact",head:true})
-.eq("restaurant_id",restaurantId)
-.eq("status","pending");
+.select(
+"id",
+{
+count:"exact",
+head:true
+}
+)
+.eq(
+"restaurant_id",
+restaurantId
+)
+.eq(
+"status",
+"pending"
+);
 
-document.getElementById("dWaiter").innerText=
-waiter||0;
+document.getElementById(
+"dWaiter"
+).innerText =
+waiter || 0;
+
 
 renderOrders(
 orders.slice(0,5),
@@ -1336,16 +1668,34 @@ orders.slice(0,5),
 }
 
 
-/* RENDER ORDERS */
+/* =====================================================
+ORDERS
+===================================================== */
 
-function renderOrders(orders,target){
+async function loadOrders(){
 
-const box=
+const orders =
+await getOrders();
+
+await renderOrders(
+orders,
+"ordersList"
+);
+
+}
+
+
+async function renderOrders(
+orders,
+target
+){
+
+const box =
 document.getElementById(target);
 
 if(!orders.length){
 
-box.innerHTML=
+box.innerHTML =
 "<div class='empty'>No orders yet.</div>";
 
 return;
@@ -1354,19 +1704,36 @@ return;
 
 box.innerHTML="";
 
-orders.forEach(order=>{
 
-const isNew=
-order.status==="new";
+for(
+const order of orders
+){
 
-const div=
+const table =
+await getTableNumber(
+order.table_id
+);
+
+
+const div =
 document.createElement("div");
 
-div.className=
-"order"+
-(isNew?" new-alert":"");
+div.className =
+"order";
 
-div.innerHTML=`
+
+if(
+order.status === "new"
+){
+
+div.classList.add(
+"new-alert"
+);
+
+}
+
+
+div.innerHTML = `
 
 <div class="orderHead">
 
@@ -1378,21 +1745,26 @@ Order #${String(order.id).slice(0,8)}
 
 <br>
 
-🪑 Table ID:
-${esc(order.table_id||"-")}
+🪑 Table
+<strong>
+${esc(table)}
+</strong>
 
 <br>
 
 <span class="stat">
-${order.created_at?
-new Date(order.created_at).toLocaleString():
-""}
+${order.created_at
+?
+new Date(
+order.created_at
+).toLocaleString()
+:""}
 </span>
 
 </div>
 
-<div class="badge ${isNew?"new":""}">
-${esc(order.status||"new")}
+<div class="badge">
+${esc(order.status || "new")}
 </div>
 
 </div>
@@ -1402,15 +1774,22 @@ ${esc(order.status||"new")}
 
 💰 Total:
 <strong>
-₹${Number(order.total||0).toFixed(2)}
+₹${Number(
+order.total || 0
+).toFixed(2)}
 </strong>
 
 <br>
 
 💳 Payment:
-${esc(order.payment_method||"cash")}
+${esc(
+order.payment_method || "cash"
+)}
+
 -
-${esc(order.payment_status||"pending")}
+${esc(
+order.payment_status || "pending"
+)}
 
 </div>
 
@@ -1427,17 +1806,20 @@ ${esc(order.payment_status||"pending")}
 id="time-${order.id}"
 type="number"
 min="1"
-value="${order.estimated_minutes||15}"
+value="${
+order.estimated_minutes || 15
+}"
 >
 
-<span>minutes</span>
+<span>
+minutes
+</span>
 
 <button
 class="green"
-onclick="updateTime('${order.id}')">
-
+onclick="updateTime('${order.id}')"
+>
 Update
-
 </button>
 
 </div>
@@ -1447,39 +1829,44 @@ Update
 
 <div class="actions">
 
-${
-order.status==="new"?
-`
 <button
 class="green"
-onclick="status('${order.id}','accepted')">
+onclick="changeStatus(
+'${order.id}',
+'accepted'
+)"
+>
 Accept
 </button>
-`:""
-}
 
 <button
 class="yellow"
-onclick="status('${order.id}','preparing')">
+onclick="changeStatus(
+'${order.id}',
+'preparing'
+)"
+>
 Preparing
 </button>
 
 <button
 class="blue"
-onclick="status('${order.id}','ready')">
+onclick="changeStatus(
+'${order.id}',
+'ready'
+)"
+>
 Ready
 </button>
 
 <button
 class="primary"
-onclick="status('${order.id}','delivered')">
+onclick="changeStatus(
+'${order.id}',
+'delivered'
+)"
+>
 Delivered
-</button>
-
-<button
-class="red"
-onclick="openBill('${order.id}')">
-🧾 Bill
 </button>
 
 </div>
@@ -1488,84 +1875,95 @@ onclick="openBill('${order.id}')">
 
 box.appendChild(div);
 
-});
+}
 
 }
 
 
-async function loadOrders(){
+/* =====================================================
+CHANGE ORDER STATUS
+===================================================== */
 
-const orders=await getOrders();
+async function changeStatus(
+id,
+value
+){
 
-renderOrders(
-orders,
-"ordersList"
-);
-
-}
-
-
-/* STATUS */
-
-async function status(id,value){
-
-const updateData={
-status:value,
-updated_at:new Date().toISOString()
-};
-
-const {error}=
+const {error} =
 await db
 .from("orders")
-.update(updateData)
-.eq("id",id)
-.eq("restaurant_id",restaurantId);
+.update({
+status:value,
+updated_at:
+new Date().toISOString()
+})
+.eq(
+"id",
+id
+);
 
 if(error){
 
-alert(error.message);
+alert(
+"Status update error:\n"+
+error.message
+);
+
 return;
 
 }
 
 await loadOrders();
+
 await loadDashboard();
 
 }
 
 
-/* TIME */
+/* =====================================================
+ESTIMATED TIME
+===================================================== */
 
 async function updateTime(id){
 
-const input=
-document.getElementById("time-"+id);
+const input =
+document.getElementById(
+"time-"+id
+);
 
-if(!input)return;
+const value =
+Number(input?.value);
 
-const value=
-Number(input.value);
+if(!value || value < 1){
 
-if(!value||value<1){
+alert(
+"Valid time डालो."
+);
 
-alert("Valid time डालो");
 return;
 
 }
 
-const {error}=
+const {error} =
 await db
 .from("orders")
 .update({
 estimated_minutes:value,
-updated_at:new Date().toISOString()
+updated_at:
+new Date().toISOString()
 })
-.eq("id",id)
-.eq("restaurant_id",restaurantId);
+.eq(
+"id",
+id
+);
 
 if(error){
 
-alert(error.message);
+alert(
+"Time update error:\n"+
+error.message
+);
+
 return;
 
 }
@@ -1575,132 +1973,274 @@ await loadOrders();
 }
 
 
-/* REALTIME */
+/* =====================================================
+REALTIME
+===================================================== */
 
 async function startRealtime(){
 
-if(!restaurantId)return;
+if(!restaurantId){
+
+return;
+
+}
+
+
+/* ORDER REALTIME */
 
 if(orderChannel){
 
-await db.removeChannel(orderChannel);
+await db.removeChannel(
+orderChannel
+);
 
 }
+
+
+orderChannel =
+db
+.channel(
+"orders-live-"+restaurantId
+)
+.on(
+"postgres_changes",
+{
+event:"INSERT",
+schema:"public",
+table:"orders",
+filter:
+"restaurant_id=eq."+restaurantId
+},
+async payload => {
+
+showNotification(
+"📦 नया Order आया!",
+"नया customer order आया है."
+);
+
+playNotificationSound();
+
+browserNotification(
+"📦 New Order",
+"नया customer order आया है."
+);
+
+await loadOrders();
+
+await loadDashboard();
+
+}
+)
+.on(
+"postgres_changes",
+{
+event:"UPDATE",
+schema:"public",
+table:"orders",
+filter:
+"restaurant_id=eq."+restaurantId
+},
+async payload => {
+
+await loadOrders();
+
+await loadDashboard();
+
+}
+)
+.subscribe();
+
+
+/* WAITER REALTIME */
 
 if(waiterChannel){
 
-await db.removeChannel(waiterChannel);
-
-}
-
-
-/* ORDERS */
-
-orderChannel=
-db
-.channel("restaurant-orders-"+restaurantId)
-
-.on(
-"postgres_changes",
-{
-event:"INSERT",
-schema:"public",
-table:"orders",
-filter:"restaurant_id=eq."+restaurantId
-},
-payload=>{
-
-notifyAdmin(
-"📦 NEW ORDER",
-"New customer order received"
+await db.removeChannel(
+waiterChannel
 );
 
-loadOrders();
-loadDashboard();
-
 }
-)
-
-.on(
-"postgres_changes",
-{
-event:"UPDATE",
-schema:"public",
-table:"orders",
-filter:"restaurant_id=eq."+restaurantId
-},
-payload=>{
-
-loadOrders();
-loadDashboard();
-
-}
-)
-
-.subscribe();
 
 
-/* WAITER */
-
-waiterChannel=
+waiterChannel =
 db
-.channel("restaurant-waiter-"+restaurantId)
-
+.channel(
+"waiter-live-"+restaurantId
+)
 .on(
 "postgres_changes",
 {
 event:"INSERT",
 schema:"public",
 table:"waiter_calls",
-filter:"restaurant_id=eq."+restaurantId
+filter:
+"restaurant_id=eq."+restaurantId
 },
-payload=>{
+async payload => {
 
-notifyAdmin(
-"📞 WAITER CALL",
-"Customer requested a waiter"
+showNotification(
+"🔔 Waiter Call!",
+"Customer ने waiter को बुलाया है."
 );
 
-loadWaiter();
-loadDashboard();
+playNotificationSound();
+
+browserNotification(
+"🔔 Waiter Call",
+"Customer ने waiter को बुलाया है."
+);
+
+await loadWaiter();
+
+await loadDashboard();
 
 }
 )
-
-.on(
-"postgres_changes",
-{
-event:"UPDATE",
-schema:"public",
-table:"waiter_calls",
-filter:"restaurant_id=eq."+restaurantId
-},
-payload=>{
-
-loadWaiter();
-loadDashboard();
-
-}
-)
-
 .subscribe();
 
 }
 
 
-/* TABLES */
+/* =====================================================
+NOTIFICATION
+===================================================== */
+
+function showNotification(
+title,
+text
+){
+
+document.getElementById(
+"notificationTitle"
+).innerText =
+title;
+
+document.getElementById(
+"notificationText"
+).innerText =
+text;
+
+document.getElementById(
+"notification"
+).classList.add(
+"show"
+);
+
+setTimeout(
+closeNotification,
+7000
+);
+
+}
+
+
+function closeNotification(){
+
+document.getElementById(
+"notification"
+).classList.remove(
+"show"
+);
+
+}
+
+
+/* =====================================================
+SOUND
+===================================================== */
+
+function playNotificationSound(){
+
+try{
+
+if(!notificationAudio){
+
+notificationAudio =
+new Audio(
+"https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
+);
+
+notificationAudio.volume =
+0.8;
+
+}
+
+notificationAudio.currentTime=0;
+
+notificationAudio.play()
+.catch(
+e =>
+console.log(
+"Sound blocked until page interaction."
+)
+);
+
+}catch(e){
+
+console.log(e);
+
+}
+
+}
+
+
+/* =====================================================
+BROWSER NOTIFICATION
+===================================================== */
+
+function browserNotification(
+title,
+body
+){
+
+if(
+"Notification" in window &&
+Notification.permission==="granted"
+){
+
+try{
+
+new Notification(
+title,
+{
+body:body,
+icon:""
+}
+);
+
+}catch(e){
+
+console.log(e);
+
+}
+
+}
+
+}
+
+
+/* =====================================================
+TABLES
+===================================================== */
 
 async function createTables(){
 
-for(let i=1;i<=50;i++){
+for(
+let i=1;
+i<=50;
+i++
+){
 
-const {error}=
+const {error} =
 await db
 .from("restaurant_tables")
 .upsert(
 {
-restaurant_id:restaurantId,
+restaurant_id:
+restaurantId,
+
 table_number:i,
+
 active:true
 },
 {
@@ -1720,7 +2260,9 @@ error
 
 }
 
-alert("✅ Table 1–50 created!");
+alert(
+"✅ Table 1–50 created!"
+);
 
 await loadTables();
 
@@ -1729,29 +2271,39 @@ await loadTables();
 
 async function loadTables(){
 
-const {data,error}=
+const {data,error} =
 await db
 .from("restaurant_tables")
 .select("*")
-.eq("restaurant_id",restaurantId)
-.order("table_number");
+.eq(
+"restaurant_id",
+restaurantId
+)
+.order(
+"table_number",
+{
+ascending:true
+}
+);
 
-const box=
-document.getElementById("tableList");
+const box =
+document.getElementById(
+"tableList"
+);
 
 if(error){
 
-box.innerHTML=
+box.innerHTML =
 "<p>"+esc(error.message)+"</p>";
 
 return;
 
 }
 
-if(!data||!data.length){
+if(!data?.length){
 
-box.innerHTML=
-"<div class='empty'>Click Create Table 1–50</div>";
+box.innerHTML =
+"<div class='empty'>Create Table 1–50</div>";
 
 return;
 
@@ -1759,25 +2311,30 @@ return;
 
 box.innerHTML="";
 
-const customerBase=
+
+const customerBase =
 new URL(
 "../index.html",
 window.location.href
 ).href;
 
-data.forEach(table=>{
 
-const url=
-customerBase+
+data.forEach(
+table => {
+
+const url =
+customerBase +
 "?table="+
 table.table_number;
 
-const card=
+
+const card =
 document.createElement("div");
 
-card.className="tableCard";
+card.className =
+"tableCard";
 
-card.innerHTML=`
+card.innerHTML = `
 
 <h2>
 🪑 Table ${table.table_number}
@@ -1785,7 +2342,8 @@ card.innerHTML=`
 
 <div
 class="qr"
-id="qr-${table.table_number}">
+id="qr-${table.table_number}"
+>
 </div>
 
 <div class="stat">
@@ -1796,19 +2354,26 @@ Scan to Order
 
 <button
 class="primary"
-onclick="downloadQR(${table.table_number})">
+onclick="downloadQR(
+${table.table_number}
+)"
+>
 ⬇️ Download
 </button>
 
 <button
 class="green"
-onclick="printQR(${table.table_number})">
+onclick="printQR(
+${table.table_number}
+)"
+>
 🖨️ Print
 </button>
 
 `;
 
 box.appendChild(card);
+
 
 new QRCode(
 document.getElementById(
@@ -1823,28 +2388,35 @@ QRCode.CorrectLevel.H
 }
 );
 
-});
+}
+);
 
 }
 
 
 function downloadQR(number){
 
-const canvas=
+const canvas =
 document.querySelector(
 "#qr-"+number+" canvas"
 );
 
-if(!canvas)return;
+if(!canvas){
 
-const a=
+return;
+
+}
+
+const a =
 document.createElement("a");
 
-a.download=
+a.download =
 "Table-"+number+"-QR.png";
 
-a.href=
-canvas.toDataURL("image/png");
+a.href =
+canvas.toDataURL(
+"image/png"
+);
 
 a.click();
 
@@ -1853,40 +2425,54 @@ a.click();
 
 function printQR(number){
 
-const canvas=
+const canvas =
 document.querySelector(
 "#qr-"+number+" canvas"
 );
 
-if(!canvas)return;
-
-const w=
-window.open("","_blank");
-
-if(!w){
-
-alert("Popup allow करो");
+if(!canvas){
 
 return;
 
 }
+
+const w =
+window.open(
+"",
+"_blank"
+);
 
 w.document.write(`
 
 <html>
 
 <body
-style="text-align:center;font-family:Arial">
+style="
+text-align:center;
+font-family:Arial
+"
+>
 
-<h1>Restaurant</h1>
+<h1>
+${esc(
+document.getElementById(
+"restaurantTitle"
+).innerText
+)}
+</h1>
 
-<h2>Table ${number}</h2>
+<h2>
+🪑 Table ${number}
+</h2>
 
 <img
 src="${canvas.toDataURL()}"
-style="width:300px">
+style="width:300px"
+>
 
-<h2>📱 Scan to Order</h2>
+<h2>
+📱 Scan to Order
+</h2>
 
 <script>
 window.onload=function(){
@@ -1904,32 +2490,44 @@ w.document.close();
 }
 
 
-/* MENU */
+/* =====================================================
+MENU
+===================================================== */
 
 async function loadMenu(){
 
-const {data,error}=
+const {data,error} =
 await db
 .from("menu_items")
 .select("*")
-.eq("restaurant_id",restaurantId)
-.order("created_at",{ascending:false});
+.eq(
+"restaurant_id",
+restaurantId
+)
+.order(
+"created_at",
+{
+ascending:false
+}
+);
 
-const box=
-document.getElementById("menuList");
+const box =
+document.getElementById(
+"menuList"
+);
 
 if(error){
 
-box.innerHTML=
+box.innerHTML =
 "<p>"+esc(error.message)+"</p>";
 
 return;
 
 }
 
-if(!data||!data.length){
+if(!data?.length){
 
-box.innerHTML=
+box.innerHTML =
 "<div class='empty'>No menu items.</div>";
 
 return;
@@ -1938,50 +2536,77 @@ return;
 
 box.innerHTML="";
 
-data.forEach(item=>{
 
-const card=
+data.forEach(
+item => {
+
+const card =
 document.createElement("div");
 
-card.className="foodCard";
+card.className =
+"foodCard";
 
-card.innerHTML=`
+card.innerHTML = `
 
 <img
-src="${esc(
-item.image_url||
+src="${
+item.image_url ||
 "https://via.placeholder.com/400x250"
-)}">
+}"
+>
 
 <div class="foodBody">
 
-<h3>${esc(item.name)}</h3>
+<h3>
+${esc(item.name)}
+</h3>
 
 <p>
-₹${Number(item.price||0)}
+₹${Number(
+item.price || 0
+)}
 </p>
 
 <p>
-${item.is_veg?"🥗 Veg":"🍗 Non-Veg"}
+${
+item.is_veg
+?
+"🥗 Veg"
+:
+"🍗 Non-Veg"
+}
 </p>
 
 <p>
-${item.is_available?
-"✅ Available":
-"❌ Out of Stock"}
+${
+item.is_available
+?
+"✅ Available"
+:
+"❌ Out of Stock"
+}
 </p>
 
 <button
-class="${item.is_available?"red":"green"}"
+class="${
+item.is_available
+?
+"red"
+:
+"green"
+}"
 onclick="toggleFood(
 '${item.id}',
 ${!item.is_available}
-)">
-
-${item.is_available?
-"Out of Stock":
-"Available"}
-
+)"
+>
+${
+item.is_available
+?
+"Out of Stock"
+:
+"Available"
+}
 </button>
 
 </div>
@@ -1990,75 +2615,110 @@ ${item.is_available?
 
 box.appendChild(card);
 
-});
+}
+);
 
 }
 
 
 async function addFood(){
 
-const name=
-document.getElementById("foodName")
-.value.trim();
+const name =
+document.getElementById(
+"foodName"
+).value.trim();
 
-const price=
+const price =
 Number(
-document.getElementById("foodPrice")
-.value
+document.getElementById(
+"foodPrice"
+).value
 );
 
-if(!name||!price){
+if(!name || !price){
 
-alert("Food name और price डालो");
+alert(
+"Food name और price डालो."
+);
 
 return;
 
 }
 
-const {error}=
+const {error} =
 await db
 .from("menu_items")
 .insert({
-restaurant_id:restaurantId,
-name,
-price,
+restaurant_id:
+restaurantId,
+
+name:name,
+
+price:price,
+
 category:
-document.getElementById("foodCategory").value,
+document.getElementById(
+"foodCategory"
+).value,
+
 image_url:
-document.getElementById("foodImage").value,
+document.getElementById(
+"foodImage"
+).value,
+
 description:
-document.getElementById("foodDescription").value,
+document.getElementById(
+"foodDescription"
+).value,
+
 is_veg:
-document.getElementById("foodVeg").value==="true",
+document.getElementById(
+"foodVeg"
+).value === "true",
+
 is_available:true
 });
 
 if(error){
 
 alert(error.message);
+
 return;
 
 }
 
-alert("✅ Food added!");
+alert(
+"✅ Food added!"
+);
 
-document.getElementById("foodName").value="";
-document.getElementById("foodPrice").value="";
+document.getElementById(
+"foodName"
+).value="";
 
-loadMenu();
+document.getElementById(
+"foodPrice"
+).value="";
+
+await loadMenu();
 
 }
 
 
-async function toggleFood(id,value){
+async function toggleFood(
+id,
+value
+){
 
-const {error}=
+const {error} =
 await db
 .from("menu_items")
 .update({
 is_available:value
 })
-.eq("id",id);
+.eq(
+"id",
+id
+);
 
 if(error){
 
@@ -2068,178 +2728,244 @@ return;
 
 }
 
-loadMenu();
+await loadMenu();
 
 }
 
 
-/* OFFERS */
+/* =====================================================
+OFFERS
+===================================================== */
 
 async function loadOffers(){
 
-const {data,error}=
+const {data,error} =
 await db
 .from("offers")
 .select("*")
-.eq("restaurant_id",restaurantId)
-.order("created_at",{ascending:false});
+.eq(
+"restaurant_id",
+restaurantId
+)
+.order(
+"created_at",
+{
+ascending:false
+}
+);
 
-const box=
-document.getElementById("offerList");
+const box =
+document.getElementById(
+"offerList"
+);
 
 if(error){
 
-box.innerHTML=
+box.innerHTML =
 "<p>"+esc(error.message)+"</p>";
 
 return;
 
 }
 
-if(!data||!data.length){
+if(!data?.length){
 
-box.innerHTML=
+box.innerHTML =
 "<div class='empty'>No offers.</div>";
 
 return;
 
 }
 
-box.innerHTML="";
+box.innerHTML =
+data.map(
+o => `
 
-data.forEach(o=>{
+<div class="itemCard">
 
-const div=
-document.createElement("div");
-
-div.className="itemCard";
-
-div.innerHTML=`
-
-<h3>${esc(o.title)}</h3>
-
-<p>${esc(o.description||"")}</p>
+<h3>
+${esc(o.title)}
+</h3>
 
 <p>
-<strong>${esc(o.discount||"")}</strong>
+${esc(o.description || "")}
 </p>
 
 <p>
-${o.active?
-"🟢 Active":
-"🔴 Inactive"}
+<strong>
+${esc(o.discount || "")}
+</strong>
+</p>
+
+<p>
+${
+o.active
+?
+"🟢 Active"
+:
+"🔴 Inactive"
+}
 </p>
 
 <button
-class="${o.active?"red":"green"}"
+class="${
+o.active
+?
+"red"
+:
+"green"
+}"
 onclick="toggleOffer(
 '${o.id}',
 ${!o.active}
-)">
-
-${o.active?
-"Deactivate":
-"Activate"}
-
+)"
+>
+${
+o.active
+?
+"Deactivate"
+:
+"Activate"
+}
 </button>
 
-`;
+</div>
 
-box.appendChild(div);
-
-});
+`
+).join("");
 
 }
 
 
 async function addOffer(){
 
-const title=
-document.getElementById("offerTitle")
-.value.trim();
+const title =
+document.getElementById(
+"offerTitle"
+).value.trim();
 
 if(!title){
 
-alert("Offer title डालो");
+alert(
+"Offer title डालो."
+);
+
 return;
 
 }
 
-const {error}=
+const {error} =
 await db
 .from("offers")
 .insert({
-restaurant_id:restaurantId,
-title,
+
+restaurant_id:
+restaurantId,
+
+title:title,
+
 description:
-document.getElementById("offerDesc").value,
+document.getElementById(
+"offerDesc"
+).value,
+
 discount:
-document.getElementById("offerDiscount").value,
+document.getElementById(
+"offerDiscount"
+).value,
+
 image_url:
-document.getElementById("offerImage").value,
+document.getElementById(
+"offerImage"
+).value,
+
 active:true
 });
 
 if(error){
 
 alert(error.message);
+
 return;
 
 }
 
-alert("✅ Offer added!");
+alert(
+"✅ Offer added!"
+);
 
-loadOffers();
+await loadOffers();
 
 }
 
 
-async function toggleOffer(id,value){
+async function toggleOffer(
+id,
+value
+){
 
-const {error}=
+const {error} =
 await db
 .from("offers")
-.update({active:value})
-.eq("id",id);
+.update({
+active:value
+})
+.eq(
+"id",
+id
+);
 
 if(error){
 
 alert(error.message);
+
 return;
 
 }
 
-loadOffers();
+await loadOffers();
 
 }
 
 
-/* WAITER */
+/* =====================================================
+WAITER CALLS
+===================================================== */
 
 async function loadWaiter(){
 
-const {data,error}=
+const {data,error} =
 await db
 .from("waiter_calls")
 .select("*")
-.eq("restaurant_id",restaurantId)
-.order("created_at",{ascending:false});
+.eq(
+"restaurant_id",
+restaurantId
+)
+.order(
+"created_at",
+{
+ascending:false
+}
+);
 
-const box=
-document.getElementById("waiterList");
+const box =
+document.getElementById(
+"waiterList"
+);
 
 if(error){
 
-box.innerHTML=
+box.innerHTML =
 "<p>"+esc(error.message)+"</p>";
 
 return;
 
 }
 
-if(!data||!data.length){
+if(!data?.length){
 
-box.innerHTML=
+box.innerHTML =
 "<div class='empty'>No waiter calls.</div>";
 
 return;
@@ -2248,377 +2974,508 @@ return;
 
 box.innerHTML="";
 
-data.forEach(x=>{
 
-const div=
+for(
+const x of data
+){
+
+let table =
+x.table_number || "-";
+
+
+/*
+If waiter_calls stores table_id
+*/
+
+if(
+(!x.table_number) &&
+x.table_id
+){
+
+table =
+await getTableNumber(
+x.table_id
+);
+
+}
+
+
+const div =
 document.createElement("div");
 
-div.className=
-"itemCard"+
-(x.status==="pending"?
-" waiter-alert":"");
+div.className =
+"itemCard";
 
-div.innerHTML=`
+
+if(
+x.status === "pending"
+){
+
+div.classList.add(
+"waiter-alert"
+);
+
+}
+
+
+div.innerHTML = `
 
 <h3>
-📞 Table ${esc(x.table_number||"-")}
+🔔 Table ${esc(table)}
 </h3>
 
 <p>
-${esc(x.request_type||"Waiter")}
+${esc(
+x.request_type ||
+"Customer requested waiter"
+)}
 </p>
 
 <p>
-${x.created_at?
-new Date(x.created_at).toLocaleString():
-""}
+${x.created_at
+?
+new Date(
+x.created_at
+).toLocaleString()
+:""}
 </p>
 
 <p>
 Status:
 <strong>
-${esc(x.status||"pending")}
+${esc(x.status || "pending")}
 </strong>
 </p>
 
 ${
-x.status==="pending"?
+x.status === "pending"
+?
 `
 <button
 class="green"
-onclick="completeWaiter('${x.id}')">
+onclick="completeWaiter(
+'${x.id}'
+)"
+>
 ✅ Complete
 </button>
-`:""
+`
+:
+""
 }
 
 `;
 
 box.appendChild(div);
 
-});
+}
 
 }
 
 
 async function completeWaiter(id){
 
-const {error}=
+const {error} =
 await db
 .from("waiter_calls")
 .update({
 status:"completed"
 })
-.eq("id",id)
-.eq("restaurant_id",restaurantId);
+.eq(
+"id",
+id
+);
 
 if(error){
 
 alert(error.message);
+
 return;
 
 }
 
-loadWaiter();
-loadDashboard();
+await loadWaiter();
+
+await loadDashboard();
 
 }
 
 
-/* COMPLAINTS */
+/* =====================================================
+COMPLAINTS
+===================================================== */
 
 async function loadComplaints(){
 
-const {data,error}=
+const {data,error} =
 await db
 .from("complaints")
 .select("*")
-.eq("restaurant_id",restaurantId)
-.order("created_at",{ascending:false});
+.eq(
+"restaurant_id",
+restaurantId
+)
+.order(
+"created_at",
+{
+ascending:false
+}
+);
 
-const box=
-document.getElementById("complaintList");
+const box =
+document.getElementById(
+"complaintList"
+);
 
 if(error){
 
-box.innerHTML=
+box.innerHTML =
 "<p>"+esc(error.message)+"</p>";
 
 return;
 
 }
 
-if(!data||!data.length){
+if(!data?.length){
 
-box.innerHTML=
+box.innerHTML =
 "<div class='empty'>No complaints.</div>";
 
 return;
 
 }
 
-box.innerHTML="";
+box.innerHTML =
+data.map(
+c => `
 
-data.forEach(c=>{
-
-const div=
-document.createElement("div");
-
-div.className="itemCard";
-
-div.innerHTML=`
+<div class="itemCard">
 
 <h3>
-⚠️ ${esc(c.complaint_type||"Complaint")}
+⚠️
+${esc(
+c.complaint_type ||
+"Complaint"
+)}
 </h3>
 
 <p>
-Table: ${esc(c.table_number||"-")}
+Table:
+${esc(
+c.table_number || "-"
+)}
 </p>
 
 <p>
-${esc(c.message||"")}
+${esc(
+c.message || ""
+)}
 </p>
 
 <p>
-Status: ${esc(c.status||"")}
+Status:
+${esc(c.status)}
 </p>
 
 <textarea
 id="reply-${c.id}"
-placeholder="Response">${esc(c.response||"")}</textarea>
+placeholder="Response"
+>${esc(c.response || "")}</textarea>
 
 <button
 class="green"
-onclick="replyComplaint('${c.id}')">
-
+onclick="replyComplaint(
+'${c.id}'
+)"
+>
 Save Response
-
 </button>
 
-`;
+</div>
 
-box.appendChild(div);
-
-});
+`
+).join("");
 
 }
 
 
 async function replyComplaint(id){
 
-const response=
+const response =
 document.getElementById(
 "reply-"+id
 ).value;
 
-const {error}=
+const {error} =
 await db
 .from("complaints")
 .update({
-response,
+response:response,
 status:"resolved"
 })
-.eq("id",id)
-.eq("restaurant_id",restaurantId);
+.eq(
+"id",
+id
+);
 
 if(error){
 
 alert(error.message);
+
 return;
 
 }
 
-loadComplaints();
+await loadComplaints();
 
 }
 
 
-/* FEEDBACK */
+/* =====================================================
+FEEDBACK
+===================================================== */
 
 async function loadFeedback(){
 
-const {data,error}=
+const {data,error} =
 await db
 .from("feedback")
 .select("*")
-.eq("restaurant_id",restaurantId)
-.order("created_at",{ascending:false});
+.eq(
+"restaurant_id",
+restaurantId
+)
+.order(
+"created_at",
+{
+ascending:false
+}
+);
 
-const box=
-document.getElementById("feedbackList");
+const box =
+document.getElementById(
+"feedbackList"
+);
 
 if(error){
 
-box.innerHTML=
+box.innerHTML =
 "<p>"+esc(error.message)+"</p>";
 
 return;
 
 }
 
-if(!data||!data.length){
+if(!data?.length){
 
-box.innerHTML=
+box.innerHTML =
 "<div class='empty'>No feedback yet.</div>";
 
 return;
 
 }
 
-const average=
+const average =
 data.reduce(
-(a,x)=>a+Number(x.rating||0),
+(a,x)=>
+a + Number(x.rating || 0),
 0
-)/data.length;
+) / data.length;
+
 
 document.getElementById(
 "averageRating"
-).innerText=
+).innerText =
 average.toFixed(1);
 
-box.innerHTML="";
 
-data.forEach(x=>{
+box.innerHTML =
+data.map(
+x => `
 
-const div=
-document.createElement("div");
-
-div.className="itemCard";
-
-div.innerHTML=`
+<div class="itemCard">
 
 <h3>
 ${"⭐".repeat(
-Math.max(0,Math.min(5,Number(x.rating||0)))
+Number(x.rating || 0)
 )}
 </h3>
 
 <p>
-${esc(x.message||"")}
+${esc(x.message || "")}
 </p>
 
 <p>
-Table ${esc(x.table_number||"-")}
+Table:
+${esc(x.table_number || "-")}
 </p>
 
-`;
+</div>
 
-box.appendChild(div);
-
-});
+`
+).join("");
 
 }
 
 
-/* BILLING */
+/* =====================================================
+BILLING - FIXED
+===================================================== */
 
 async function loadBilling(){
 
-const orders=await getOrders();
+const orders =
+await getOrders();
 
-const box=
-document.getElementById("billingList");
+const box =
+document.getElementById(
+"billingList"
+);
 
 if(!orders.length){
 
-box.innerHTML=
-"<div class='empty'>No bills.</div>";
+box.innerHTML =
+"<div class='empty'>No bills yet.</div>";
+
+billingOrders=[];
 
 return;
 
 }
 
+
+/*
+Save orders for Print Bill
+*/
+
+billingOrders =
+orders;
+
+
 box.innerHTML="";
 
-orders.forEach(o=>{
 
-const div=
+for(
+const order of orders
+){
+
+const table =
+await getTableNumber(
+order.table_id
+);
+
+
+const div =
 document.createElement("div");
 
-div.className="itemCard";
+div.className =
+"bill";
 
-div.innerHTML=`
+
+div.innerHTML = `
 
 <h3>
-🧾 Order #${String(o.id).slice(0,8)}
+🧾 Order #${String(
+order.id
+).slice(0,8)}
 </h3>
 
 <p>
-Table ID: ${esc(o.table_id||"-")}
-</p>
-
-<p>
-Total:
+🪑 Table:
 <strong>
-₹${Number(o.total||0).toFixed(2)}
+${esc(table)}
 </strong>
 </p>
 
 <p>
-Payment:
-${esc(o.payment_method||"cash")}
--
-${esc(o.payment_status||"pending")}
+💰 Total:
+<strong>
+₹${Number(
+order.total || 0
+).toFixed(2)}
+</strong>
 </p>
 
 <p>
-Bill:
-${o.bill_generated?
-"✅ Generated":
-"❌ Not Generated"}
+💳 Payment:
+${esc(
+order.payment_method || "cash"
+)}
 </p>
+
+<p>
+📌 Payment Status:
+${esc(
+order.payment_status || "pending"
+)}
+</p>
+
+<p>
+📦 Order Status:
+${esc(
+order.status || "new"
+)}
+</p>
+
+<p>
+🕐 ${
+order.created_at
+?
+new Date(
+order.created_at
+).toLocaleString()
+:
+""
+}
+</p>
+
+<div class="actions">
 
 <button
 class="primary"
-onclick="openBill('${o.id}')">
-
-🧾 Generate / View Bill
-
+onclick="printBill(
+'${order.id}'
+)"
+>
+🖨️ Print Bill
 </button>
+
+${
+order.bill_generated
+?
+"<span class='badge'>✅ Bill Generated</span>"
+:
+""
+}
+
+</div>
 
 `;
 
 box.appendChild(div);
 
-});
+}
 
 }
 
 
-/* OPEN BILL */
+/* =====================================================
+PRINT BILL
+===================================================== */
 
-async function openBill(orderId){
+async function printBill(
+orderId
+){
 
-const {data:order,error}=
-await db
-.from("orders")
-.select("*")
-.eq("id",orderId)
-.eq("restaurant_id",restaurantId)
-.single();
+const order =
+billingOrders.find(
+x => x.id === orderId
+);
 
-if(error){
-
-alert(error.message);
-return;
-
-}
-
-
-/* ITEMS */
-
-const {data:items,error:itemError}=
-await db
-.from("order_items")
-.select("*")
-.eq("order_id",orderId);
-
-if(itemError){
+if(!order){
 
 alert(
-"Order items load नहीं हुए:\n"+
-itemError.message
+"Bill data नहीं मिला."
 );
 
 return;
@@ -2626,123 +3483,29 @@ return;
 }
 
 
-/* MENU NAMES */
-
-let menuMap={};
-
-const menuIds=
-(items||[])
-.map(x=>x.menu_item_id)
-.filter(Boolean);
-
-if(menuIds.length){
-
-const {data:menus,error:menuError}=
-await db
-.from("menu_items")
-.select("id,name")
-.in("id",menuIds);
-
-if(menuError){
-
-alert(menuError.message);
-return;
-
-}
-
-(menus||[]).forEach(m=>{
-menuMap[m.id]=m.name;
-});
-
-}
+const table =
+await getTableNumber(
+order.table_id
+);
 
 
-/* TABLE */
-
-let tableNumber="-";
-
-if(order.table_id){
-
-const {data:table}=
-await db
-.from("restaurant_tables")
-.select("table_number")
-.eq("id",order.table_id)
-.maybeSingle();
-
-if(table){
-
-tableNumber=
-table.table_number;
-
-}
-
-}
-
-
-/* RESTAURANT */
-
-const {data:restaurant}=
-await db
-.from("restaurants")
-.select("*")
-.eq("id",restaurantId)
-.single();
-
-const restaurantName=
-restaurant?.name||
+const restaurantName =
+document.getElementById(
+"restaurantTitle"
+).innerText ||
 "Restaurant";
 
-const taxPercent=
-Number(restaurant?.tax_percent||0);
 
-const servicePercent=
-Number(
-restaurant?.service_charge_percent||0
+const win =
+window.open(
+"",
+"_blank"
 );
 
-
-/* SUBTOTAL */
-
-let subtotal=0;
-
-(items||[]).forEach(item=>{
-
-subtotal +=
-Number(item.price||0)*
-Number(item.quantity||0);
-
-});
-
-
-const tax=
-subtotal*taxPercent/100;
-
-const service=
-subtotal*servicePercent/100;
-
-const grandTotal=
-subtotal+tax+service;
-
-
-/* SAVE FINAL TOTAL */
-
-const {error:updateError}=
-await db
-.from("orders")
-.update({
-total:grandTotal,
-bill_generated:true,
-updated_at:new Date().toISOString()
-})
-.eq("id",orderId)
-.eq("restaurant_id",restaurantId);
-
-if(updateError){
+if(!win){
 
 alert(
-"Bill save नहीं हुआ:\n"+
-updateError.message
+"Popup blocked है. Browser में popup allow करो."
 );
 
 return;
@@ -2750,285 +3513,49 @@ return;
 }
 
 
-currentBillOrder={
-order,
-items:items||[],
-menuMap,
-restaurant,
-tableNumber,
-subtotal,
-tax,
-service,
-grandTotal
-};
+win.document.write(`
 
-
-renderBill(currentBillOrder);
-
-document.getElementById(
-"billModal"
-).style.display="flex";
-
-loadBilling();
-
-}
-
-
-function renderBill(bill){
-
-const r=bill.restaurant;
-
-let itemsHTML="";
-
-bill.items.forEach(item=>{
-
-const name=
-bill.menuMap[item.menu_item_id]||
-"Food Item";
-
-const qty=
-Number(item.quantity||0);
-
-const price=
-Number(item.price||0);
-
-const amount=
-qty*price;
-
-itemsHTML+=`
-
-<div class="billRow">
-
-<span>
-${esc(name)}
-× ${qty}
-</span>
-
-<strong>
-₹${amount.toFixed(2)}
-</strong>
-
-</div>
-
-`;
-
-});
-
-
-document.getElementById(
-"billContent"
-).innerHTML=`
-
-<div class="bill">
-
-<div class="billHeader">
-
-<h1>
-🍽️ ${esc(r?.name||"Restaurant")}
-</h1>
-
-<p>
-${esc(r?.address||"")}
-</p>
-
-<p>
-${esc(r?.phone||"")}
-</p>
-
-</div>
-
-<p>
-<strong>Order:</strong>
-#${String(bill.order.id).slice(0,8)}
-</p>
-
-<p>
-<strong>Table:</strong>
-${esc(bill.tableNumber)}
-</p>
-
-<p>
-<strong>Date:</strong>
-${bill.order.created_at?
-new Date(
-bill.order.created_at
-).toLocaleString():
-"-"}
-</p>
-
-<hr>
-
-<h3>Items</h3>
-
-${itemsHTML||`
-<p>No items found.</p>
-`}
-
-<div class="billRow">
-<span>Subtotal</span>
-<strong>
-₹${bill.subtotal.toFixed(2)}
-</strong>
-</div>
-
-<div class="billRow">
-<span>
-Tax (${Number(
-r?.tax_percent||0
-)}%)
-</span>
-<strong>
-₹${bill.tax.toFixed(2)}
-</strong>
-</div>
-
-<div class="billRow">
-<span>
-Service Charge (${Number(
-r?.service_charge_percent||0
-)}%)
-</span>
-<strong>
-₹${bill.service.toFixed(2)}
-</strong>
-</div>
-
-<div class="billTotal">
-
-<span>
-Grand Total
-</span>
-
-<span style="float:right">
-₹${bill.grandTotal.toFixed(2)}
-</span>
-
-</div>
-
-<p style="text-align:center;margin-top:25px">
-<strong>
-${bill.order.payment_status==="paid"?
-"✅ PAID":
-"⏳ PAYMENT PENDING"}
-</strong>
-</p>
-
-<p style="text-align:center">
-Thank you for visiting us! 🙏
-</p>
-
-</div>
-
-`;
-
-}
-
-
-async function markBillPaid(){
-
-if(!currentBillOrder)return;
-
-const id=
-currentBillOrder.order.id;
-
-const {error}=
-await db
-.from("orders")
-.update({
-payment_status:"paid",
-updated_at:new Date().toISOString()
-})
-.eq("id",id)
-.eq("restaurant_id",restaurantId);
-
-if(error){
-
-alert(error.message);
-return;
-
-}
-
-currentBillOrder.order.payment_status="paid";
-
-renderBill(currentBillOrder);
-
-loadBilling();
-
-loadDashboard();
-
-}
-
-
-function closeBill(){
-
-document.getElementById(
-"billModal"
-).style.display="none";
-
-currentBillOrder=null;
-
-}
-
-
-function printBill(){
-
-if(!currentBillOrder)return;
-
-const content=
-document.getElementById(
-"billContent"
-).innerHTML;
-
-const w=
-window.open("","_blank");
-
-if(!w){
-
-alert("Popup allow करो");
-
-return;
-
-}
-
-w.document.write(`
+<!DOCTYPE html>
 
 <html>
 
 <head>
 
-<title>Restaurant Bill</title>
+<title>
+Restaurant Bill
+</title>
 
 <style>
 
 body{
-font-family:Arial;
-padding:20px
+font-family:Arial,sans-serif;
+max-width:420px;
+margin:auto;
+padding:25px;
 }
 
-.bill{
-max-width:700px;
-margin:auto
-}
-
-.billHeader{
+h1,h2{
 text-align:center;
-border-bottom:1px solid #ddd;
-padding-bottom:15px
 }
 
-.billRow{
+.line{
+border-top:1px dashed #555;
+margin:15px 0;
+}
+
+.row{
 display:flex;
 justify-content:space-between;
-padding:7px 0;
-border-bottom:1px solid #eee
+margin:8px 0;
 }
 
-.billTotal{
-font-size:21px;
+.total{
+font-size:24px;
 font-weight:bold;
-border-top:2px solid #111;
-margin-top:12px;
-padding-top:12px
+}
+
+.center{
+text-align:center;
 }
 
 </style>
@@ -3037,12 +3564,75 @@ padding-top:12px
 
 <body>
 
-${content}
+<h1>
+${esc(restaurantName)}
+</h1>
+
+<h2>
+🧾 BILL
+</h2>
+
+<div class="line"></div>
+
+<div class="row">
+<span>Order</span>
+<strong>
+#${String(
+order.id
+).slice(0,8)}
+</strong>
+</div>
+
+<div class="row">
+<span>Table</span>
+<strong>
+${esc(table)}
+</strong>
+</div>
+
+<div class="row">
+<span>Payment</span>
+<strong>
+${esc(
+order.payment_method || "cash"
+)}
+</strong>
+</div>
+
+<div class="row">
+<span>Status</span>
+<strong>
+${esc(
+order.payment_status || "pending"
+)}
+</strong>
+</div>
+
+<div class="line"></div>
+
+<div class="row total">
+<span>Total</span>
+<span>
+₹${Number(
+order.total || 0
+).toFixed(2)}
+</span>
+</div>
+
+<div class="line"></div>
+
+<p class="center">
+Thank you for visiting! ❤️
+</p>
 
 <script>
+
 window.onload=function(){
+
 window.print();
-}
+
+};
+
 <\/script>
 
 </body>
@@ -3051,373 +3641,584 @@ window.print();
 
 `);
 
-w.document.close();
+win.document.close();
+
+
+/*
+Mark bill generated
+*/
+
+const {error} =
+await db
+.from("orders")
+.update({
+bill_generated:true
+})
+.eq(
+"id",
+orderId
+);
+
+if(error){
+
+console.log(
+"Bill generated update:",
+error.message
+);
+
+}
 
 }
 
 
-/* PAYMENTS */
+/* =====================================================
+PAYMENTS
+===================================================== */
 
 function fillPayments(data){
 
-document.getElementById("upiId").value=
-data.upi_id||"";
+document.getElementById(
+"upiId"
+).value =
+data.upi_id || "";
 
-document.getElementById("upiQR").value=
-data.upi_qr_url||"";
+document.getElementById(
+"upiQR"
+).value =
+data.upi_qr_url || "";
 
-document.getElementById("tax").value=
-data.tax_percent||0;
+document.getElementById(
+"tax"
+).value =
+data.tax_percent || 0;
 
-document.getElementById("service").value=
-data.service_charge_percent||0;
+document.getElementById(
+"service"
+).value =
+data.service_charge_percent || 0;
 
 }
 
 
 async function savePayments(){
 
-const {error}=
+const {error} =
 await db
 .from("restaurants")
 .update({
+
 upi_id:
-document.getElementById("upiId").value,
+document.getElementById(
+"upiId"
+).value,
+
 upi_qr_url:
-document.getElementById("upiQR").value,
+document.getElementById(
+"upiQR"
+).value,
+
 tax_percent:
 Number(
-document.getElementById("tax").value||0
+document.getElementById(
+"tax"
+).value || 0
 ),
+
 service_charge_percent:
 Number(
-document.getElementById("service").value||0
+document.getElementById(
+"service"
+).value || 0
 )
+
 })
-.eq("id",restaurantId);
+.eq(
+"id",
+restaurantId
+);
 
 if(error){
 
 alert(error.message);
+
 return;
 
 }
 
-alert("✅ Payment settings saved!");
+alert(
+"✅ Payment settings saved!"
+);
 
 }
 
 
-/* PROFILE */
+/* =====================================================
+PROFILE
+===================================================== */
 
 function fillProfile(data){
 
-document.getElementById("pName").value=
-data.name||"";
+document.getElementById(
+"pName"
+).value =
+data.name || "";
 
-document.getElementById("pLogo").value=
-data.logo_url||"";
+document.getElementById(
+"pLogo"
+).value =
+data.logo_url || "";
 
-document.getElementById("pCover").value=
-data.cover_url||"";
+document.getElementById(
+"pCover"
+).value =
+data.cover_url || "";
 
-document.getElementById("pAddress").value=
-data.address||"";
+document.getElementById(
+"pAddress"
+).value =
+data.address || "";
 
-document.getElementById("pPhone").value=
-data.phone||"";
+document.getElementById(
+"pPhone"
+).value =
+data.phone || "";
 
-document.getElementById("pOpen").value=
-data.opening_time||"";
+document.getElementById(
+"pOpen"
+).value =
+data.opening_time || "";
 
-document.getElementById("pClose").value=
-data.closing_time||"";
+document.getElementById(
+"pClose"
+).value =
+data.closing_time || "";
 
-document.getElementById("pAbout").value=
-data.about||"";
+document.getElementById(
+"pMaps"
+).value =
+data.maps_url || "";
+
+document.getElementById(
+"pAbout"
+).value =
+data.about || "";
 
 }
 
 
 async function loadProfile(){
 
-const {data,error}=
+const {data,error} =
 await db
 .from("restaurants")
 .select("*")
-.eq("id",restaurantId)
+.eq(
+"id",
+restaurantId
+)
 .single();
 
 if(error){
 
 console.error(error);
+
 return;
 
 }
 
-if(data)fillProfile(data);
+if(data){
+
+fillProfile(data);
+
+}
 
 }
 
 
 async function saveProfile(){
 
-const name=
-document.getElementById("pName")
-.value.trim();
+const name =
+document.getElementById(
+"pName"
+).value.trim();
+
 
 if(!name){
 
-alert("Restaurant name डालो");
+alert(
+"Restaurant name डालो."
+);
+
 return;
 
 }
 
-const {error}=
+
+const {error} =
 await db
 .from("restaurants")
 .update({
-name,
+
+name:name,
+
 logo_url:
-document.getElementById("pLogo").value,
+document.getElementById(
+"pLogo"
+).value,
+
 cover_url:
-document.getElementById("pCover").value,
+document.getElementById(
+"pCover"
+).value,
+
 address:
-document.getElementById("pAddress").value,
+document.getElementById(
+"pAddress"
+).value,
+
 phone:
-document.getElementById("pPhone").value,
+document.getElementById(
+"pPhone"
+).value,
+
 opening_time:
-document.getElementById("pOpen").value||null,
+document.getElementById(
+"pOpen"
+).value || null,
+
 closing_time:
-document.getElementById("pClose").value||null,
+document.getElementById(
+"pClose"
+).value || null,
+
+maps_url:
+document.getElementById(
+"pMaps"
+).value,
+
 about:
-document.getElementById("pAbout").value
+document.getElementById(
+"pAbout"
+).value
+
 })
-.eq("id",restaurantId);
+.eq(
+"id",
+restaurantId
+);
+
 
 if(error){
 
-alert(error.message);
+alert(
+"Profile update error:\n"+
+error.message
+);
+
 return;
 
 }
 
+
 document.getElementById(
 "restaurantTitle"
-).innerText=name;
+).innerText =
+name;
 
-alert("✅ Profile saved!");
+
+alert(
+"✅ Restaurant profile saved!"
+);
 
 }
 
 
-/* STAFF */
+/* =====================================================
+STAFF
+===================================================== */
 
 async function loadStaff(){
 
-const {data,error}=
+const {data,error} =
 await db
 .from("staff")
 .select("*")
-.eq("restaurant_id",restaurantId)
-.order("created_at",{ascending:false});
+.eq(
+"restaurant_id",
+restaurantId
+)
+.order(
+"created_at",
+{
+ascending:false
+}
+);
 
-const box=
-document.getElementById("staffList");
+const box =
+document.getElementById(
+"staffList"
+);
 
 if(error){
 
-box.innerHTML=
+box.innerHTML =
 "<p>"+esc(error.message)+"</p>";
 
 return;
 
 }
 
-if(!data||!data.length){
+if(!data?.length){
 
-box.innerHTML=
+box.innerHTML =
 "<div class='empty'>No staff added.</div>";
 
 return;
 
 }
 
-box.innerHTML="";
+box.innerHTML =
+data.map(
+s => `
 
-data.forEach(s=>{
-
-const div=
-document.createElement("div");
-
-div.className="itemCard";
-
-div.innerHTML=`
+<div class="itemCard">
 
 <h3>
-${esc(s.name||"Staff")}
+${esc(
+s.name || "Staff"
+)}
 </h3>
 
 <p>
-${esc(s.email||"")}
+${esc(s.email || "")}
 </p>
 
 <p>
 Role:
 <strong>
-${esc(s.role||"")}
+${esc(s.role || "")}
 </strong>
 </p>
 
-`;
+</div>
 
-box.appendChild(div);
-
-});
+`
+).join("");
 
 }
 
 
 async function addStaff(){
 
-const name=
-document.getElementById("staffName")
-.value.trim();
+const name =
+document.getElementById(
+"staffName"
+).value.trim();
 
-const email=
-document.getElementById("staffEmail")
-.value.trim();
+const email =
+document.getElementById(
+"staffEmail"
+).value.trim();
 
-if(!name||!email){
 
-alert("Name और email डालो");
+if(!name || !email){
+
+alert(
+"Name और email डालो."
+);
+
 return;
 
 }
 
-const {error}=
+
+const {error} =
 await db
 .from("staff")
 .insert({
-restaurant_id:restaurantId,
-name,
-email,
+
+restaurant_id:
+restaurantId,
+
+name:name,
+
+email:email,
+
 role:
-document.getElementById("staffRole").value,
+document.getElementById(
+"staffRole"
+).value,
+
 active:true
+
 });
+
 
 if(error){
 
 alert(error.message);
+
 return;
 
 }
 
-alert("✅ Staff added!");
 
-loadStaff();
+alert(
+"✅ Staff added!"
+);
+
+await loadStaff();
 
 }
 
 
-/* ANALYTICS */
+/* =====================================================
+ANALYTICS
+===================================================== */
 
 async function loadAnalytics(){
 
-const orders=await getOrders();
+const orders =
+await getOrders();
 
-const sales=
+
+const sales =
 orders.reduce(
-(a,o)=>a+Number(o.total||0),
+(a,o)=>
+a + Number(o.total || 0),
 0
 );
 
-document.getElementById("aOrders").innerText=
+
+document.getElementById(
+"aOrders"
+).innerText =
 orders.length;
 
-document.getElementById("aSales").innerText=
+
+document.getElementById(
+"aSales"
+).innerText =
 sales.toFixed(0);
 
-document.getElementById("aAverage").innerText=
-orders.length?
-(sales/orders.length).toFixed(0):
-0;
+
+document.getElementById(
+"aAverage"
+).innerText =
+orders.length
+?
+(sales/orders.length).toFixed(0)
+:
+"0";
 
 }
 
 
-/* SETTINGS */
+/* =====================================================
+SETTINGS
+===================================================== */
 
 async function saveSettings(){
 
-const time=
-Number(
-document.getElementById(
-"settingTime"
-).value||15
-);
-
-const minimum=
-Number(
-document.getElementById(
-"settingMinimum"
-).value||0
-);
-
-const isOpen=
-document.getElementById(
-"settingOpen"
-).value==="true";
-
-const {error}=
+const {error} =
 await db
 .from("restaurants")
 .update({
-default_preparation_minutes:time,
-minimum_order:minimum,
-is_open:isOpen
+
+default_preparation_minutes:
+Number(
+document.getElementById(
+"settingTime"
+).value || 15
+),
+
+minimum_order:
+Number(
+document.getElementById(
+"settingMinimum"
+).value || 0
+),
+
+is_open:
+document.getElementById(
+"settingOpen"
+).value === "true"
+
 })
-.eq("id",restaurantId);
+.eq(
+"id",
+restaurantId
+);
+
 
 if(error){
 
-alert(error.message);
+alert(
+"Settings error:\n"+
+error.message
+);
+
 return;
 
 }
 
-alert("✅ Settings saved!");
+
+alert(
+"✅ Settings saved!"
+);
 
 }
 
 
-/* MOBILE */
+/* =====================================================
+MOBILE SIDEBAR
+===================================================== */
 
 function toggleSidebar(){
 
 document
 .getElementById("sidebar")
-.classList.toggle("open");
+.classList.toggle(
+"open"
+);
 
 }
 
 
-/* ESCAPE */
+/* =====================================================
+ESCAPE HTML
+===================================================== */
 
 function esc(v){
 
-return String(v??"")
-.replace(/&/g,"&amp;")
-.replace(/</g,"&lt;")
-.replace(/>/g,"&gt;")
-.replace(/"/g,"&quot;")
-.replace(/'/g,"&#039;");
+return String(v ?? "")
+.replace(
+/&/g,
+"&amp;"
+)
+.replace(
+/</g,
+"&lt;"
+)
+.replace(
+/>/g,
+"&gt;"
+)
+.replace(
+/"/g,
+"&quot;"
+)
+.replace(
+/'/g,
+"&#039;"
+);
 
 }
 
 
-/* RUN */
+/* =====================================================
+RUN
+===================================================== */
 
 start();
 
