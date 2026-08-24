@@ -1,1289 +1,868 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Restaurant Admin</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <style>
-
-*{
-box-sizing:border-box;
-margin:0;
-padding:0;
-font-family:Arial,sans-serif;
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f5f6f8;color:#222}
+button{border:0;border-radius:8px;padding:10px 14px;cursor:pointer;font-weight:600}
+input,textarea,select{width:100%;padding:11px;border:1px solid #ddd;border-radius:8px;margin:6px 0 12px}
+textarea{min-height:90px}
+.login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.loginbox{width:100%;max-width:390px;background:#fff;padding:28px;border-radius:18px;box-shadow:0 5px 25px #0001}
+.loginbox h1{text-align:center}
+.primary{background:#111;color:#fff}
+.green{background:#198754;color:#fff}
+.red{background:#dc3545;color:#fff}
+.yellow{background:#ffc107;color:#111}
+.blue{background:#0d6efd;color:#fff}
+.top{height:64px;background:#111;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 18px;position:sticky;top:0;z-index:100}
+.topLeft{display:flex;align-items:center;gap:10px}
+.menuBtn{display:none;background:#333;color:#fff}
+.layout{display:flex;min-height:calc(100vh - 64px)}
+.sidebar{width:240px;background:#1b1b1b;padding:14px;flex-shrink:0}
+.nav{display:block;width:100%;background:transparent;color:#fff;text-align:left;margin:3px 0}
+.nav.active,.nav:hover{background:#333}
+.main{flex:1;padding:20px;overflow:auto}
+.page{display:none}.page.active{display:block}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:15px;margin-top:18px}
+.card{background:#fff;border-radius:14px;padding:18px;box-shadow:0 3px 14px #0000000d}
+.card small{color:#777}.card b{font-size:27px;display:block;margin-top:8px}
+.panel{background:#fff;border-radius:14px;padding:18px;margin-top:18px;box-shadow:0 3px 14px #0000000d}
+.panelHead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.order{border:1px solid #eee;border-radius:12px;padding:15px;margin:12px 0}
+.orderHead{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.badge{background:#eee;padding:6px 10px;border-radius:20px;font-size:12px}
+.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.time{background:#f0f6ff;padding:12px;border-radius:10px;margin-top:12px}
+.timeRow{display:flex;align-items:center;gap:7px}
+.timeRow input{max-width:100px;margin:5px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:15px}
+.tableCard,.foodCard,.itemCard{background:#fff;border-radius:14px;padding:15px;box-shadow:0 3px 14px #0000000d}
+.tableCard{text-align:center}
+.qr{display:flex;justify-content:center;margin:12px}
+.foodCard img{width:100%;height:150px;object-fit:cover;border-radius:9px}
+.foodBody{padding-top:10px}
+.empty{text-align:center;padding:30px;color:#777}
+.stat{font-size:13px;color:#666}
+@media(max-width:800px){
+.menuBtn{display:block}
+.sidebar{position:fixed;left:-250px;top:64px;bottom:0;z-index:90;transition:.2s}
+.sidebar.open{left:0}
+.main{padding:12px}
+.grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.tableCard{padding:10px}
 }
-
-body{
-background:#f5f6f8;
-color:#222;
-}
-
-header{
-background:#111;
-color:white;
-padding:18px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-header h1{
-font-size:20px;
-}
-
-.layout{
-display:flex;
-min-height:calc(100vh - 65px);
-}
-
-.sidebar{
-width:230px;
-background:white;
-padding:15px;
-border-right:1px solid #ddd;
-}
-
-.sidebar button{
-width:100%;
-padding:12px;
-margin-bottom:8px;
-border:0;
-border-radius:9px;
-text-align:left;
-background:#f1f1f1;
-cursor:pointer;
-}
-
-.content{
-flex:1;
-padding:20px;
-}
-
-.page{
-display:none;
-}
-
-.page.active{
-display:block;
-}
-
-.cards{
-display:grid;
-grid-template-columns:
-repeat(auto-fit,minmax(160px,1fr));
-gap:15px;
-margin-top:20px;
-}
-
-.card{
-background:white;
-padding:20px;
-border-radius:14px;
-box-shadow:0 2px 8px rgba(0,0,0,.06);
-}
-
-.card h3{
-font-size:14px;
-color:#777;
-margin-bottom:10px;
-}
-
-.card strong{
-font-size:25px;
-}
-
-.order{
-background:white;
-padding:18px;
-margin-top:15px;
-border-radius:14px;
-}
-
-.order-top{
-display:flex;
-justify-content:space-between;
-margin-bottom:12px;
-}
-
-.status{
-padding:7px 12px;
-border-radius:20px;
-background:#fff3cd;
-font-size:13px;
-}
-
-.actions button,
-.qr-actions button{
-padding:9px 12px;
-margin:5px 3px 0 0;
-border:0;
-border-radius:7px;
-cursor:pointer;
-}
-
-.accept{
-background:#198754;
-color:white;
-}
-
-.prepare{
-background:#ffc107;
-}
-
-.ready{
-background:#0d6efd;
-color:white;
-}
-
-.delivered{
-background:#6c757d;
-color:white;
-}
-
-.primary{
-background:#111;
-color:white;
-}
-
-.tables-grid{
-display:grid;
-grid-template-columns:
-repeat(auto-fill,minmax(190px,1fr));
-gap:18px;
-margin-top:20px;
-}
-
-.table-card{
-background:white;
-border-radius:15px;
-padding:18px;
-text-align:center;
-box-shadow:0 3px 10px rgba(0,0,0,.08);
-}
-
-.table-card h3{
-margin-bottom:10px;
-}
-
-.qr{
-display:flex;
-justify-content:center;
-margin:15px 0;
-min-height:128px;
-}
-
-.table-link{
-font-size:11px;
-word-break:break-all;
-color:#777;
-}
-
-.empty{
-padding:25px;
-background:white;
-margin-top:15px;
-border-radius:12px;
-text-align:center;
-color:#777;
-}
-
-.success{
-padding:12px;
-background:#d1e7dd;
-color:#0f5132;
-border-radius:9px;
-margin-top:15px;
-display:none;
-}
-
-@media(max-width:700px){
-
-.layout{
-flex-direction:column;
-}
-
-.sidebar{
-width:100%;
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:7px;
-}
-
-.sidebar button{
-margin:0;
-}
-
-.content{
-padding:12px;
-}
-
-}
-
 </style>
-
 </head>
 
 <body>
 
+<!-- LOGIN -->
+<div id="loginScreen" class="login">
+<div class="loginbox">
+<h1>🔐 Restaurant Admin</h1>
 
-<header>
+<label>Email</label>
+<input id="email" type="email" placeholder="Admin email">
 
-<h1>🍽️ Royal Restaurant — Admin</h1>
+<label>Password</label>
+<input id="password" type="password" placeholder="Password">
 
-<button
-class="primary"
-onclick="loadOrders()">
+<button class="primary" style="width:100%" onclick="login()">Login</button>
 
-🔄 Refresh
+<p id="loginError" style="color:red;text-align:center"></p>
+</div>
+</div>
 
-</button>
 
+<!-- APP -->
+<div id="app" style="display:none">
+
+<header class="top">
+<div class="topLeft">
+<button class="menuBtn" onclick="toggleSidebar()">☰</button>
+<h2 id="restaurantTitle">Restaurant Admin</h2>
+</div>
+
+<button class="red" onclick="logout()">Logout</button>
 </header>
 
 
 <div class="layout">
 
+<aside id="sidebar" class="sidebar">
 
-<div class="sidebar">
+<button class="nav active" onclick="page('dashboard',this)">📊 Dashboard</button>
+<button class="nav" onclick="page('orders',this)">🔔 Live Orders</button>
+<button class="nav" onclick="page('menu',this)">📋 Menu</button>
+<button class="nav" onclick="page('tables',this)">🪑 Tables + QR</button>
+<button class="nav" onclick="page('offers',this)">🎁 Offers</button>
+<button class="nav" onclick="page('waiter',this)">🔔 Waiter Calls</button>
+<button class="nav" onclick="page('complaints',this)">⚠️ Complaints</button>
+<button class="nav" onclick="page('feedback',this)">⭐ Feedback</button>
+<button class="nav" onclick="page('billing',this)">🧾 Billing</button>
+<button class="nav" onclick="page('payments',this)">💰 Payments</button>
+<button class="nav" onclick="page('profile',this)">🏪 Restaurant Profile</button>
+<button class="nav" onclick="page('staff',this)">👥 Staff</button>
+<button class="nav" onclick="page('analytics',this)">📈 Analytics</button>
+<button class="nav" onclick="page('settings',this)">⚙️ Settings</button>
 
-<button onclick="showPage('dashboard')">
-📊 Dashboard
-</button>
-
-<button onclick="showPage('orders')">
-🔔 Live Orders
-</button>
-
-<button onclick="showPage('tables')">
-🪑 Tables + QR
-</button>
-
-<button onclick="showPage('menu')">
-📋 Menu
-</button>
-
-<button onclick="showPage('offers')">
-🎁 Offers
-</button>
-
-<button onclick="showPage('complaints')">
-⚠️ Complaints
-</button>
-
-<button onclick="showPage('feedback')">
-⭐ Feedback
-</button>
-
-<button onclick="showPage('billing')">
-🧾 Billing
-</button>
-
-<button onclick="showPage('payments')">
-💰 Payments
-</button>
-
-<button onclick="showPage('staff')">
-👥 Staff
-</button>
-
-<button onclick="showPage('analytics')">
-📈 Analytics
-</button>
-
-<button onclick="showPage('settings')">
-⚙️ Settings
-</button>
-
-</div>
+</aside>
 
 
-<div class="content">
+<main class="main">
 
 
 <!-- DASHBOARD -->
+<section id="dashboard" class="page active">
 
-<section
-id="dashboard"
-class="page active">
-
-<h2>📊 Dashboard</h2>
+<h1>📊 Dashboard</h1>
 
 <div class="cards">
 
 <div class="card">
-
-<h3>Today's Orders</h3>
-
-<strong id="totalOrders">
-0
-</strong>
-
+<small>Today's Orders</small>
+<b id="dOrders">0</b>
 </div>
-
 
 <div class="card">
-
-<h3>Pending Orders</h3>
-
-<strong id="pendingOrders">
-0
-</strong>
-
+<small>Pending Orders</small>
+<b id="dPending">0</b>
 </div>
-
 
 <div class="card">
-
-<h3>Completed</h3>
-
-<strong id="completedOrders">
-0
-</strong>
-
+<small>Completed Orders</small>
+<b id="dCompleted">0</b>
 </div>
-
 
 <div class="card">
+<small>Today's Sales</small>
+<b>₹<span id="dSales">0</span></b>
+</div>
 
-<h3>Today's Sales</h3>
+<div class="card">
+<small>Active Tables</small>
+<b id="dTables">0</b>
+</div>
 
-<strong id="sales">
-₹0
-</strong>
+<div class="card">
+<small>Pending Complaints</small>
+<b id="dComplaints">0</b>
+</div>
+
+<div class="card">
+<small>Pending Waiter Calls</small>
+<b id="dWaiter">0</b>
+</div>
 
 </div>
 
+<div class="panel">
+<div class="panelHead">
+<h2>🔔 Latest Orders</h2>
+<button class="primary" onclick="loadOrders()">Refresh</button>
+</div>
+<div id="dashOrders"></div>
 </div>
 
 </section>
 
 
 <!-- ORDERS -->
+<section id="orders" class="page">
 
-<section
-id="orders"
-class="page">
+<h1>🔔 Live Order Management</h1>
 
-<h2>🔔 Live Orders</h2>
-
-<div id="ordersList">
-
-<div class="empty">
-Loading orders...
+<div class="panel">
+<div class="panelHead">
+<h2>Orders</h2>
+<button class="primary" onclick="loadOrders()">🔄 Refresh</button>
 </div>
 
+<div id="ordersList"></div>
+</div>
+
+</section>
+
+
+<!-- MENU -->
+<section id="menu" class="page">
+
+<h1>📋 Menu Management</h1>
+
+<div class="panel">
+
+<h2>➕ Add New Food</h2>
+
+<input id="foodName" placeholder="Food name">
+<input id="foodPrice" type="number" placeholder="Price">
+<input id="foodCategory" placeholder="Category">
+<input id="foodImage" placeholder="Image URL">
+<textarea id="foodDescription" placeholder="Description"></textarea>
+
+<select id="foodVeg">
+<option value="true">🥗 Veg</option>
+<option value="false">🍗 Non-Veg</option>
+</select>
+
+<button class="primary" onclick="addFood()">Add Food</button>
+
+</div>
+
+<div class="panel">
+<h2>🍽️ Menu Items</h2>
+<div id="menuList" class="grid"></div>
 </div>
 
 </section>
 
 
 <!-- TABLES -->
+<section id="tables" class="page">
 
-<section
-id="tables"
-class="page">
+<h1>🪑 Table + QR Management</h1>
 
-<h2>
-🪑 Table + QR Management
-</h2>
+<div class="panel">
 
-<p style="margin-top:8px;color:#666">
-
-हर table का अलग QR है। QR scan होने पर
-order में सही table number save होगा।
-
+<p>
+Create all restaurant tables from <b>1 to 50</b>.
+Every table gets its own QR.
 </p>
 
-
-<button
-class="primary"
-style="margin-top:15px;padding:12px;border:0;border-radius:8px;"
-onclick="createTables()">
-
-⚡ Create / Update Table 1–50
-
+<button class="primary" onclick="createTables()">
+⚡ Create Table 1–50
 </button>
 
-
-<div
-id="qrSuccess"
-class="success">
-
-Tables successfully तैयार हो गईं।
-
 </div>
 
-
-<div
-id="tablesGrid"
-class="tables-grid">
-
-<div class="empty">
-
-पहले ऊपर वाला button दबाएँ।
-
-</div>
-
-</div>
+<div id="tableList" class="grid"></div>
 
 </section>
 
 
-<!-- OTHER PAGES -->
-
-<section id="menu" class="page">
-
-<h2>📋 Menu Management</h2>
-
-<div class="empty">
-Menu module बाद में बनाया जाएगा।
-</div>
-
-</section>
-
-
+<!-- OFFERS -->
 <section id="offers" class="page">
 
-<h2>🎁 Today's Offers</h2>
+<h1>🎁 Today's Offers</h1>
 
-<div class="empty">
-Offers module बाद में बनाया जाएगा।
+<div class="panel">
+
+<input id="offerTitle" placeholder="Offer title">
+<textarea id="offerDesc" placeholder="Description"></textarea>
+<input id="offerDiscount" placeholder="Discount e.g. 20% OFF">
+<input id="offerImage" placeholder="Image URL">
+
+<button class="primary" onclick="addOffer()">➕ Add Offer</button>
+
+</div>
+
+<div class="panel">
+<div id="offerList"></div>
 </div>
 
 </section>
 
 
+<!-- WAITER -->
+<section id="waiter" class="page">
+
+<h1>🔔 Call Waiter</h1>
+
+<div class="panel">
+<div id="waiterList"></div>
+</div>
+
+</section>
+
+
+<!-- COMPLAINTS -->
 <section id="complaints" class="page">
 
-<h2>⚠️ Complaints</h2>
+<h1>⚠️ Complaints</h1>
 
-<div class="empty">
-Complaints module बाद में बनाया जाएगा।
+<div class="panel">
+<div id="complaintList"></div>
 </div>
 
 </section>
 
 
+<!-- FEEDBACK -->
 <section id="feedback" class="page">
 
-<h2>⭐ Feedback</h2>
+<h1>⭐ Feedback</h1>
 
-<div class="empty">
-Feedback module बाद में बनाया जाएगा।
+<div class="cards">
+<div class="card">
+<small>Average Rating</small>
+<b>⭐ <span id="averageRating">0</span>/5</b>
+</div>
+</div>
+
+<div class="panel">
+<div id="feedbackList"></div>
 </div>
 
 </section>
 
 
+<!-- BILLING -->
 <section id="billing" class="page">
 
-<h2>🧾 Billing</h2>
+<h1>🧾 Billing</h1>
 
-<div class="empty">
-Billing module बाद में बनाया जाएगा।
+<div class="panel">
+<div id="billingList"></div>
 </div>
 
 </section>
 
 
+<!-- PAYMENTS -->
 <section id="payments" class="page">
 
-<h2>💰 Payments</h2>
+<h1>💰 Payment Settings</h1>
 
-<div class="empty">
-Payment module बाद में बनाया जाएगा।
+<div class="panel">
+
+<label>UPI ID</label>
+<input id="upiId">
+
+<label>UPI QR Image URL</label>
+<input id="upiQR">
+
+<label>Tax Percentage</label>
+<input id="tax" type="number">
+
+<label>Service Charge Percentage</label>
+<input id="service" type="number">
+
+<button class="primary" onclick="savePayments()">💾 Save Payment Settings</button>
+
 </div>
 
 </section>
 
 
+<!-- PROFILE -->
+<section id="profile" class="page">
+
+<h1>🏪 Restaurant Profile</h1>
+
+<div class="panel">
+
+<label>Restaurant Name</label>
+<input id="pName">
+
+<label>Logo URL</label>
+<input id="pLogo">
+
+<label>Cover Image URL</label>
+<input id="pCover">
+
+<label>Address</label>
+<textarea id="pAddress"></textarea>
+
+<label>Phone</label>
+<input id="pPhone">
+
+<label>Opening Hours</label>
+<input id="pOpen">
+
+<label>Closing Hours</label>
+<input id="pClose">
+
+<label>About Restaurant</label>
+<textarea id="pAbout"></textarea>
+
+<button class="primary" onclick="saveProfile()">💾 Save Profile</button>
+
+</div>
+
+</section>
+
+
+<!-- STAFF -->
 <section id="staff" class="page">
 
-<h2>👥 Staff</h2>
+<h1>👥 Staff Accounts</h1>
 
-<div class="empty">
-Staff module बाद में बनाया जाएगा।
+<div class="panel">
+
+<input id="staffName" placeholder="Staff name">
+<input id="staffEmail" placeholder="Staff email">
+
+<select id="staffRole">
+<option value="manager">Manager</option>
+<option value="waiter">Waiter</option>
+<option value="kitchen">Kitchen</option>
+</select>
+
+<button class="primary" onclick="addStaff()">➕ Add Staff</button>
+
+</div>
+
+<div class="panel">
+<div id="staffList"></div>
 </div>
 
 </section>
 
 
+<!-- ANALYTICS -->
 <section id="analytics" class="page">
 
-<h2>📈 Analytics</h2>
+<h1>📈 Sales & Analytics</h1>
 
-<div class="empty">
-Analytics module बाद में बनाया जाएगा।
+<div class="cards">
+
+<div class="card">
+<small>Total Orders</small>
+<b id="aOrders">0</b>
+</div>
+
+<div class="card">
+<small>Total Sales</small>
+<b>₹<span id="aSales">0</span></b>
+</div>
+
+<div class="card">
+<small>Average Order</small>
+<b>₹<span id="aAverage">0</span></b>
+</div>
+
 </div>
 
 </section>
 
 
+<!-- SETTINGS -->
 <section id="settings" class="page">
 
-<h2>⚙️ Settings</h2>
+<h1>⚙️ Settings</h1>
 
-<div class="empty">
-Settings module बाद में बनाया जाएगा।
+<div class="panel">
+
+<label>Default Estimated Time</label>
+<input id="settingTime" type="number" value="15">
+
+<label>Minimum Order</label>
+<input id="settingMinimum" type="number" value="0">
+
+<label>Restaurant Status</label>
+
+<select id="settingOpen">
+<option value="true">🟢 Open</option>
+<option value="false">🔴 Closed</option>
+</select>
+
+<button class="primary" onclick="saveSettings()">💾 Save Settings</button>
+
 </div>
 
 </section>
 
-
+</main>
 </div>
-
 </div>
 
 
 <script>
 
-/* ==============================
+/* ===============================
 SUPABASE
-============================== */
+================================ */
 
 const SUPABASE_URL =
 "https://ltpjjckiaaonpetbzfvn.supabase.co";
 
-
 const SUPABASE_KEY =
-"sb_publishable_skzmVVxdVcKTQaUbwqEaIg_-KDmA-3L";
+"PASTE_YOUR_PUBLISHABLE_KEY_HERE";
 
-
-const supabaseClient =
+const db =
 window.supabase.createClient(
 SUPABASE_URL,
 SUPABASE_KEY
 );
 
-
-/* ==============================
-VARIABLES
-============================== */
-
-let restaurantId = null;
+let restaurantId=null;
+let orderChannel=null;
 
 
-/* ==============================
-CUSTOMER WEBSITE
-============================== */
+/* ===============================
+LOGIN
+================================ */
 
-const CUSTOMER_URL =
-"https://technicalayu001-cell.github.io/Restaurant-order-system1/";
+async function login(){
+
+const email=
+document.getElementById("email").value.trim();
+
+const password=
+document.getElementById("password").value;
+
+const {error}=
+await db.auth.signInWithPassword({
+email,
+password
+});
+
+if(error){
+
+document.getElementById("loginError").innerText=
+"❌ "+error.message;
+
+return;
+}
+
+location.reload();
+}
 
 
-/* ==============================
-LOAD RESTAURANT
-============================== */
+async function logout(){
+
+await db.auth.signOut();
+location.reload();
+
+}
+
+
+/* ===============================
+START
+================================ */
+
+async function start(){
+
+const {data}=
+await db.auth.getSession();
+
+if(!data.session)return;
+
+document.getElementById("loginScreen").style.display="none";
+document.getElementById("app").style.display="block";
+
+await loadRestaurant();
+await startRealtime();
+
+}
+
 
 async function loadRestaurant(){
 
-const {data,error} =
-await supabaseClient
+let {data,error}=
+await db
 .from("restaurants")
 .select("*")
 .limit(1)
 .maybeSingle();
 
-
 if(error){
-
-console.error(error);
-
+alert(error.message);
 return;
-
 }
 
+
+/* Automatically create restaurant if none exists */
 
 if(!data){
 
-return;
+const {data:newRestaurant,error:createError}=
+await db
+.from("restaurants")
+.insert({
+name:"My Restaurant"
+})
+.select()
+.single();
 
-}
-
-
-restaurantId =
-data.id;
-
-
-loadOrders();
-
-}
-
-
-/* ==============================
-CREATE TABLE 1–50
-============================== */
-
-async function createTables(){
-
-if(!restaurantId){
+if(createError){
 
 alert(
-"Restaurant अभी load नहीं हुआ।"
+"Restaurant create error: "+
+createError.message
 );
 
 return;
+}
+
+data=newRestaurant;
+
+}
+
+restaurantId=data.id;
+
+document.getElementById("restaurantTitle").innerText=
+data.name || "Restaurant Admin";
+
+fillProfile(data);
+fillPayments(data);
+
+await loadDashboard();
 
 }
 
 
-const tables=[];
+/* ===============================
+NAVIGATION
+================================ */
 
+function page(id,btn){
 
-for(
-let i=1;
-i<=50;
-i++
-){
+document.querySelectorAll(".page")
+.forEach(x=>x.classList.remove("active"));
 
-tables.push({
+document.getElementById(id).classList.add("active");
 
-restaurant_id:
-restaurantId,
+document.querySelectorAll(".nav")
+.forEach(x=>x.classList.remove("active"));
 
-table_number:
-i,
+if(btn)btn.classList.add("active");
 
-active:true
-
-});
-
-}
-
-
-/*
-ON CONFLICT तभी काम करेगा
-जब restaurant_id + table_number
-का UNIQUE constraint हो।
-*/
-
-const {error} =
-await supabaseClient
-.from("restaurant_tables")
-.upsert(
-tables,
-{
-onConflict:
-"restaurant_id,table_number"
-}
-);
-
-
-if(error){
-
-alert(
-"Tables create नहीं हुए:\n\n"+
-error.message
-);
-
-console.error(error);
-
-return;
+if(id==="dashboard")loadDashboard();
+if(id==="orders")loadOrders();
+if(id==="menu")loadMenu();
+if(id==="tables")loadTables();
+if(id==="offers")loadOffers();
+if(id==="waiter")loadWaiter();
+if(id==="complaints")loadComplaints();
+if(id==="feedback")loadFeedback();
+if(id==="billing")loadBilling();
+if(id==="profile")loadProfile();
+if(id==="staff")loadStaff();
+if(id==="analytics")loadAnalytics();
 
 }
 
 
-document
-.getElementById("qrSuccess")
-.style.display =
-"block";
+/* ===============================
+DASHBOARD
+================================ */
 
+async function getOrders(){
 
-loadTables();
-
-}
-
-
-/* ==============================
-LOAD TABLES
-============================== */
-
-async function loadTables(){
-
-if(!restaurantId){
-
-return;
-
-}
-
-
-const {data,error} =
-await supabaseClient
-.from("restaurant_tables")
+const {data,error}=
+await db
+.from("orders")
 .select("*")
-.eq(
-"restaurant_id",
-restaurantId
-)
-.order(
-"table_number",
-{
-ascending:true
-}
-);
-
+.eq("restaurant_id",restaurantId)
+.order("created_at",{ascending:false});
 
 if(error){
-
 console.error(error);
+return [];
+}
 
-document
-.getElementById("tablesGrid")
-.innerHTML = `
-
-<div class="empty">
-
-Tables load नहीं हुए।
-
-<br><br>
-
-${error.message}
-
-</div>
-
-`;
-
-return;
+return data||[];
 
 }
 
 
-renderTables(data || []);
+async function loadDashboard(){
 
-}
+const orders=await getOrders();
 
-
-/* ==============================
-RENDER QR TABLES
-============================== */
-
-function renderTables(tables){
-
-const grid =
-document.getElementById(
-"tablesGrid"
+const sales=
+orders.reduce(
+(a,o)=>a+Number(o.total||0),0
 );
 
-
-grid.innerHTML = "";
-
-
-tables.forEach(table=>{
-
-const card =
-document.createElement(
-"div"
-);
-
-
-card.className =
-"table-card";
-
-
-const qrId =
-"qr-" +
-table.table_number;
-
-
-const url =
-CUSTOMER_URL +
-"?table=" +
-table.table_number;
-
-
-card.innerHTML = `
-
-<h3>
-🪑 Table ${table.table_number}
-</h3>
-
-<div
-id="${qrId}"
-class="qr">
-</div>
-
-<div class="table-link">
-${url}
-</div>
-
-<div class="qr-actions">
-
-<button
-class="primary"
-onclick="downloadQR(
-${table.table_number}
-)">
-
-⬇️ Download QR
-
-</button>
-
-<button
-onclick="printQR(
-${table.table_number}
-)">
-
-🖨️ Print
-
-</button>
-
-</div>
-
-`;
-
-
-grid.appendChild(card);
-
-
-/* GENERATE QR */
-
-new QRCode(
-document.getElementById(qrId),
-{
-
-text:url,
-
-width:128,
-
-height:128,
-
-correctLevel:
-QRCode.CorrectLevel.H
-
-}
-);
-
-});
-
-}
-
-
-/* ==============================
-DOWNLOAD QR
-============================== */
-
-function downloadQR(tableNumber){
-
-const container =
-document.getElementById(
-"qr-" + tableNumber
-);
-
-
-const canvas =
-container.querySelector(
-"canvas"
-);
-
-
-if(!canvas){
-
-alert(
-"QR अभी तैयार नहीं हुआ।"
-);
-
-return;
-
-}
-
-
-const link =
-document.createElement(
-"a"
-);
-
-
-link.download =
-"Table-" +
-tableNumber +
-"-QR.png";
-
-
-link.href =
-canvas.toDataURL(
-"image/png"
-);
-
-
-link.click();
-
-}
-
-
-/* ==============================
-PRINT QR
-============================== */
-
-function printQR(tableNumber){
-
-const container =
-document.getElementById(
-"qr-" + tableNumber
-);
-
-
-const canvas =
-container.querySelector(
-"canvas"
-);
-
-
-if(!canvas){
-
-alert(
-"QR अभी तैयार नहीं हुआ।"
-);
-
-return;
-
-}
-
-
-const image =
-canvas.toDataURL(
-"image/png"
-);
-
-
-const win =
-window.open(
-"",
-"_blank"
-);
-
-
-win.document.write(`
-
-<html>
-
-<head>
-
-<title>
-Table ${tableNumber} QR
-</title>
-
-<style>
-
-body{
-text-align:center;
-font-family:Arial;
-padding:40px;
-}
-
-img{
-width:300px;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<h1>
-🍽️ Royal Restaurant
-</h1>
-
-<h2>
-🪑 Table ${tableNumber}
-</h2>
-
-<img src="${image}">
-
-<p>
-Scan to Order
-</p>
-
-</body>
-
-</html>
-
-`);
-
-
-win.document.close();
-
-
-setTimeout(
-()=>win.print(),
-500
+const pending=
+orders.filter(
+o=>!["delivered","cancelled"].includes(o.status)
+).length;
+
+const completed=
+orders.filter(
+o=>o.status==="delivered"
+).length;
+
+document.getElementById("dOrders").innerText=orders.length;
+document.getElementById("dPending").innerText=pending;
+document.getElementById("dCompleted").innerText=completed;
+document.getElementById("dSales").innerText=sales.toFixed(0);
+
+const {count:tables}=
+await db
+.from("restaurant_tables")
+.select("id",{count:"exact",head:true})
+.eq("restaurant_id",restaurantId)
+.eq("active",true);
+
+document.getElementById("dTables").innerText=tables||0;
+
+const {count:complaints}=
+await db
+.from("complaints")
+.select("id",{count:"exact",head:true})
+.eq("restaurant_id",restaurantId)
+.neq("status","resolved");
+
+document.getElementById("dComplaints").innerText=
+complaints||0;
+
+const {count:waiter}=
+await db
+.from("waiter_calls")
+.select("id",{count:"exact",head:true})
+.eq("restaurant_id",restaurantId)
+.eq("status","pending");
+
+document.getElementById("dWaiter").innerText=
+waiter||0;
+
+renderOrders(
+orders.slice(0,5),
+"dashOrders"
 );
 
 }
 
 
-/* ==============================
+/* ===============================
 ORDERS
-============================== */
+================================ */
 
 async function loadOrders(){
 
-if(!restaurantId){
-
-return;
-
-}
-
-
-const {data,error} =
-await supabaseClient
-.from("orders")
-.select(`
-*,
-restaurant_tables(
-table_number
-)
-`)
-.eq(
-"restaurant_id",
-restaurantId
-)
-.order(
-"created_at",
-{
-ascending:false
-}
-);
-
-
-if(error){
-
-console.error(error);
-
-return;
-
-}
-
-
-const orders =
-data || [];
-
-
-updateDashboard(
-orders
-);
-
+const orders=await getOrders();
 
 renderOrders(
-orders
-);
-
-}
-
-
-/* ==============================
-DASHBOARD
-============================== */
-
-function updateDashboard(
-orders
-){
-
-document.getElementById(
-"totalOrders"
-).innerText =
-orders.length;
-
-
-const pending =
-orders.filter(
-o =>
-o.status !== "delivered"
-).length;
-
-
-document.getElementById(
-"pendingOrders"
-).innerText =
-pending;
-
-
-const completed =
-orders.filter(
-o =>
-o.status === "delivered"
-).length;
-
-
-document.getElementById(
-"completedOrders"
-).innerText =
-completed;
-
-
-const sales =
-orders.reduce(
-(sum,o)=>
-sum +
-Number(o.total || 0),
-0
-);
-
-
-document.getElementById(
-"sales"
-).innerText =
-"₹" +
-sales.toFixed(0);
-
-}
-
-
-/* ==============================
-RENDER ORDERS
-============================== */
-
-function renderOrders(
-orders
-){
-
-const box =
-document.getElementById(
+orders,
 "ordersList"
 );
 
-
-if(orders.length===0){
-
-box.innerHTML = `
-
-<div class="empty">
-
-📭 अभी कोई order नहीं आया।
-
-</div>
-
-`;
-
-return;
-
 }
 
 
-box.innerHTML = "";
+function renderOrders(orders,target){
 
+const box=document.getElementById(target);
 
-orders.forEach(
-order=>{
+if(!orders.length){
 
-const table =
-order.restaurant_tables
-?
-order.restaurant_tables.table_number
-:
-"Unknown";
+box.innerHTML=
+"<div class='empty'>No orders yet.</div>";
 
+return;
+}
 
-const div =
-document.createElement(
-"div"
-);
+box.innerHTML="";
 
+orders.forEach(order=>{
 
-div.className =
-"order";
+const div=document.createElement("div");
 
+div.className="order";
 
-div.innerHTML = `
+div.innerHTML=`
 
-<div class="order-top">
+<div class="orderHead">
 
+<div>
 <strong>
-Order #${order.id.substring(0,8)}
+Order #${String(order.id).slice(0,8)}
 </strong>
 
-<span class="status">
-${statusText(order.status)}
+<br>
+🪑 Table ${order.table_id||"-"}
+
+<br>
+<span class="stat">
+${new Date(order.created_at).toLocaleString()}
 </span>
 
 </div>
 
+<div class="badge">
+${order.status||"new"}
+</div>
 
-<p>
-🪑 Table:
-<strong>
-${table}
-</strong>
-</p>
+</div>
 
 
-<p>
+<div style="margin-top:12px">
+
 💰 Total:
 <strong>
-₹${order.total}
+₹${Number(order.total||0).toFixed(0)}
 </strong>
-</p>
+
+<br>
+
+💳 Payment:
+${order.payment_method||"cash"}
+-
+${order.payment_status||"pending"}
+
+</div>
 
 
-<p>
-⏱️ Estimated:
+<div class="time">
+
 <strong>
-${order.estimated_minutes || 15}
-minutes
+⏱️ Estimated Preparation Time
 </strong>
-</p>
 
+<div class="timeRow">
 
-<p>
-🕐 ${
-new Date(
-order.created_at
-).toLocaleString()
-}
-</p>
+<input
+id="time-${order.id}"
+type="number"
+min="1"
+value="${order.estimated_minutes||15}"
+>
+
+<span>minutes</span>
+
+<button
+class="green"
+onclick="updateTime('${order.id}')">
+
+Update
+
+</button>
+
+</div>
+
+</div>
 
 
 <div class="actions">
 
 <button
-class="accept"
-onclick="changeStatus(
-'accepted',
-'${order.id}'
-)">
+class="green"
+onclick="status('${order.id}','accepted')">
 
 Accept
 
 </button>
 
-
 <button
-class="prepare"
-onclick="changeStatus(
-'preparing',
-'${order.id}'
-)">
+class="yellow"
+onclick="status('${order.id}','preparing')">
 
 Preparing
 
 </button>
 
-
 <button
-class="ready"
-onclick="changeStatus(
-'ready',
-'${order.id}'
-)">
+class="blue"
+onclick="status('${order.id}','ready')">
 
 Ready
 
 </button>
 
-
 <button
-class="delivered"
-onclick="changeStatus(
-'delivered',
-'${order.id}'
-)">
+class="primary"
+onclick="status('${order.id}','delivered')">
 
 Delivered
 
@@ -1293,9 +872,258 @@ Delivered
 
 `;
 
+box.appendChild(div);
 
-box.appendChild(
-div
+});
+
+}
+
+
+/* ===============================
+STATUS
+================================ */
+
+async function status(id,value){
+
+const {error}=
+await db
+.from("orders")
+.update({
+status:value,
+updated_at:new Date().toISOString()
+})
+.eq("id",id);
+
+if(error){
+alert(error.message);
+return;
+}
+
+await loadOrders();
+await loadDashboard();
+
+}
+
+
+/* ===============================
+ESTIMATED TIME
+================================ */
+
+async function updateTime(id){
+
+const value=
+Number(
+document.getElementById("time-"+id).value
+);
+
+if(!value||value<1){
+
+alert("Valid time डालो");
+return;
+
+}
+
+const {error}=
+await db
+.from("orders")
+.update({
+estimated_minutes:value,
+updated_at:new Date().toISOString()
+})
+.eq("id",id);
+
+if(error){
+
+alert(error.message);
+return;
+
+}
+
+await loadOrders();
+
+}
+
+
+/* ===============================
+REALTIME
+================================ */
+
+async function startRealtime(){
+
+if(!restaurantId)return;
+
+if(orderChannel){
+await db.removeChannel(orderChannel);
+}
+
+orderChannel=
+db
+.channel("restaurant-live-"+restaurantId)
+.on(
+"postgres_changes",
+{
+event:"*",
+schema:"public",
+table:"orders",
+filter:"restaurant_id=eq."+restaurantId
+},
+async()=>{
+await loadOrders();
+await loadDashboard();
+}
+)
+.subscribe();
+
+}
+
+
+/* ===============================
+TABLES + QR
+================================ */
+
+async function createTables(){
+
+for(let i=1;i<=50;i++){
+
+const {error}=
+await db
+.from("restaurant_tables")
+.upsert(
+{
+restaurant_id:restaurantId,
+table_number:i,
+active:true
+},
+{
+onConflict:"restaurant_id,table_number"
+}
+);
+
+if(error){
+
+console.error(
+"Table "+i,
+error
+);
+
+}
+
+}
+
+alert("✅ Table 1–50 created!");
+
+await loadTables();
+
+}
+
+
+async function loadTables(){
+
+const {data,error}=
+await db
+.from("restaurant_tables")
+.select("*")
+.eq("restaurant_id",restaurantId)
+.order("table_number");
+
+const box=
+document.getElementById("tableList");
+
+if(error){
+
+box.innerHTML=
+"<p>"+error.message+"</p>";
+
+return;
+}
+
+if(!data.length){
+
+box.innerHTML=
+"<div class='empty'>Click Create Table 1–50</div>";
+
+return;
+}
+
+box.innerHTML="";
+
+
+/*
+From:
+.../Restaurant-order-system1/admin/index.html
+
+To:
+.../Restaurant-order-system1/index.html
+*/
+
+const customerBase=
+new URL(
+"../index.html",
+window.location.href
+).href;
+
+
+data.forEach(table=>{
+
+const url=
+customerBase+
+"?table="+
+table.table_number;
+
+
+const card=
+document.createElement("div");
+
+card.className="tableCard";
+
+card.innerHTML=`
+
+<h2>
+🪑 Table ${table.table_number}
+</h2>
+
+<div
+class="qr"
+id="qr-${table.table_number}">
+</div>
+
+<div class="stat">
+Scan to Order
+</div>
+
+<br>
+
+<button
+class="primary"
+onclick="downloadQR(${table.table_number})">
+
+⬇️ Download
+
+</button>
+
+<button
+class="green"
+onclick="printQR(${table.table_number})">
+
+🖨️ Print
+
+</button>
+
+`;
+
+box.appendChild(card);
+
+
+new QRCode(
+document.getElementById(
+"qr-"+table.table_number
+),
+{
+text:url,
+width:160,
+height:160,
+correctLevel:QRCode.CorrectLevel.H
+}
 );
 
 });
@@ -1303,141 +1131,842 @@ div
 }
 
 
-/* ==============================
-STATUS TEXT
-============================== */
+function downloadQR(number){
 
-function statusText(status){
+const canvas=
+document.querySelector(
+"#qr-"+number+" canvas"
+);
 
-const map={
+if(!canvas)return;
 
-new:"🆕 New",
+const a=document.createElement("a");
 
-accepted:"✅ Accepted",
+a.download=
+"Table-"+number+"-QR.png";
 
-preparing:"👨‍🍳 Preparing",
+a.href=
+canvas.toDataURL("image/png");
 
-ready:"🔵 Ready",
-
-delivered:"🟢 Delivered"
-
-};
-
-
-return map[status] || status;
+a.click();
 
 }
 
 
-/* ==============================
-CHANGE STATUS
-============================== */
+function printQR(number){
 
-async function changeStatus(
-status,
-orderId
-){
-
-const {error} =
-await supabaseClient
-.from("orders")
-.update({
-status:status
-})
-.eq(
-"id",
-orderId
+const canvas=
+document.querySelector(
+"#qr-"+number+" canvas"
 );
 
+if(!canvas)return;
+
+const w=window.open("","_blank");
+
+w.document.write(`
+
+<html>
+<body style="text-align:center;font-family:Arial">
+
+<h1>Restaurant</h1>
+<h2>Table ${number}</h2>
+
+<img
+src="${canvas.toDataURL()}"
+style="width:300px">
+
+<h2>📱 Scan to Order</h2>
+
+<script>
+window.onload=function(){
+window.print();
+}
+<\/script>
+
+</body>
+</html>
+
+`);
+
+w.document.close();
+
+}
+
+
+/* ===============================
+MENU
+================================ */
+
+async function loadMenu(){
+
+const {data,error}=
+await db
+.from("menu_items")
+.select("*")
+.eq("restaurant_id",restaurantId)
+.order("created_at",{ascending:false});
+
+const box=
+document.getElementById("menuList");
 
 if(error){
+box.innerHTML="<p>"+error.message+"</p>";
+return;
+}
 
-alert(
-error.message
-);
+if(!data.length){
+box.innerHTML=
+"<div class='empty'>No menu items.</div>";
+return;
+}
 
+box.innerHTML="";
+
+data.forEach(item=>{
+
+const card=document.createElement("div");
+
+card.className="foodCard";
+
+card.innerHTML=`
+
+<img
+src="${item.image_url||"https://via.placeholder.com/400x250"}">
+
+<div class="foodBody">
+
+<h3>
+${esc(item.name)}
+</h3>
+
+<p>
+₹${Number(item.price||0)}
+</p>
+
+<p>
+${item.is_veg?"🥗 Veg":"🍗 Non-Veg"}
+</p>
+
+<p>
+${item.is_available?"✅ Available":"❌ Out of Stock"}
+</p>
+
+<button
+class="${item.is_available?"red":"green"}"
+onclick="toggleFood('${item.id}',${!item.is_available})">
+
+${item.is_available?"Out of Stock":"Available"}
+
+</button>
+
+</div>
+
+`;
+
+box.appendChild(card);
+
+});
+
+}
+
+
+async function addFood(){
+
+const name=
+document.getElementById("foodName").value.trim();
+
+const price=
+Number(document.getElementById("foodPrice").value);
+
+if(!name||!price){
+
+alert("Food name और price डालो");
 return;
 
 }
 
+const {error}=
+await db
+.from("menu_items")
+.insert({
+restaurant_id:restaurantId,
+name,
+price,
+category:document.getElementById("foodCategory").value,
+image_url:document.getElementById("foodImage").value,
+description:document.getElementById("foodDescription").value,
+is_veg:
+document.getElementById("foodVeg").value==="true",
+is_available:true
+});
 
-loadOrders();
+if(error){
+alert(error.message);
+return;
+}
+
+alert("✅ Food added!");
+
+document.getElementById("foodName").value="";
+document.getElementById("foodPrice").value="";
+
+loadMenu();
 
 }
 
 
-/* ==============================
-PAGE
-============================== */
+async function toggleFood(id,value){
 
-function showPage(page){
+const {error}=
+await db
+.from("menu_items")
+.update({is_available:value})
+.eq("id",id);
 
-document
-.querySelectorAll(".page")
-.forEach(
-p =>
-p.classList.remove(
-"active"
-)
+if(error)alert(error.message);
+
+loadMenu();
+
+}
+
+
+/* ===============================
+OFFERS
+================================ */
+
+async function loadOffers(){
+
+const {data,error}=
+await db
+.from("offers")
+.select("*")
+.eq("restaurant_id",restaurantId)
+.order("created_at",{ascending:false});
+
+const box=
+document.getElementById("offerList");
+
+if(error){
+box.innerHTML="<p>"+error.message+"</p>";
+return;
+}
+
+if(!data.length){
+box.innerHTML="<div class='empty'>No offers.</div>";
+return;
+}
+
+box.innerHTML="";
+
+data.forEach(o=>{
+
+const div=document.createElement("div");
+
+div.className="itemCard";
+
+div.innerHTML=`
+
+<h3>${esc(o.title)}</h3>
+
+<p>${esc(o.description||"")}</p>
+
+<p><strong>${esc(o.discount||"")}</strong></p>
+
+<p>
+${o.active?"🟢 Active":"🔴 Inactive"}
+</p>
+
+<button
+class="${o.active?"red":"green"}"
+onclick="toggleOffer('${o.id}',${!o.active})">
+
+${o.active?"Deactivate":"Activate"}
+
+</button>
+
+`;
+
+box.appendChild(div);
+
+});
+
+}
+
+
+async function addOffer(){
+
+const title=
+document.getElementById("offerTitle").value.trim();
+
+if(!title){
+
+alert("Offer title डालो");
+return;
+
+}
+
+const {error}=
+await db
+.from("offers")
+.insert({
+restaurant_id:restaurantId,
+title,
+description:
+document.getElementById("offerDesc").value,
+discount:
+document.getElementById("offerDiscount").value,
+image_url:
+document.getElementById("offerImage").value,
+active:true
+});
+
+if(error){
+alert(error.message);
+return;
+}
+
+alert("✅ Offer added!");
+loadOffers();
+
+}
+
+
+async function toggleOffer(id,value){
+
+await db
+.from("offers")
+.update({active:value})
+.eq("id",id);
+
+loadOffers();
+
+}
+
+
+/* ===============================
+WAITER
+================================ */
+
+async function loadWaiter(){
+
+const {data,error}=
+await db
+.from("waiter_calls")
+.select("*")
+.eq("restaurant_id",restaurantId)
+.order("created_at",{ascending:false});
+
+const box=document.getElementById("waiterList");
+
+if(error){
+box.innerHTML="<p>"+error.message+"</p>";
+return;
+}
+
+if(!data.length){
+box.innerHTML="<div class='empty'>No waiter calls.</div>";
+return;
+}
+
+box.innerHTML=data.map(x=>`
+
+<div class="itemCard">
+
+<h3>
+🔔 Table ${x.table_number}
+</h3>
+
+<p>${esc(x.request_type||"Waiter")}</p>
+
+<p>${new Date(x.created_at).toLocaleString()}</p>
+
+<p>Status: ${esc(x.status)}</p>
+
+<button
+class="green"
+onclick="completeWaiter('${x.id}')">
+
+Complete
+
+</button>
+
+</div>
+
+`).join("");
+
+}
+
+
+async function completeWaiter(id){
+
+await db
+.from("waiter_calls")
+.update({status:"completed"})
+.eq("id",id);
+
+loadWaiter();
+
+}
+
+
+/* ===============================
+COMPLAINTS
+================================ */
+
+async function loadComplaints(){
+
+const {data,error}=
+await db
+.from("complaints")
+.select("*")
+.eq("restaurant_id",restaurantId)
+.order("created_at",{ascending:false});
+
+const box=
+document.getElementById("complaintList");
+
+if(error){
+box.innerHTML="<p>"+error.message+"</p>";
+return;
+}
+
+if(!data.length){
+box.innerHTML="<div class='empty'>No complaints.</div>";
+return;
+}
+
+box.innerHTML=data.map(c=>`
+
+<div class="itemCard">
+
+<h3>⚠️ ${esc(c.complaint_type||"Complaint")}</h3>
+
+<p>Table: ${c.table_number||"-"}</p>
+
+<p>${esc(c.message||"")}</p>
+
+<p>Status: ${esc(c.status)}</p>
+
+<textarea
+id="reply-${c.id}"
+placeholder="Response">
+
+${esc(c.response||"")}</textarea>
+
+<button
+class="green"
+onclick="replyComplaint('${c.id}')">
+
+Save Response
+
+</button>
+
+</div>
+
+`).join("");
+
+}
+
+
+async function replyComplaint(id){
+
+const response=
+document.getElementById("reply-"+id).value;
+
+await db
+.from("complaints")
+.update({
+response,
+status:"resolved"
+})
+.eq("id",id);
+
+loadComplaints();
+
+}
+
+
+/* ===============================
+FEEDBACK
+================================ */
+
+async function loadFeedback(){
+
+const {data,error}=
+await db
+.from("feedback")
+.select("*")
+.eq("restaurant_id",restaurantId)
+.order("created_at",{ascending:false});
+
+const box=
+document.getElementById("feedbackList");
+
+if(error){
+box.innerHTML="<p>"+error.message+"</p>";
+return;
+}
+
+if(!data.length){
+box.innerHTML="<div class='empty'>No feedback yet.</div>";
+return;
+}
+
+const average=
+data.reduce((a,x)=>a+Number(x.rating||0),0)/data.length;
+
+document.getElementById("averageRating")
+.innerText=average.toFixed(1);
+
+box.innerHTML=data.map(x=>`
+
+<div class="itemCard">
+
+<h3>
+${"⭐".repeat(Number(x.rating||0))}
+</h3>
+
+<p>${esc(x.message||"")}</p>
+
+<p>
+Table ${x.table_number||"-"}
+</p>
+
+</div>
+
+`).join("");
+
+}
+
+
+/* ===============================
+BILLING
+================================ */
+
+async function loadBilling(){
+
+const orders=await getOrders();
+
+const box=
+document.getElementById("billingList");
+
+if(!orders.length){
+box.innerHTML="<div class='empty'>No bills.</div>";
+return;
+}
+
+box.innerHTML=orders.map(o=>`
+
+<div class="itemCard">
+
+<h3>
+🧾 Order #${String(o.id).slice(0,8)}
+</h3>
+
+<p>Table: ${o.table_id||"-"}</p>
+
+<p>
+Total:
+<strong>₹${Number(o.total||0).toFixed(2)}</strong>
+</p>
+
+<p>
+Payment:
+${esc(o.payment_method||"cash")}
+</p>
+
+<p>
+Status:
+${esc(o.payment_status||"pending")}
+</p>
+
+</div>
+
+`).join("");
+
+}
+
+
+/* ===============================
+PAYMENTS
+================================ */
+
+function fillPayments(data){
+
+document.getElementById("upiId").value=
+data.upi_id||"";
+
+document.getElementById("upiQR").value=
+data.upi_qr_url||"";
+
+document.getElementById("tax").value=
+data.tax_percent||0;
+
+document.getElementById("service").value=
+data.service_charge_percent||0;
+
+}
+
+
+async function savePayments(){
+
+const {error}=
+await db
+.from("restaurants")
+.update({
+upi_id:document.getElementById("upiId").value,
+upi_qr_url:document.getElementById("upiQR").value,
+tax_percent:Number(document.getElementById("tax").value||0),
+service_charge_percent:Number(document.getElementById("service").value||0)
+})
+.eq("id",restaurantId);
+
+if(error){
+alert(error.message);
+return;
+}
+
+alert("✅ Payment settings saved!");
+
+}
+
+
+/* ===============================
+PROFILE
+================================ */
+
+function fillProfile(data){
+
+document.getElementById("pName").value=data.name||"";
+document.getElementById("pLogo").value=data.logo_url||"";
+document.getElementById("pCover").value=data.cover_image_url||"";
+document.getElementById("pAddress").value=data.address||"";
+document.getElementById("pPhone").value=data.phone||"";
+document.getElementById("pOpen").value=data.opening_hours||"";
+document.getElementById("pClose").value=data.closing_hours||"";
+document.getElementById("pAbout").value=data.about||"";
+
+}
+
+
+async function loadProfile(){
+
+const {data}=
+await db
+.from("restaurants")
+.select("*")
+.eq("id",restaurantId)
+.single();
+
+if(data)fillProfile(data);
+
+}
+
+
+async function saveProfile(){
+
+const name=
+document.getElementById("pName").value.trim();
+
+const {error}=
+await db
+.from("restaurants")
+.update({
+name,
+logo_url:document.getElementById("pLogo").value,
+cover_image_url:document.getElementById("pCover").value,
+address:document.getElementById("pAddress").value,
+phone:document.getElementById("pPhone").value,
+opening_hours:document.getElementById("pOpen").value,
+closing_hours:document.getElementById("pClose").value,
+about:document.getElementById("pAbout").value
+})
+.eq("id",restaurantId);
+
+if(error){
+alert(error.message);
+return;
+}
+
+document.getElementById("restaurantTitle").innerText=name;
+
+alert("✅ Profile saved!");
+
+}
+
+
+/* ===============================
+STAFF
+================================ */
+
+async function loadStaff(){
+
+const {data,error}=
+await db
+.from("staff")
+.select("*")
+.eq("restaurant_id",restaurantId)
+.order("created_at",{ascending:false});
+
+const box=document.getElementById("staffList");
+
+if(error){
+box.innerHTML="<p>"+error.message+"</p>";
+return;
+}
+
+if(!data.length){
+box.innerHTML="<div class='empty'>No staff added.</div>";
+return;
+}
+
+box.innerHTML=data.map(s=>`
+
+<div class="itemCard">
+
+<h3>${esc(s.name||"Staff")}</h3>
+
+<p>${esc(s.email||"")}</p>
+
+<p>Role: <strong>${esc(s.role)}</strong></p>
+
+</div>
+
+`).join("");
+
+}
+
+
+async function addStaff(){
+
+const name=
+document.getElementById("staffName").value.trim();
+
+const email=
+document.getElementById("staffEmail").value.trim();
+
+if(!name||!email){
+
+alert("Name और email डालो");
+return;
+
+}
+
+const {error}=
+await db
+.from("staff")
+.insert({
+restaurant_id:restaurantId,
+name,
+email,
+role:document.getElementById("staffRole").value,
+active:true
+});
+
+if(error){
+alert(error.message);
+return;
+}
+
+alert("✅ Staff added!");
+loadStaff();
+
+}
+
+
+/* ===============================
+ANALYTICS
+================================ */
+
+async function loadAnalytics(){
+
+const orders=await getOrders();
+
+const sales=
+orders.reduce(
+(a,o)=>a+Number(o.total||0),0
 );
 
+document.getElementById("aOrders").innerText=
+orders.length;
+
+document.getElementById("aSales").innerText=
+sales.toFixed(0);
+
+document.getElementById("aAverage").innerText=
+orders.length?
+(sales/orders.length).toFixed(0):
+0;
+
+}
+
+
+/* ===============================
+SETTINGS
+================================ */
+
+async function saveSettings(){
+
+const {error}=
+await db
+.from("restaurants")
+.update({
+estimated_time:
+Number(document.getElementById("settingTime").value||15),
+
+minimum_order:
+Number(document.getElementById("settingMinimum").value||0),
+
+is_open:
+document.getElementById("settingOpen").value==="true"
+})
+.eq("id",restaurantId);
+
+if(error){
+alert(error.message);
+return;
+}
+
+alert("✅ Settings saved!");
+
+}
+
+
+/* ===============================
+MOBILE
+================================ */
+
+function toggleSidebar(){
 
 document
-.getElementById(page)
-.classList.add(
-"active"
-);
-
-
-if(page==="tables"){
-
-loadTables();
+.getElementById("sidebar")
+.classList.toggle("open");
 
 }
 
 
-if(page==="orders"){
+/* ===============================
+ESCAPE HTML
+================================ */
 
-loadOrders();
+function esc(v){
 
-}
-
-}
-
-
-/* ==============================
-REALTIME ORDERS
-============================== */
-
-supabaseClient
-.channel(
-"admin-orders"
-)
-.on(
-"postgres_changes",
-{
-
-event:"*",
-
-schema:"public",
-
-table:"orders"
-
-},
-payload=>{
-
-loadOrders();
+return String(v??"")
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
 
 }
-)
-.subscribe();
 
 
-/* ==============================
-START
-============================== */
+/* ===============================
+RUN
+================================ */
 
-loadRestaurant();
+start();
 
 </script>
 
