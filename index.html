@@ -279,6 +279,87 @@ header h1{
   color:#777;
 }
 
+/* ================= BILL ================= */
+
+.bill-box{
+  display:none;
+  background:#f8fff9;
+  border:2px solid #198754;
+}
+
+.bill-box.show{
+  display:block;
+}
+
+.bill-notice{
+  background:#fff3cd;
+  color:#664d03;
+  padding:13px;
+  border-radius:10px;
+  margin-bottom:15px;
+  font-weight:bold;
+  text-align:center;
+}
+
+.bill-row{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  padding:10px 0;
+  border-bottom:1px solid #eee;
+}
+
+.bill-total{
+  font-size:25px;
+  font-weight:bold;
+  margin-top:16px;
+  text-align:right;
+}
+
+.pay-btn{
+  width:100%;
+  background:#198754;
+  color:#fff;
+  padding:14px;
+  border-radius:10px;
+  margin-top:15px;
+  font-size:16px;
+}
+
+.pay-btn:disabled{
+  opacity:.6;
+}
+
+.notification-box{
+  display:none;
+  position:fixed;
+  left:15px;
+  right:15px;
+  bottom:20px;
+  background:#111;
+  color:#fff;
+  padding:17px;
+  border-radius:14px;
+  z-index:9999;
+  box-shadow:0 5px 25px rgba(0,0,0,.3);
+}
+
+.notification-box.show{
+  display:block;
+}
+
+.notification-box h3{
+  margin-bottom:6px;
+}
+
+.notification-box button{
+  margin-top:10px;
+  background:#fff;
+  color:#111;
+  padding:9px 15px;
+  border-radius:8px;
+}
+
 @media(max-width:600px){
 
   .container{
@@ -447,40 +528,20 @@ header h1{
 
     <div class="stars">
 
-      <button
-        class="star"
-        id="star1"
-        onclick="setRating(1)">
-        ★
-      </button>
+      <button class="star" id="star1"
+        onclick="setRating(1)">★</button>
 
-      <button
-        class="star"
-        id="star2"
-        onclick="setRating(2)">
-        ★
-      </button>
+      <button class="star" id="star2"
+        onclick="setRating(2)">★</button>
 
-      <button
-        class="star"
-        id="star3"
-        onclick="setRating(3)">
-        ★
-      </button>
+      <button class="star" id="star3"
+        onclick="setRating(3)">★</button>
 
-      <button
-        class="star"
-        id="star4"
-        onclick="setRating(4)">
-        ★
-      </button>
+      <button class="star" id="star4"
+        onclick="setRating(4)">★</button>
 
-      <button
-        class="star"
-        id="star5"
-        onclick="setRating(5)">
-        ★
-      </button>
+      <button class="star" id="star5"
+        onclick="setRating(5)">★</button>
 
     </div>
 
@@ -502,6 +563,75 @@ header h1{
 
 </div>
 
+
+<!-- ================= BILL ================= -->
+
+<div id="billBox" class="card bill-box">
+
+  <div class="bill-notice">
+    🧾 आपका Bill तैयार है!
+  </div>
+
+  <h2>🧾 Your Bill</h2>
+
+  <div style="margin-top:12px">
+
+    <div class="bill-row">
+      <span>Order</span>
+      <strong id="billOrder">-</strong>
+    </div>
+
+    <div class="bill-row">
+      <span>Table</span>
+      <strong id="billTable">-</strong>
+    </div>
+
+    <div class="bill-row">
+      <span>Payment Method</span>
+      <strong id="billPaymentMethod">-</strong>
+    </div>
+
+    <div class="bill-row">
+      <span>Payment Status</span>
+      <strong id="billPaymentStatus">Pending</strong>
+    </div>
+
+    <div class="bill-total">
+      Total: ₹<span id="billTotal">0</span>
+    </div>
+
+  </div>
+
+  <button
+    id="payButton"
+    class="pay-btn"
+    onclick="payBill()">
+
+    💳 Pay Bill
+
+  </button>
+
+</div>
+
+</div>
+
+
+<!-- CUSTOMER NOTIFICATION -->
+
+<div
+  id="customerNotification"
+  class="notification-box">
+
+  <h3 id="customerNotificationTitle">
+    🔔 Notification
+  </h3>
+
+  <div id="customerNotificationText"></div>
+
+  <button onclick="closeCustomerNotification()">
+    Close
+  </button>
+
 </div>
 
 
@@ -515,7 +645,7 @@ const SUPABASE_URL =
 "https://ltpjjckiaaonpetbzfvn.supabase.co";
 
 const SUPABASE_KEY =
-"sb_publishable_skzmVVxdVcKTQaUbwqEaIg_-KDmA-3L";
+"sb_publishable_skzmVVxdVcKTQaUbwEaIg_-KDmA-3L";
 
 const supabaseClient =
 window.supabase.createClient(
@@ -548,6 +678,10 @@ let currentOrderId = null;
 let selectedRating = 0;
 let realtimeChannel = null;
 let isPlacingOrder = false;
+
+let currentBill = null;
+
+let restaurantPaymentData = null;
 
 
 /* =========================================
@@ -582,6 +716,130 @@ function showMessage(text){
 
 
 /* =========================================
+   NOTIFICATION PERMISSION
+========================================= */
+
+async function requestNotifications(){
+
+  if(
+    !("Notification" in window)
+  ){
+
+    return;
+
+  }
+
+  if(
+    Notification.permission === "default"
+  ){
+
+    try{
+
+      await Notification.requestPermission();
+
+    }catch(error){
+
+      console.log(error);
+
+    }
+
+  }
+
+}
+
+
+/* =========================================
+   CUSTOMER NOTIFICATION
+========================================= */
+
+function sendCustomerNotification(
+  title,
+  body
+){
+
+  const notificationKey =
+    "notification-" +
+    currentOrderId +
+    "-" +
+    title;
+
+  if(
+    sessionStorage.getItem(
+      notificationKey
+    )
+  ){
+
+    return;
+
+  }
+
+  sessionStorage.setItem(
+    notificationKey,
+    "true"
+  );
+
+
+  /* In-page notification */
+
+  const box =
+    document.getElementById(
+      "customerNotification"
+    );
+
+  document.getElementById(
+    "customerNotificationTitle"
+  ).innerText =
+    title;
+
+  document.getElementById(
+    "customerNotificationText"
+  ).innerText =
+    body;
+
+  box.classList.add("show");
+
+
+  /* Browser notification */
+
+  if(
+    "Notification" in window &&
+    Notification.permission === "granted"
+  ){
+
+    try{
+
+      new Notification(
+        title,
+        {
+          body:body
+        }
+      );
+
+    }catch(error){
+
+      console.log(error);
+
+    }
+
+  }
+
+}
+
+
+function closeCustomerNotification(){
+
+  document
+    .getElementById(
+      "customerNotification"
+    )
+    .classList.remove(
+      "show"
+    );
+
+}
+
+
+/* =========================================
    LOAD RESTAURANT
 ========================================= */
 
@@ -603,6 +861,7 @@ async function loadRestaurant(){
     );
 
     return;
+
   }
 
   if(!result.data){
@@ -612,10 +871,13 @@ async function loadRestaurant(){
     );
 
     return;
+
   }
+
 
   restaurantId =
     result.data.id;
+
 
   document
     .getElementById("restaurantName")
@@ -623,11 +885,29 @@ async function loadRestaurant(){
     "🍽️ " +
     (result.data.name || "Restaurant");
 
+
+  /* Payment information */
+
+  restaurantPaymentData = {
+
+    upi_id:
+      result.data.upi_id || "",
+
+    upi_qr_url:
+      result.data.upi_qr_url || ""
+
+  };
+
+
   await loadTable();
 
+
   if(!tableId){
+
     return;
+
   }
+
 
   await loadMenu();
 
@@ -646,6 +926,7 @@ async function loadTable(){
     .getElementById("tableNumber")
     .innerText =
     tableNumber;
+
 
   const result =
     await supabaseClient
@@ -667,6 +948,7 @@ async function loadTable(){
       )
       .maybeSingle();
 
+
   if(result.error){
 
     console.error(result.error);
@@ -677,7 +959,9 @@ async function loadTable(){
       "Error";
 
     return;
+
   }
+
 
   if(!result.data){
 
@@ -691,10 +975,13 @@ async function loadTable(){
     );
 
     return;
+
   }
+
 
   tableId =
     result.data.id;
+
 
   document
     .getElementById("tableNumber")
@@ -716,6 +1003,7 @@ async function loadMenu(){
   menu.innerHTML =
     '<div class="loading">Loading menu...</div>';
 
+
   const result =
     await supabaseClient
       .from("menu_items")
@@ -735,6 +1023,7 @@ async function loadMenu(){
         }
       );
 
+
   if(result.error){
 
     console.error(result.error);
@@ -743,7 +1032,9 @@ async function loadMenu(){
       '<div class="loading">Menu load नहीं हुआ.</div>';
 
     return;
+
   }
+
 
   if(
     !result.data ||
@@ -754,9 +1045,12 @@ async function loadMenu(){
       '<div class="loading">Menu अभी खाली है.</div>';
 
     return;
+
   }
 
+
   menu.innerHTML = "";
+
 
   result.data.forEach(item => {
 
@@ -765,9 +1059,11 @@ async function loadMenu(){
 
     card.className = "food";
 
+
     const image =
       item.image_url ||
       "https://via.placeholder.com/600x400?text=Food";
+
 
     card.innerHTML = `
 
@@ -785,11 +1081,15 @@ async function loadMenu(){
         </h3>
 
         <p class="description">
-          ${escapeHTML(item.description || "")}
+          ${escapeHTML(
+            item.description || ""
+          )}
         </p>
 
         <div class="price">
-          ₹${Number(item.price || 0).toFixed(0)}
+          ₹${Number(
+            item.price || 0
+          ).toFixed(0)}
         </div>
 
         <button
@@ -801,7 +1101,9 @@ async function loadMenu(){
         </button>
 
       </div>
+
     `;
+
 
     menu.appendChild(card);
 
@@ -828,6 +1130,7 @@ async function addToCart(id){
       )
       .single();
 
+
   if(result.error){
 
     console.error(result.error);
@@ -837,12 +1140,15 @@ async function addToCart(id){
     );
 
     return;
+
   }
+
 
   const existing =
     cart.find(
       item => item.id === id
     );
+
 
   if(existing){
 
@@ -852,19 +1158,23 @@ async function addToCart(id){
 
     cart.push({
 
-      id:result.data.id,
+      id:
+        result.data.id,
 
-      name:result.data.name,
+      name:
+        result.data.name,
 
-      price:Number(
-        result.data.price
-      ),
+      price:
+        Number(
+          result.data.price
+        ),
 
       quantity:1
 
     });
 
   }
+
 
   updateCart();
 
@@ -884,6 +1194,7 @@ function updateCart(){
 
   box.innerHTML = "";
 
+
   if(cart.length === 0){
 
     box.innerHTML =
@@ -894,9 +1205,12 @@ function updateCart(){
       .innerText = "0";
 
     return;
+
   }
 
+
   let total = 0;
+
 
   cart.forEach(
     (item,index) => {
@@ -905,6 +1219,7 @@ function updateCart(){
         item.price *
         item.quantity;
 
+
       const row =
         document.createElement(
           "div"
@@ -912,6 +1227,7 @@ function updateCart(){
 
       row.className =
         "cart-item";
+
 
       row.innerHTML = `
 
@@ -947,10 +1263,12 @@ function updateCart(){
 
       `;
 
+
       box.appendChild(row);
 
     }
   );
+
 
   document
     .getElementById("total")
@@ -967,10 +1285,14 @@ function updateCart(){
 function changeQty(index,value){
 
   if(!cart[index]){
+
     return;
+
   }
 
+
   cart[index].quantity += value;
+
 
   if(cart[index].quantity <= 0){
 
@@ -980,6 +1302,7 @@ function changeQty(index,value){
     );
 
   }
+
 
   updateCart();
 
@@ -993,8 +1316,11 @@ function changeQty(index,value){
 async function placeOrder(){
 
   if(isPlacingOrder){
+
     return;
+
   }
+
 
   if(cart.length === 0){
 
@@ -1003,7 +1329,9 @@ async function placeOrder(){
     );
 
     return;
+
   }
+
 
   if(!restaurantId || !tableId){
 
@@ -1012,14 +1340,18 @@ async function placeOrder(){
     );
 
     return;
+
   }
 
+
   isPlacingOrder = true;
+
 
   const button =
     document.getElementById(
       "placeButton"
     );
+
 
   button.disabled = true;
 
@@ -1031,6 +1363,7 @@ async function placeOrder(){
 
     let total = 0;
 
+
     cart.forEach(item => {
 
       total +=
@@ -1039,8 +1372,6 @@ async function placeOrder(){
 
     });
 
-
-    /* CREATE ORDER */
 
     const orderResult =
       await supabaseClient
@@ -1087,18 +1418,6 @@ async function placeOrder(){
       orderResult.data;
 
 
-    /* =====================================
-       IMPORTANT:
-       order_items ONLY uses these columns:
-
-       order_id
-       menu_item_id
-       quantity
-       price
-
-       NO name column.
-    ===================================== */
-
     const orderItems =
       cart.map(item => ({
 
@@ -1127,10 +1446,6 @@ async function placeOrder(){
 
     if(itemResult.error){
 
-      /*
-       Delete incomplete order.
-      */
-
       await supabaseClient
         .from("orders")
         .delete()
@@ -1148,10 +1463,9 @@ async function placeOrder(){
     }
 
 
-    /* SAVE ORDER */
-
     currentOrderId =
       order.id;
+
 
     localStorage.setItem(
       "currentOrderId",
@@ -1163,7 +1477,9 @@ async function placeOrder(){
 
     updateCart();
 
+
     showOrder(order);
+
 
     subscribeToOrder(
       order.id
@@ -1178,9 +1494,11 @@ async function placeOrder(){
 
     console.error(error);
 
+
     alert(
       error.message
     );
+
 
     button.disabled = false;
 
@@ -1206,20 +1524,40 @@ function showOrder(order){
     .style.display =
     "block";
 
+
   document
     .getElementById("orderId")
     .innerText =
     String(order.id)
       .substring(0,8);
 
+
   document
     .getElementById("estimated")
     .innerText =
     order.estimated_minutes || 15;
 
+
   updateStatus(
     order.status || "new"
   );
+
+
+  /*
+   BILL GENERATED
+  */
+
+  if(
+    order.bill_generated === true
+  ){
+
+    showBill(order);
+
+  }else{
+
+    hideBill();
+
+  }
 
 }
 
@@ -1237,6 +1575,7 @@ function updateStatus(status){
     "stepDelivered"
   ];
 
+
   steps.forEach(id => {
 
     document
@@ -1247,7 +1586,9 @@ function updateStatus(status){
 
   });
 
+
   let activeIndex = 0;
+
 
   if(
     status === "new" ||
@@ -1302,6 +1643,7 @@ function updateStatus(status){
 
   }
 
+
   document
     .getElementById(
       steps[activeIndex]
@@ -1324,9 +1666,13 @@ async function loadOldOrder(){
       "currentOrderId"
     );
 
+
   if(!saved){
+
     return;
+
   }
+
 
   const result =
     await supabaseClient
@@ -1338,17 +1684,29 @@ async function loadOldOrder(){
       )
       .maybeSingle();
 
-  if(result.error || !result.data){
+
+  if(
+    result.error ||
+    !result.data
+  ){
 
     localStorage.removeItem(
       "currentOrderId"
     );
 
     return;
+
   }
+
 
   const order =
     result.data;
+
+
+  /*
+   SECURITY CHECK:
+   Same restaurant + same table only.
+  */
 
   if(
     order.restaurant_id !==
@@ -1358,12 +1716,16 @@ async function loadOldOrder(){
   ){
 
     return;
+
   }
+
 
   currentOrderId =
     order.id;
 
+
   showOrder(order);
+
 
   subscribeToOrder(
     order.id
@@ -1373,14 +1735,17 @@ async function loadOldOrder(){
 
 
 /* =========================================
-   REALTIME
+   REALTIME ORDER
 ========================================= */
 
 function subscribeToOrder(orderId){
 
   if(!orderId){
+
     return;
+
   }
+
 
   if(realtimeChannel){
 
@@ -1390,7 +1755,9 @@ function subscribeToOrder(orderId){
       );
 
     realtimeChannel = null;
+
   }
+
 
   realtimeChannel =
     supabaseClient
@@ -1414,13 +1781,233 @@ function subscribeToOrder(orderId){
             payload.new
           );
 
+
           showOrder(
             payload.new
           );
 
+
+          /*
+           BILL notification
+          */
+
+          if(
+            payload.new.bill_generated === true
+          ){
+
+            const total =
+              Number(
+                payload.new.total || 0
+              ).toFixed(2);
+
+
+            sendCustomerNotification(
+              "🧾 Bill Ready!",
+              "आपका bill तैयार है। Total ₹" +
+              total
+            );
+
+          }
+
         }
       )
       .subscribe();
+
+}
+
+
+/* =========================================
+   BILL
+========================================= */
+
+function showBill(order){
+
+  currentBill = order;
+
+
+  const box =
+    document.getElementById(
+      "billBox"
+    );
+
+
+  box.classList.add(
+    "show"
+  );
+
+
+  document.getElementById(
+    "billOrder"
+  ).innerText =
+    "#" +
+    String(
+      order.id
+    ).substring(0,8);
+
+
+  document.getElementById(
+    "billTable"
+  ).innerText =
+    tableNumber;
+
+
+  document.getElementById(
+    "billPaymentMethod"
+  ).innerText =
+    order.payment_method ||
+    "cash";
+
+
+  document.getElementById(
+    "billPaymentStatus"
+  ).innerText =
+    order.payment_status ||
+    "pending";
+
+
+  document.getElementById(
+    "billTotal"
+  ).innerText =
+    Number(
+      order.total || 0
+    ).toFixed(2);
+
+
+  /*
+   Change button if paid
+  */
+
+  const payButton =
+    document.getElementById(
+      "payButton"
+    );
+
+
+  if(
+    order.payment_status === "paid"
+  ){
+
+    payButton.innerText =
+      "✅ Payment Completed";
+
+    payButton.disabled = true;
+
+  }else{
+
+    payButton.innerText =
+      "💳 Pay Bill";
+
+    payButton.disabled = false;
+
+  }
+
+}
+
+
+function hideBill(){
+
+  document
+    .getElementById(
+      "billBox"
+    )
+    .classList.remove(
+      "show"
+    );
+
+}
+
+
+/* =========================================
+   PAY BILL
+========================================= */
+
+async function payBill(){
+
+  if(!currentBill){
+
+    alert(
+      "Bill अभी available नहीं है."
+    );
+
+    return;
+
+  }
+
+
+  if(
+    currentBill.payment_status ===
+    "paid"
+  ){
+
+    alert(
+      "यह bill पहले ही paid है."
+    );
+
+    return;
+
+  }
+
+
+  const upi =
+    restaurantPaymentData?.upi_id;
+
+
+  if(!upi){
+
+    alert(
+      "Restaurant ने UPI payment setup नहीं किया है."
+    );
+
+    return;
+
+  }
+
+
+  const amount =
+    Number(
+      currentBill.total || 0
+    ).toFixed(2);
+
+
+  const restaurantName =
+    (
+      document
+        .getElementById(
+          "restaurantName"
+        )
+        .innerText ||
+      "Restaurant"
+    )
+    .replace(
+      "🍽️ ",
+      ""
+    );
+
+
+  const note =
+    "Order " +
+    String(
+      currentBill.id
+    ).substring(0,8);
+
+
+  const upiUrl =
+    "upi://pay" +
+    "?pa=" +
+    encodeURIComponent(upi) +
+    "&pn=" +
+    encodeURIComponent(
+      restaurantName
+    ) +
+    "&am=" +
+    encodeURIComponent(amount) +
+    "&cu=INR" +
+    "&tn=" +
+    encodeURIComponent(note);
+
+
+  window.location.href =
+    upiUrl;
 
 }
 
@@ -1438,7 +2025,9 @@ async function callWaiter(){
     );
 
     return;
+
   }
+
 
   if(!tableId){
 
@@ -1447,7 +2036,9 @@ async function callWaiter(){
     );
 
     return;
+
   }
+
 
   const result =
     await supabaseClient
@@ -1481,7 +2072,9 @@ async function callWaiter(){
     );
 
     return;
+
   }
+
 
   alert(
     "🔔 Waiter को बुला दिया गया है!"
@@ -1503,12 +2096,15 @@ function toggleFeedback(){
     );
 
     return;
+
   }
+
 
   const box =
     document.getElementById(
       "feedbackBox"
     );
+
 
   box.style.display =
     box.style.display === "block"
@@ -1527,6 +2123,7 @@ function setRating(rating){
   selectedRating =
     rating;
 
+
   for(
     let i=1;
     i<=5;
@@ -1537,6 +2134,7 @@ function setRating(rating){
       document.getElementById(
         "star" + i
       );
+
 
     if(i <= rating){
 
@@ -1570,7 +2168,9 @@ async function submitFeedback(){
     );
 
     return;
+
   }
+
 
   if(!selectedRating){
 
@@ -1579,7 +2179,9 @@ async function submitFeedback(){
     );
 
     return;
+
   }
+
 
   const text =
     document
@@ -1622,11 +2224,14 @@ async function submitFeedback(){
     );
 
     return;
+
   }
+
 
   alert(
     "⭐ Thank you for your feedback!"
   );
+
 
   document
     .getElementById(
@@ -1634,7 +2239,9 @@ async function submitFeedback(){
     )
     .value = "";
 
+
   selectedRating = 0;
+
 
   for(
     let i=1;
@@ -1652,6 +2259,7 @@ async function submitFeedback(){
 
   }
 
+
   document
     .getElementById(
       "feedbackBox"
@@ -1666,7 +2274,21 @@ async function submitFeedback(){
    START
 ========================================= */
 
-loadRestaurant();
+async function start(){
+
+  /*
+   Notification permission
+  */
+
+  await requestNotifications();
+
+
+  await loadRestaurant();
+
+}
+
+
+start();
 
 </script>
 
