@@ -1,21 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0"
->
-
-<title>Restaurant Order</title>
+<title>Restaurant</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-
 *{
   box-sizing:border-box;
   margin:0;
@@ -79,10 +72,7 @@ header h1{
 
 .menu{
   display:grid;
-  grid-template-columns:repeat(
-    auto-fit,
-    minmax(220px,1fr)
-  );
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
   gap:15px;
 }
 
@@ -284,141 +274,10 @@ header h1{
   margin-top:12px;
 }
 
-.error-box{
-  display:none;
-  background:#ffe5e5;
-  border:1px solid #ffb3b3;
-  color:#a00000;
-  padding:15px;
-  border-radius:12px;
-  margin-bottom:15px;
-}
-
 .loading{
   text-align:center;
   padding:25px;
   color:#777;
-}
-
-/* BILL */
-
-.bill-box{
-  display:none;
-  background:#f8fff9;
-  border:2px solid #198754;
-}
-
-.bill-box.show{
-  display:block;
-}
-
-.bill-notice{
-  background:#fff3cd;
-  color:#664d03;
-  padding:13px;
-  border-radius:10px;
-  margin-bottom:15px;
-  font-weight:bold;
-  text-align:center;
-}
-
-.bill-row{
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  padding:10px 0;
-  border-bottom:1px solid #eee;
-}
-
-.bill-total{
-  font-size:25px;
-  font-weight:bold;
-  margin-top:16px;
-  text-align:right;
-}
-
-.pay-btn{
-  width:100%;
-  background:#198754;
-  color:white;
-  padding:14px;
-  border-radius:10px;
-  margin-top:15px;
-  font-size:16px;
-}
-
-.pay-btn:disabled{
-  opacity:.6;
-}
-
-/* NOTIFICATION */
-
-.notification-box{
-  display:none;
-  position:fixed;
-  left:15px;
-  right:15px;
-  bottom:20px;
-  background:#111;
-  color:white;
-  padding:17px;
-  border-radius:14px;
-  z-index:9999;
-  box-shadow:0 5px 25px rgba(0,0,0,.3);
-}
-
-.notification-box.show{
-  display:block;
-}
-
-.notification-box h3{
-  margin-bottom:6px;
-}
-
-.notification-box button{
-  margin-top:10px;
-  background:white;
-  color:#111;
-  padding:9px 15px;
-  border-radius:8px;
-}
-
-/* LOADING SCREEN */
-
-#loadingScreen{
-  position:fixed;
-  inset:0;
-  background:#f5f6f8;
-  z-index:10000;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  text-align:center;
-}
-
-.loading-card{
-  background:white;
-  padding:30px;
-  border-radius:18px;
-  box-shadow:0 5px 25px rgba(0,0,0,.1);
-  max-width:330px;
-  margin:20px;
-}
-
-.spinner{
-  width:42px;
-  height:42px;
-  border:4px solid #ddd;
-  border-top:4px solid #111;
-  border-radius:50%;
-  animation:spin 1s linear infinite;
-  margin:0 auto 18px;
-}
-
-@keyframes spin{
-  to{
-    transform:rotate(360deg);
-  }
 }
 
 @media(max-width:600px){
@@ -438,45 +297,19 @@ header h1{
   .actions{
     grid-template-columns:1fr;
   }
-
 }
-
 </style>
-
 </head>
-
 
 <body>
 
-
-<!-- LOADING -->
-
-<div id="loadingScreen">
-
-  <div class="loading-card">
-
-    <div class="spinner"></div>
-
-    <h3>Restaurant Loading...</h3>
-
-    <p style="margin-top:8px;color:#777">
-      Please wait
-    </p>
-
-  </div>
-
-</div>
-
-
 <header>
 
-  <h1 id="restaurantName">
-    🍽️ Restaurant
-  </h1>
+<h1 id="restaurantName">
+🍽️ Restaurant
+</h1>
 
-  <p>
-    Fresh Food • Great Taste
-  </p>
+<p>Fresh Food • Great Taste</p>
 
 </header>
 
@@ -484,55 +317,24 @@ header h1{
 <div class="container">
 
 
-<!-- ERROR -->
-
-<div id="errorBox" class="error-box">
-
-  <strong>⚠️ Something went wrong</strong>
-
-  <p
-    id="errorText"
-    style="margin-top:7px">
-  </p>
-
-  <button
-    onclick="location.reload()"
-    style="
-      margin-top:12px;
-      background:#a00000;
-      color:white;
-      padding:10px 15px;
-      border-radius:8px;
-    "
-  >
-    🔄 Retry
-
-  </button>
-
-</div>
-
-
-<!-- TABLE -->
+<!-- WELCOME -->
 
 <div class="card welcome">
 
-  <h2>
-    Welcome 👋
-  </h2>
+<h2>Welcome 👋</h2>
 
-  <p style="margin-top:7px">
-    Order directly from your table
-  </p>
+<p style="margin-top:7px">
+Order directly from your table
+</p>
 
-  <div class="table">
+<div class="table">
 
-    🪑 Table No:
+🪑 Table No:
+<strong id="tableNumber">
+Loading...
+</strong>
 
-    <strong id="tableNumber">
-      Loading...
-    </strong>
-
-  </div>
+</div>
 
 </div>
 
@@ -540,14 +342,14 @@ header h1{
 <!-- MENU -->
 
 <h2 class="section-title">
-  📋 Menu
+📋 Menu
 </h2>
 
 <div id="menu" class="menu">
 
-  <div class="loading">
-    Loading menu...
-  </div>
+<div class="loading">
+Loading menu...
+</div>
 
 </div>
 
@@ -556,491 +358,199 @@ header h1{
 
 <div class="card">
 
-  <h2>
-    🛒 Your Cart
-  </h2>
+<h2>🛒 Your Cart</h2>
 
-  <div
-    id="cartItems"
-    style="margin-top:12px"
-  >
+<div id="cartItems" style="margin-top:12px">
 
-    <p style="color:#777">
-      Your cart is empty.
-    </p>
+<p style="color:#777">
+Your cart is empty.
+</p>
 
-  </div>
+</div>
 
-  <div class="total">
+<div class="total">
+Total: ₹<span id="total">0</span>
+</div>
 
-    Total:
-    ₹<span id="total">0</span>
+<button
+id="placeButton"
+class="place"
+onclick="placeOrder()">
 
-  </div>
+📦 Place Order
 
-  <button
-    id="placeButton"
-    class="place"
-    onclick="placeOrder()"
-  >
+</button>
 
-    📦 Place Order
-
-  </button>
-
-  <div
-    id="message"
-    class="message">
-  </div>
+<div id="message" class="message"></div>
 
 </div>
 
 
 <!-- ORDER -->
 
-<div
-  id="orderBox"
-  class="card order-box"
->
+<div id="orderBox" class="card order-box">
 
-  <h2>
-    📦 My Order
-  </h2>
+<h2>📦 My Order</h2>
 
-  <div class="order-id">
+<div class="order-id">
 
-    Order:
-
-    <strong id="orderId">
-      -
-    </strong>
-
-  </div>
-
-
-  <div class="status">
-
-    <div
-      id="statusText"
-      class="status-text"
-    >
-      🆕 Order Received
-    </div>
-
-
-    <div class="steps">
-
-      <div
-        id="stepNew"
-        class="step active"
-      >
-        🆕<br>
-        Received
-      </div>
-
-      <div
-        id="stepPreparing"
-        class="step"
-      >
-        👨‍🍳<br>
-        Preparing
-      </div>
-
-      <div
-        id="stepReady"
-        class="step"
-      >
-        🔵<br>
-        Ready
-      </div>
-
-      <div
-        id="stepDelivered"
-        class="step"
-      >
-        ✅<br>
-        Delivered
-      </div>
-
-    </div>
-
-
-    <div class="time">
-
-      ⏱️ Estimated:
-
-      <span id="estimated">
-        15
-      </span>
-
-      minutes
-
-    </div>
-
-  </div>
-
-
-  <!-- CUSTOMER OPTIONS -->
-
-  <div class="actions">
-
-    <button
-      class="action-btn waiter"
-      onclick="callWaiter()"
-    >
-
-      📞 Call Waiter
-
-    </button>
-
-
-    <button
-      class="action-btn feedback"
-      onclick="toggleFeedback()"
-    >
-
-      ⭐ Feedback
-
-    </button>
-
-  </div>
-
-
-  <!-- FEEDBACK -->
-
-  <div
-    id="feedbackBox"
-    class="feedback-box"
-  >
-
-    <h3>
-      ⭐ Give Feedback
-    </h3>
-
-
-    <div class="stars">
-
-      <button
-        class="star"
-        id="star1"
-        onclick="setRating(1)"
-      >
-        ★
-      </button>
-
-      <button
-        class="star"
-        id="star2"
-        onclick="setRating(2)"
-      >
-        ★
-      </button>
-
-      <button
-        class="star"
-        id="star3"
-        onclick="setRating(3)"
-      >
-        ★
-      </button>
-
-      <button
-        class="star"
-        id="star4"
-        onclick="setRating(4)"
-      >
-        ★
-      </button>
-
-      <button
-        class="star"
-        id="star5"
-        onclick="setRating(5)"
-      >
-        ★
-      </button>
-
-    </div>
-
-
-    <textarea
-      id="feedbackText"
-      class="feedback-text"
-      placeholder="आपका feedback लिखें..."
-    ></textarea>
-
-
-    <button
-      class="submit-feedback"
-      onclick="submitFeedback()"
-    >
-
-      Submit Feedback
-
-    </button>
-
-  </div>
+Order:
+<strong id="orderId">-</strong>
 
 </div>
 
 
-<!-- BILL -->
+<div class="status">
 
-<div
-  id="billBox"
-  class="card bill-box"
->
-
-  <div class="bill-notice">
-
-    🧾 आपका Bill तैयार है!
-
-  </div>
+<div id="statusText" class="status-text">
+🆕 Order Received
+</div>
 
 
-  <h2>
-    🧾 Your Bill
-  </h2>
+<div class="steps">
+
+<div id="stepNew" class="step active">
+🆕<br>Received
+</div>
+
+<div id="stepPreparing" class="step">
+👨‍🍳<br>Preparing
+</div>
+
+<div id="stepReady" class="step">
+🔵<br>Ready
+</div>
+
+<div id="stepDelivered" class="step">
+✅<br>Delivered
+</div>
+
+</div>
 
 
-  <div style="margin-top:12px">
+<div class="time">
 
-    <div class="bill-row">
-
-      <span>
-        Order
-      </span>
-
-      <strong id="billOrder">
-        -
-      </strong>
-
-    </div>
-
-
-    <div class="bill-row">
-
-      <span>
-        Table
-      </span>
-
-      <strong id="billTable">
-        -
-      </strong>
-
-    </div>
-
-
-    <div class="bill-row">
-
-      <span>
-        Payment Method
-      </span>
-
-      <strong id="billPaymentMethod">
-        -
-      </strong>
-
-    </div>
-
-
-    <div class="bill-row">
-
-      <span>
-        Payment Status
-      </span>
-
-      <strong id="billPaymentStatus">
-        Pending
-      </strong>
-
-    </div>
-
-
-    <div class="bill-total">
-
-      Total:
-      ₹<span id="billTotal">
-        0
-      </span>
-
-    </div>
-
-  </div>
-
-
-  <button
-    id="payButton"
-    class="pay-btn"
-    onclick="payBill()"
-  >
-
-    💳 Pay Bill
-
-  </button>
+⏱️ Estimated:
+<span id="estimated">15</span>
+minutes
 
 </div>
 
 </div>
 
 
-<!-- CUSTOMER NOTIFICATION -->
+<!-- CUSTOMER OPTIONS -->
 
-<div
-  id="customerNotification"
-  class="notification-box"
->
+<div class="actions">
 
-  <h3
-    id="customerNotificationTitle"
-  >
-    🔔 Notification
-  </h3>
+<button
+class="action-btn waiter"
+onclick="callWaiter()">
 
-  <div
-    id="customerNotificationText"
-  ></div>
+📞 Call Waiter
+
+</button>
+
+<button
+class="action-btn feedback"
+onclick="toggleFeedback()">
+
+⭐ Feedback
+
+</button>
+
+</div>
 
 
-  <button
-    onclick="closeCustomerNotification()"
-  >
+<!-- FEEDBACK -->
 
-    Close
+<div id="feedbackBox" class="feedback-box">
 
-  </button>
+<h3>⭐ Give Feedback</h3>
+
+<div class="stars">
+
+<button class="star" id="star1" onclick="setRating(1)">★</button>
+
+<button class="star" id="star2" onclick="setRating(2)">★</button>
+
+<button class="star" id="star3" onclick="setRating(3)">★</button>
+
+<button class="star" id="star4" onclick="setRating(4)">★</button>
+
+<button class="star" id="star5" onclick="setRating(5)">★</button>
+
+</div>
+
+<textarea
+id="feedbackText"
+class="feedback-text"
+placeholder="आपका feedback लिखें...">
+</textarea>
+
+<button
+class="submit-feedback"
+onclick="submitFeedback()">
+
+Submit Feedback
+
+</button>
+
+</div>
+
+</div>
 
 </div>
 
 
 <script>
 
-/* =====================================================
+/* =========================================
    SUPABASE
-===================================================== */
+========================================= */
 
 const SUPABASE_URL =
 "https://ltpjjckiaaonpetbzfvn.supabase.co";
 
 const SUPABASE_KEY =
-"sb_publishable_skzmVVxdVcKTQaUbwEaIg_-KDmA-3L";
+"sb_publishable_skzmVVxdVcKTQaUbwqEaIg_-KDmA-3L";
+
+const supabaseClient =
+window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
 
-let supabaseClient = null;
-
-
-/* =====================================================
-   VARIABLES
-===================================================== */
-
-let restaurantId = null;
-
-let tableId = null;
-
-let cart = [];
-
-let currentOrderId = null;
-
-let selectedRating = 0;
-
-let realtimeChannel = null;
-
-let isPlacingOrder = false;
-
-let currentBill = null;
-
-let restaurantPaymentData = {
-  upi_id:"",
-  upi_qr_url:""
-};
-
-
-/* =====================================================
-   QR TABLE
-===================================================== */
+/* =========================================
+   QR TABLE NUMBER
+========================================= */
 
 const params =
 new URLSearchParams(
   window.location.search
 );
 
-
-let tableNumber =
-parseInt(
-  params.get("table"),
-  10
-);
+const tableNumber =
+Number(params.get("table")) || 1;
 
 
-if(
-  !Number.isFinite(tableNumber) ||
-  tableNumber <= 0
-){
+/* =========================================
+   VARIABLES
+========================================= */
 
-  tableNumber = 1;
-
-}
-
-
-/* =====================================================
-   HELPERS
-===================================================== */
-
-function hideLoading(){
-
-  const loading =
-    document.getElementById(
-      "loadingScreen"
-    );
-
-  if(loading){
-
-    loading.style.display =
-      "none";
-
-  }
-
-}
+let restaurantId = null;
+let tableId = null;
+let cart = [];
+let currentOrderId = null;
+let selectedRating = 0;
+let realtimeChannel = null;
+let isPlacingOrder = false;
 
 
-function showError(message){
-
-  console.error(message);
-
-  const box =
-    document.getElementById(
-      "errorBox"
-    );
-
-  const text =
-    document.getElementById(
-      "errorText"
-    );
-
-  text.innerText =
-    message;
-
-  box.style.display =
-    "block";
-
-}
-
-
-function showMessage(text){
-
-  const box =
-    document.getElementById(
-      "message"
-    );
-
-  box.style.display =
-    "block";
-
-  box.innerText =
-    text;
-
-}
-
+/* =========================================
+   SAFE HTML
+========================================= */
 
 function escapeHTML(value){
 
@@ -1054,482 +564,212 @@ function escapeHTML(value){
 }
 
 
-/* =====================================================
-   SUPABASE INITIALIZE
-===================================================== */
+/* =========================================
+   MESSAGE
+========================================= */
 
-function initializeSupabase(){
-
-  try{
-
-    if(
-      !window.supabase ||
-      !window.supabase.createClient
-    ){
-
-      throw new Error(
-        "Supabase library load नहीं हुई."
-      );
-
-    }
-
-
-    supabaseClient =
-      window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-      );
-
-
-    return true;
-
-  }catch(error){
-
-    showError(
-      "Supabase initialize नहीं हुआ: " +
-      error.message
-    );
-
-    return false;
-
-  }
-
-}
-
-
-/* =====================================================
-   NOTIFICATION
-===================================================== */
-
-async function requestNotifications(){
-
-  /*
-   Permission automatically page load पर
-   नहीं मांगेंगे.
-
-   इससे mobile browser में loading
-   problem नहीं होगी.
-  */
-
-}
-
-
-async function enableNotifications(){
-
-  if(
-    !("Notification" in window)
-  ){
-
-    return;
-
-  }
-
-
-  if(
-    Notification.permission ===
-    "default"
-  ){
-
-    try{
-
-      await Notification.requestPermission();
-
-    }catch(error){
-
-      console.log(error);
-
-    }
-
-  }
-
-}
-
-
-function sendCustomerNotification(
-  title,
-  body
-){
-
-  const key =
-    "notification-" +
-    currentOrderId +
-    "-" +
-    title;
-
-
-  if(
-    sessionStorage.getItem(key)
-  ){
-
-    return;
-
-  }
-
-
-  sessionStorage.setItem(
-    key,
-    "true"
-  );
-
+function showMessage(text){
 
   const box =
-    document.getElementById(
-      "customerNotification"
-    );
+  document.getElementById("message");
 
-
-  document.getElementById(
-    "customerNotificationTitle"
-  ).innerText =
-    title;
-
-
-  document.getElementById(
-    "customerNotificationText"
-  ).innerText =
-    body;
-
-
-  box.classList.add(
-    "show"
-  );
-
-
-  if(
-    "Notification" in window &&
-    Notification.permission ===
-    "granted"
-  ){
-
-    try{
-
-      new Notification(
-        title,
-        {
-          body:body
-        }
-      );
-
-    }catch(error){
-
-      console.log(error);
-
-    }
-
-  }
+  box.style.display = "block";
+  box.innerText = text;
 
 }
 
 
-function closeCustomerNotification(){
-
-  document
-    .getElementById(
-      "customerNotification"
-    )
-    .classList.remove(
-      "show"
-    );
-
-}
-
-
-/* =====================================================
+/* =========================================
    LOAD RESTAURANT
-===================================================== */
+========================================= */
 
 async function loadRestaurant(){
 
-  console.log(
-    "Loading restaurant..."
-  );
+  const {data,error} =
+  await supabaseClient
+    .from("restaurants")
+    .select("*")
+    .limit(1)
+    .maybeSingle();
 
+  if(error){
 
-  /*
-   IMPORTANT:
-   maybeSingle() नहीं लगाया गया है.
+    console.error(error);
 
-   इससे अगर restaurants table में
-   multiple rows हों तो भी customer page
-   टूटेगा नहीं.
-  */
-
-  const result =
-    await supabaseClient
-      .from("restaurants")
-      .select("*")
-      .limit(1);
-
-
-  if(result.error){
-
-    console.error(
-      "Restaurant error:",
-      result.error
+    showMessage(
+      "Restaurant load नहीं हुआ."
     );
 
-
-    showError(
-      "Restaurant load नहीं हुआ: " +
-      result.error.message
-    );
-
-    return false;
-
+    return;
   }
 
+  if(!data){
 
-  if(
-    !result.data ||
-    result.data.length === 0
-  ){
-
-    showError(
-      "restaurants table में कोई restaurant नहीं मिला."
+    showMessage(
+      "Restaurant नहीं मिला."
     );
 
-    return false;
-
+    return;
   }
 
-
-  const restaurant =
-    result.data[0];
-
-
-  restaurantId =
-    restaurant.id;
-
+  restaurantId = data.id;
 
   document
-    .getElementById(
-      "restaurantName"
-    )
+    .getElementById("restaurantName")
     .innerText =
-    "🍽️ " +
-    (
-      restaurant.name ||
-      "Restaurant"
+    "🍽️ " + (
+      data.name || "Restaurant"
     );
 
+  await loadTable();
 
-  restaurantPaymentData = {
+  if(tableId){
 
-    upi_id:
-      restaurant.upi_id ||
-      "",
+    await loadMenu();
 
-    upi_qr_url:
-      restaurant.upi_qr_url ||
-      ""
+    await loadOldOrder();
 
-  };
-
-
-  console.log(
-    "Restaurant loaded:",
-    restaurantId
-  );
-
-
-  return true;
+  }
 
 }
 
 
-/* =====================================================
+/* =========================================
    LOAD TABLE
-===================================================== */
+========================================= */
 
 async function loadTable(){
 
   document
-    .getElementById(
-      "tableNumber"
-    )
+    .getElementById("tableNumber")
     .innerText =
     tableNumber;
 
 
-  const result =
-    await supabaseClient
-      .from("restaurant_tables")
-      .select(
-        "id,table_number,active"
-      )
-      .eq(
-        "restaurant_id",
-        restaurantId
-      )
-      .eq(
-        "table_number",
-        tableNumber
-      )
-      .limit(1);
+  const {data,error} =
+  await supabaseClient
+    .from("restaurant_tables")
+    .select("id,table_number")
+    .eq(
+      "restaurant_id",
+      restaurantId
+    )
+    .eq(
+      "table_number",
+      tableNumber
+    )
+    .eq(
+      "active",
+      true
+    )
+    .maybeSingle();
 
 
-  if(result.error){
+  if(error){
 
-    console.error(
-      "Table error:",
-      result.error
-    );
+    console.error(error);
 
+    document
+      .getElementById("tableNumber")
+      .innerText =
+      "Error";
 
-    showError(
-      "Table load नहीं हुआ: " +
-      result.error.message
-    );
-
-    return false;
-
+    return;
   }
 
 
-  if(
-    !result.data ||
-    result.data.length === 0
-  ){
+  if(!data){
 
-    showError(
-      "Table " +
-      tableNumber +
-      " नहीं मिला."
+    document
+      .getElementById("tableNumber")
+      .innerText =
+      "Not Found";
+
+    showMessage(
+      "यह table active नहीं है."
     );
 
-    return false;
-
+    return;
   }
 
 
-  const table =
-    result.data[0];
-
-
-  if(table.active === false){
-
-    showError(
-      "यह table अभी active नहीं है."
-    );
-
-    return false;
-
-  }
-
-
-  tableId =
-    table.id;
-
+  tableId = data.id;
 
   document
-    .getElementById(
-      "tableNumber"
-    )
+    .getElementById("tableNumber")
     .innerText =
-    table.table_number;
-
-
-  console.log(
-    "Table loaded:",
-    tableId
-  );
-
-
-  return true;
+    data.table_number;
 
 }
 
 
-/* =====================================================
+/* =========================================
    LOAD MENU
-===================================================== */
+========================================= */
 
 async function loadMenu(){
 
   const menu =
-    document.getElementById(
-      "menu"
-    );
-
+  document.getElementById("menu");
 
   menu.innerHTML =
-    '<div class="loading">Loading menu...</div>';
+  '<div class="loading">Loading menu...</div>';
 
 
-  const result =
-    await supabaseClient
-      .from("menu_items")
-      .select("*")
-      .eq(
-        "restaurant_id",
-        restaurantId
-      )
-      .eq(
-        "is_available",
-        true
-      )
-      .order(
-        "created_at",
-        {
-          ascending:true
-        }
-      );
-
-
-  if(result.error){
-
-    console.error(
-      "Menu error:",
-      result.error
+  const {data,error} =
+  await supabaseClient
+    .from("menu_items")
+    .select("*")
+    .eq(
+      "restaurant_id",
+      restaurantId
+    )
+    .eq(
+      "is_available",
+      true
+    )
+    .order(
+      "created_at",
+      {
+        ascending:true
+      }
     );
 
+
+  if(error){
+
+    console.error(error);
 
     menu.innerHTML =
-      '<div class="loading">Menu load नहीं हुआ.</div>';
+    '<div class="loading">Menu load नहीं हुआ.</div>';
 
-
-    showError(
-      "Menu load नहीं हुआ: " +
-      result.error.message
-    );
-
-
-    return false;
-
+    return;
   }
 
 
-  if(
-    !result.data ||
-    result.data.length === 0
-  ){
+  if(!data || data.length === 0){
 
     menu.innerHTML =
-      '<div class="loading">Menu अभी खाली है.</div>';
+    '<div class="loading">Menu अभी खाली है.</div>';
 
-    return true;
-
+    return;
   }
 
 
   menu.innerHTML = "";
 
 
-  result.data.forEach(item => {
+  data.forEach(item => {
 
     const card =
-      document.createElement(
-        "div"
-      );
+    document.createElement("div");
 
-
-    card.className =
-      "food";
+    card.className = "food";
 
 
     const image =
-      item.image_url ||
-      "https://via.placeholder.com/600x400?text=Food";
+    item.image_url ||
+    "https://via.placeholder.com/600x400?text=Food";
 
 
     card.innerHTML = `
@@ -1548,100 +788,62 @@ async function loadMenu(){
         </h3>
 
         <p class="description">
-          ${escapeHTML(
-            item.description || ""
-          )}
+          ${escapeHTML(item.description || "")}
         </p>
 
         <div class="price">
-          ₹${Number(
-            item.price || 0
-          ).toFixed(0)}
+          ₹${Number(item.price || 0).toFixed(0)}
         </div>
 
         <button
           class="add"
-          onclick="addToCart('${item.id}')"
-        >
+          onclick="addToCart('${item.id}')">
 
           ➕ Add to Cart
 
         </button>
 
       </div>
-
     `;
 
 
-    menu.appendChild(
-      card
-    );
+    menu.appendChild(card);
 
   });
-
-
-  return true;
 
 }
 
 
-/* =====================================================
-   CART
-===================================================== */
+/* =========================================
+   ADD TO CART
+========================================= */
 
 async function addToCart(id){
 
-  const result =
-    await supabaseClient
-      .from("menu_items")
-      .select(
-        "id,name,price"
-      )
-      .eq(
-        "id",
-        id
-      )
-      .limit(1);
+  const {data,error} =
+  await supabaseClient
+    .from("menu_items")
+    .select("id,name,price")
+    .eq("id",id)
+    .single();
 
 
-  if(result.error){
+  if(error){
+
+    console.error(error);
 
     alert(
       "Food add नहीं हुआ."
     );
 
-    console.error(
-      result.error
-    );
-
     return;
-
   }
-
-
-  if(
-    !result.data ||
-    result.data.length === 0
-  ){
-
-    alert(
-      "Food नहीं मिला."
-    );
-
-    return;
-
-  }
-
-
-  const food =
-    result.data[0];
 
 
   const existing =
-    cart.find(
-      item =>
-        item.id === id
-    );
+  cart.find(
+    item => item.id === id
+  );
 
 
   if(existing){
@@ -1652,16 +854,11 @@ async function addToCart(id){
 
     cart.push({
 
-      id:
-        food.id,
+      id:data.id,
 
-      name:
-        food.name,
+      name:data.name,
 
-      price:
-        Number(
-          food.price || 0
-        ),
+      price:Number(data.price),
 
       quantity:1
 
@@ -1675,43 +872,14 @@ async function addToCart(id){
 }
 
 
-function changeQty(index,value){
-
-  if(!cart[index]){
-
-    return;
-
-  }
-
-
-  cart[index].quantity +=
-    value;
-
-
-  if(
-    cart[index].quantity <= 0
-  ){
-
-    cart.splice(
-      index,
-      1
-    );
-
-  }
-
-
-  updateCart();
-
-}
-
+/* =========================================
+   UPDATE CART
+========================================= */
 
 function updateCart(){
 
   const box =
-    document.getElementById(
-      "cartItems"
-    );
-
+  document.getElementById("cartItems");
 
   box.innerHTML = "";
 
@@ -1719,19 +887,13 @@ function updateCart(){
   if(cart.length === 0){
 
     box.innerHTML =
-      '<p style="color:#777">Your cart is empty.</p>';
-
+    '<p style="color:#777">Your cart is empty.</p>';
 
     document
-      .getElementById(
-        "total"
-      )
-      .innerText =
-      "0";
-
+      .getElementById("total")
+      .innerText = "0";
 
     return;
-
   }
 
 
@@ -1742,18 +904,15 @@ function updateCart(){
     (item,index) => {
 
       total +=
-        item.price *
-        item.quantity;
+      item.price *
+      item.quantity;
 
 
       const row =
-        document.createElement(
-          "div"
-        );
-
+      document.createElement("div");
 
       row.className =
-        "cart-item";
+      "cart-item";
 
 
       row.innerHTML = `
@@ -1766,15 +925,15 @@ function updateCart(){
 
           <br>
 
-          ₹${item.price.toFixed(2)}
+          ₹${item.price}
 
         </div>
+
 
         <div class="qty">
 
           <button
-            onclick="changeQty(${index},-1)"
-          >
+            onclick="changeQty(${index},-1)">
             −
           </button>
 
@@ -1783,8 +942,7 @@ function updateCart(){
           </strong>
 
           <button
-            onclick="changeQty(${index},1)"
-          >
+            onclick="changeQty(${index},1)">
             +
           </button>
 
@@ -1793,34 +951,54 @@ function updateCart(){
       `;
 
 
-      box.appendChild(
-        row
-      );
+      box.appendChild(row);
 
     }
   );
 
 
   document
-    .getElementById(
-      "total"
-    )
+    .getElementById("total")
     .innerText =
     total.toFixed(0);
 
 }
 
 
-/* =====================================================
+/* =========================================
+   CHANGE QUANTITY
+========================================= */
+
+function changeQty(index,value){
+
+  if(!cart[index]){
+    return;
+  }
+
+
+  cart[index].quantity += value;
+
+
+  if(cart[index].quantity <= 0){
+
+    cart.splice(index,1);
+
+  }
+
+
+  updateCart();
+
+}
+
+
+/* =========================================
    PLACE ORDER
-===================================================== */
+========================================= */
 
 async function placeOrder(){
 
   if(isPlacingOrder){
-
     return;
-
   }
 
 
@@ -1831,40 +1009,31 @@ async function placeOrder(){
     );
 
     return;
-
   }
 
 
-  if(
-    !restaurantId ||
-    !tableId
-  ){
+  if(!restaurantId || !tableId){
 
     alert(
       "Restaurant/Table information missing."
     );
 
     return;
-
   }
 
 
-  isPlacingOrder =
-    true;
+  isPlacingOrder = true;
 
 
   const button =
-    document.getElementById(
-      "placeButton"
-    );
+  document.getElementById(
+    "placeButton"
+  );
 
-
-  button.disabled =
-    true;
-
+  button.disabled = true;
 
   button.innerText =
-    "⏳ Placing Order...";
+  "⏳ Placing Order...";
 
 
   try{
@@ -1875,112 +1044,93 @@ async function placeOrder(){
     cart.forEach(item => {
 
       total +=
-        Number(item.price) *
-        Number(item.quantity);
+      item.price *
+      item.quantity;
 
     });
 
 
-    /*
-     ORDER CREATE
-    */
+    /* CREATE ORDER */
 
-    const orderResult =
-      await supabaseClient
-        .from("orders")
-        .insert({
+    const {
+      data:order,
+      error:orderError
+    } =
+    await supabaseClient
+      .from("orders")
+      .insert({
 
-          restaurant_id:
-            restaurantId,
+        restaurant_id:
+        restaurantId,
 
-          table_id:
-            tableId,
+        table_id:
+        tableId,
 
-          status:
-            "new",
+        status:
+        "new",
 
-          estimated_minutes:
-            15,
+        estimated_minutes:
+        15,
 
-          total:
-            total,
+        total:
+        total,
 
-          payment_method:
-            "upi",
+        payment_method:
+        "cash",
 
-          payment_status:
-            "pending"
+        payment_status:
+        "pending"
 
-        })
-        .select("*")
-        .limit(1);
+      })
+      .select()
+      .single();
 
 
-    if(orderResult.error){
+    if(orderError){
 
       throw new Error(
         "Order create नहीं हुआ: " +
-        orderResult.error.message
+        orderError.message
       );
 
     }
 
 
-    if(
-      !orderResult.data ||
-      orderResult.data.length === 0
-    ){
-
-      throw new Error(
-        "Order create हुआ लेकिन data वापस नहीं मिला."
-      );
-
-    }
-
-
-    const order =
-      orderResult.data[0];
-
-
-    /*
-     ORDER ITEMS
-    */
+    /* CREATE ORDER ITEMS */
 
     const orderItems =
-      cart.map(item => ({
+    cart.map(item => ({
 
-        order_id:
-          order.id,
+      order_id:
+      order.id,
 
-        menu_item_id:
-          item.id,
+      menu_item_id:
+      item.id,
 
-        quantity:
-          item.quantity,
+      quantity:
+      item.quantity,
 
-        price:
-          item.price
+      price:
+      item.price
 
-      }));
-
-
-    const itemResult =
-      await supabaseClient
-        .from("order_items")
-        .insert(
-          orderItems
-        );
+    }));
 
 
-    if(itemResult.error){
-
-      console.error(
-        itemResult.error
+    const {
+      error:itemError
+    } =
+    await supabaseClient
+      .from("order_items")
+      .insert(
+        orderItems
       );
 
 
+    if(itemError){
+
       /*
-       Order delete करने की कोशिश
+       If items fail, remove the empty order
+       so an incomplete order is not left behind.
       */
 
       await supabaseClient
@@ -1994,32 +1144,37 @@ async function placeOrder(){
 
       throw new Error(
         "Order items save नहीं हुए: " +
-        itemResult.error.message
+        itemError.message
       );
 
     }
 
 
+    /* SAVE CURRENT ORDER */
+
     currentOrderId =
-      order.id;
+    order.id;
 
 
     localStorage.setItem(
       "currentOrderId",
-      String(order.id)
+      order.id
     );
 
 
     cart = [];
 
-
     updateCart();
 
 
-    showOrder(
-      order
-    );
+    showOrder(order);
 
+
+    /*
+     IMPORTANT:
+     Realtime starts AFTER
+     currentOrderId exists.
+    */
 
     subscribeToOrder(
       order.id
@@ -2027,111 +1182,65 @@ async function placeOrder(){
 
 
     button.innerText =
-      "✅ Order Placed";
-
-
-    /*
-     Notification permission अब user
-     के order के बाद मांगी जाएगी.
-    */
-
-    await enableNotifications();
+    "✅ Order Placed";
 
 
   }catch(error){
 
-    console.error(
-      "PLACE ORDER ERROR:",
-      error
-    );
+    console.error(error);
 
+    alert(error.message);
 
-    alert(
-      error.message ||
-      "Order place नहीं हुआ."
-    );
-
-
-    button.disabled =
-      false;
-
+    button.disabled = false;
 
     button.innerText =
-      "📦 Place Order";
+    "📦 Place Order";
+
+    return;
 
   }
 
 
-  isPlacingOrder =
-    false;
+  isPlacingOrder = false;
 
 }
 
 
-/* =====================================================
+/* =========================================
    SHOW ORDER
-===================================================== */
+========================================= */
 
 function showOrder(order){
 
-  const box =
-    document.getElementById(
-      "orderBox"
-    );
-
-
-  box.style.display =
+  document
+    .getElementById("orderBox")
+    .style.display =
     "block";
 
 
   document
-    .getElementById(
-      "orderId"
-    )
+    .getElementById("orderId")
     .innerText =
-    String(
-      order.id
-    ).substring(
-      0,
-      8
-    );
+    String(order.id)
+      .substring(0,8);
 
 
   document
-    .getElementById(
-      "estimated"
-    )
+    .getElementById("estimated")
     .innerText =
-    order.estimated_minutes ||
-    15;
+    order.estimated_minutes || 15;
 
 
   updateStatus(
-    order.status ||
-    "new"
+    order.status || "new"
   );
-
-
-  if(
-    order.bill_generated === true
-  ){
-
-    showBill(
-      order
-    );
-
-  }else{
-
-    hideBill();
-
-  }
 
 }
 
 
-/* =====================================================
-   STATUS
-===================================================== */
+/* =========================================
+   UPDATE STATUS
+========================================= */
 
 function updateStatus(status){
 
@@ -2159,8 +1268,7 @@ function updateStatus(status){
   });
 
 
-  let activeIndex =
-    0;
+  let activeIndex = 0;
 
 
   if(
@@ -2168,65 +1276,52 @@ function updateStatus(status){
     status === "accepted"
   ){
 
-    activeIndex =
-      0;
-
+    activeIndex = 0;
 
     document
-      .getElementById(
-        "statusText"
-      )
+      .getElementById("statusText")
       .innerText =
       "🆕 Order Received";
 
   }
 
+
   else if(
     status === "preparing"
   ){
 
-    activeIndex =
-      1;
-
+    activeIndex = 1;
 
     document
-      .getElementById(
-        "statusText"
-      )
+      .getElementById("statusText")
       .innerText =
       "👨‍🍳 Order is Preparing";
 
   }
 
+
   else if(
     status === "ready"
   ){
 
-    activeIndex =
-      2;
-
+    activeIndex = 2;
 
     document
-      .getElementById(
-        "statusText"
-      )
+      .getElementById("statusText")
       .innerText =
       "🔵 Order is Ready";
 
   }
 
+
   else if(
     status === "delivered"
   ){
 
-    activeIndex =
-      3;
-
+    activeIndex = 3;
 
     document
-      .getElementById(
-        "statusText"
-      )
+      .getElementById("statusText")
       .innerText =
       "✅ Order Delivered";
 
@@ -2244,544 +1339,207 @@ function updateStatus(status){
 }
 
 
-/* =====================================================
+/* =========================================
    LOAD OLD ORDER
-===================================================== */
+========================================= */
 
 async function loadOldOrder(){
 
   const saved =
-    localStorage.getItem(
-      "currentOrderId"
-    );
+  localStorage.getItem(
+    "currentOrderId"
+  );
 
 
   if(!saved){
-
     return;
-
   }
 
 
-  const result =
-    await supabaseClient
-      .from("orders")
-      .select("*")
-      .eq(
-        "id",
-        saved
-      )
-      .limit(1);
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+    .from("orders")
+    .select("*")
+    .eq(
+      "id",
+      saved
+    )
+    .maybeSingle();
 
 
-  if(result.error){
-
-    console.error(
-      "Old order error:",
-      result.error
-    );
-
-    return;
-
-  }
-
-
-  if(
-    !result.data ||
-    result.data.length === 0
-  ){
+  if(error || !data){
 
     localStorage.removeItem(
       "currentOrderId"
     );
 
     return;
-
   }
 
 
-  const order =
-    result.data[0];
-
-
   /*
-   SECURITY CHECK
+   Make sure old order belongs
+   to this restaurant/table.
   */
 
   if(
-    String(order.restaurant_id) !==
-      String(restaurantId) ||
-    String(order.table_id) !==
-      String(tableId)
+    data.restaurant_id !==
+    restaurantId ||
+    data.table_id !==
+    tableId
   ){
 
     return;
-
   }
 
 
   currentOrderId =
-    order.id;
+  data.id;
 
 
-  showOrder(
-    order
-  );
+  showOrder(data);
 
 
   subscribeToOrder(
-    order.id
+    data.id
   );
 
 }
 
 
-/* =====================================================
+/* =========================================
    REALTIME
-===================================================== */
+========================================= */
 
 function subscribeToOrder(orderId){
 
   if(!orderId){
-
     return;
-
   }
 
 
   /*
-   पुराना channel remove
+   Remove previous channel
   */
 
   if(realtimeChannel){
 
-    try{
+    supabaseClient
+      .removeChannel(
+        realtimeChannel
+      );
 
-      supabaseClient
-        .removeChannel(
-          realtimeChannel
-        );
-
-    }catch(error){
-
-      console.log(error);
-
-    }
-
-
-    realtimeChannel =
-      null;
+    realtimeChannel = null;
 
   }
 
 
   realtimeChannel =
-    supabaseClient
-      .channel(
-        "customer-order-" +
-        String(orderId)
-      )
-      .on(
-        "postgres_changes",
-        {
-          event:"UPDATE",
-          schema:"public",
-          table:"orders",
-          filter:
-            "id=eq." +
-            String(orderId)
-        },
-        payload => {
-
-          console.log(
-            "LIVE ORDER UPDATE:",
-            payload.new
-          );
-
-
-          const oldStatus =
-            payload.old?.status;
-
-
-          const newStatus =
-            payload.new?.status;
-
-
-          showOrder(
-            payload.new
-          );
-
-
-          /*
-           STATUS NOTIFICATION
-          */
-
-          if(
-            oldStatus !==
-            newStatus
-          ){
-
-            if(
-              newStatus ===
-              "preparing"
-            ){
-
-              sendCustomerNotification(
-                "👨‍🍳 Order Preparing",
-                "आपका order अब तैयार किया जा रहा है."
-              );
-
-            }
-
-
-            if(
-              newStatus ===
-              "ready"
-            ){
-
-              sendCustomerNotification(
-                "🔵 Order Ready!",
-                "आपका order तैयार है."
-              );
-
-            }
-
-
-            if(
-              newStatus ===
-              "delivered"
-            ){
-
-              sendCustomerNotification(
-                "✅ Order Delivered",
-                "आपका order delivered हो गया है."
-              );
-
-            }
-
-          }
-
-
-          /*
-           BILL NOTIFICATION
-          */
-
-          if(
-            payload.new.bill_generated ===
-            true &&
-            payload.old?.bill_generated !==
-            true
-          ){
-
-            const total =
-              Number(
-                payload.new.total ||
-                0
-              ).toFixed(2);
-
-
-            sendCustomerNotification(
-              "🧾 Bill Ready!",
-              "आपका bill तैयार है. Total ₹" +
-              total
-            );
-
-          }
-
-        }
-      )
-      .subscribe(
-        status => {
-
-          console.log(
-            "Realtime status:",
-            status
-          );
-
-        }
-      );
-
-}
-
-
-/* =====================================================
-   BILL
-===================================================== */
-
-function showBill(order){
-
-  currentBill =
-    order;
-
-
-  document
-    .getElementById(
-      "billBox"
+  supabaseClient
+    .channel(
+      "customer-order-" +
+      orderId +
+      "-" +
+      Date.now()
     )
-    .classList.add(
-      "show"
-    );
+    .on(
+      "postgres_changes",
+      {
+        event:"UPDATE",
+        schema:"public",
+        table:"orders",
+        filter:
+        "id=eq." + orderId
+      },
+      payload => {
+
+        console.log(
+          "LIVE ORDER UPDATE",
+          payload.new
+        );
 
 
-  document
-    .getElementById(
-      "billOrder"
+        showOrder(
+          payload.new
+        );
+
+      }
     )
-    .innerText =
-    "#" +
-    String(
-      order.id
-    ).substring(
-      0,
-      8
-    );
+    .subscribe(
+      status => {
 
+        console.log(
+          "Realtime status:",
+          status
+        );
 
-  document
-    .getElementById(
-      "billTable"
-    )
-    .innerText =
-    tableNumber;
-
-
-  document
-    .getElementById(
-      "billPaymentMethod"
-    )
-    .innerText =
-    order.payment_method ||
-    "upi";
-
-
-  document
-    .getElementById(
-      "billPaymentStatus"
-    )
-    .innerText =
-    order.payment_status ||
-    "pending";
-
-
-  document
-    .getElementById(
-      "billTotal"
-    )
-    .innerText =
-    Number(
-      order.total ||
-      0
-    ).toFixed(2);
-
-
-  const payButton =
-    document.getElementById(
-      "payButton"
-    );
-
-
-  if(
-    order.payment_status ===
-    "paid"
-  ){
-
-    payButton.innerText =
-      "✅ Payment Completed";
-
-
-    payButton.disabled =
-      true;
-
-  }else{
-
-    payButton.innerText =
-      "💳 Pay Bill";
-
-
-    payButton.disabled =
-      false;
-
-  }
-
-}
-
-
-function hideBill(){
-
-  document
-    .getElementById(
-      "billBox"
-    )
-    .classList.remove(
-      "show"
+      }
     );
 
 }
 
 
-/* =====================================================
-   PAY BILL
-===================================================== */
-
-async function payBill(){
-
-  if(!currentBill){
-
-    alert(
-      "Bill अभी available नहीं है."
-    );
-
-    return;
-
-  }
-
-
-  if(
-    currentBill.payment_status ===
-    "paid"
-  ){
-
-    alert(
-      "यह bill पहले ही paid है."
-    );
-
-    return;
-
-  }
-
-
-  const upi =
-    restaurantPaymentData.upi_id;
-
-
-  if(!upi){
-
-    alert(
-      "Restaurant ने UPI payment setup नहीं किया है."
-    );
-
-    return;
-
-  }
-
-
-  const amount =
-    Number(
-      currentBill.total ||
-      0
-    ).toFixed(2);
-
-
-  const restaurantName =
-    (
-      document
-        .getElementById(
-          "restaurantName"
-        )
-        .innerText ||
-      "Restaurant"
-    )
-    .replace(
-      "🍽️ ",
-      ""
-    );
-
-
-  const note =
-    "Order " +
-    String(
-      currentBill.id
-    ).substring(
-      0,
-      8
-    );
-
-
-  const upiUrl =
-    "upi://pay" +
-    "?pa=" +
-    encodeURIComponent(
-      upi
-    ) +
-    "&pn=" +
-    encodeURIComponent(
-      restaurantName
-    ) +
-    "&am=" +
-    encodeURIComponent(
-      amount
-    ) +
-    "&cu=INR" +
-    "&tn=" +
-    encodeURIComponent(
-      note
-    );
-
-
-  /*
-   UPI APP OPEN
-  */
-
-  window.location.href =
-    upiUrl;
-
-}
-
-
-/* =====================================================
+/* =========================================
    CALL WAITER
-===================================================== */
+========================================= */
 
 async function callWaiter(){
 
-  if(
-    !restaurantId ||
-    !tableId
-  ){
+  if(!restaurantId){
 
     alert(
-      "Restaurant/Table information missing."
+      "Restaurant information missing."
     );
 
     return;
-
   }
 
 
-  const result =
-    await supabaseClient
-      .from("waiter_calls")
-      .insert({
-
-        restaurant_id:
-          restaurantId,
-
-        table_number:
-          tableNumber,
-
-        request_type:
-          "Waiter",
-
-        status:
-          "pending"
-
-      });
-
-
-  if(result.error){
-
-    console.error(
-      result.error
-    );
-
+  if(!tableId){
 
     alert(
-      "Waiter request नहीं भेजा गया:\n" +
-      result.error.message
+      "Table information missing."
     );
 
     return;
+  }
 
+
+  const {
+    error
+  } =
+  await supabaseClient
+    .from("waiter_calls")
+    .insert({
+
+      restaurant_id:
+      restaurantId,
+
+      table_number:
+      tableNumber,
+
+      request_type:
+      "Waiter",
+
+      status:
+      "pending"
+
+    });
+
+
+  if(error){
+
+    console.error(error);
+
+    alert(
+      "Waiter request नहीं भेजा गया:\n" +
+      error.message
+    );
+
+    return;
   }
 
 
@@ -2792,9 +1550,9 @@ async function callWaiter(){
 }
 
 
-/* =====================================================
+/* =========================================
    FEEDBACK
-===================================================== */
+========================================= */
 
 function toggleFeedback(){
 
@@ -2805,29 +1563,36 @@ function toggleFeedback(){
     );
 
     return;
-
   }
 
 
   const box =
-    document.getElementById(
-      "feedbackBox"
-    );
+  document.getElementById(
+    "feedbackBox"
+  );
 
 
-  box.style.display =
-    box.style.display ===
-    "block"
-      ? "none"
-      : "block";
+  if(box.style.display === "block"){
+
+    box.style.display = "none";
+
+  }else{
+
+    box.style.display = "block";
+
+  }
 
 }
 
 
+/* =========================================
+   RATING
+========================================= */
+
 function setRating(rating){
 
   selectedRating =
-    rating;
+  rating;
 
 
   for(
@@ -2837,14 +1602,12 @@ function setRating(rating){
   ){
 
     const star =
-      document.getElementById(
-        "star" + i
-      );
+    document.getElementById(
+      "star" + i
+    );
 
 
-    if(
-      i <= rating
-    ){
+    if(i <= rating){
 
       star.classList.add(
         "selected"
@@ -2863,9 +1626,9 @@ function setRating(rating){
 }
 
 
-/* =====================================================
-   SUBMIT FEEDBACK
-===================================================== */
+/* =========================================
+   FEEDBACK SUBMIT
+========================================= */
 
 async function submitFeedback(){
 
@@ -2876,7 +1639,6 @@ async function submitFeedback(){
     );
 
     return;
-
   }
 
 
@@ -2887,53 +1649,57 @@ async function submitFeedback(){
     );
 
     return;
-
   }
 
 
   const text =
-    document
-      .getElementById(
-        "feedbackText"
-      )
-      .value
-      .trim();
+  document
+    .getElementById(
+      "feedbackText"
+    )
+    .value
+    .trim();
 
 
-  const result =
-    await supabaseClient
-      .from("feedback")
-      .insert({
+  /*
+   Feedback table may have
+   different columns in your database.
+   We use only the most common
+   fields here.
+  */
 
-        restaurant_id:
-          restaurantId,
+  const {
+    error
+  } =
+  await supabaseClient
+    .from("feedback")
+    .insert({
 
-        order_id:
-          currentOrderId,
+      restaurant_id:
+      restaurantId,
 
-        rating:
-          selectedRating,
+      order_id:
+      currentOrderId,
 
-        message:
-          text
+      rating:
+      selectedRating,
 
-      });
+      message:
+      text
+
+    });
 
 
-  if(result.error){
+  if(error){
 
-    console.error(
-      result.error
-    );
-
+    console.error(error);
 
     alert(
       "Feedback submit नहीं हुआ:\n" +
-      result.error.message
+      error.message
     );
 
     return;
-
   }
 
 
@@ -2946,12 +1712,10 @@ async function submitFeedback(){
     .getElementById(
       "feedbackText"
     )
-    .value =
-    "";
+    .value = "";
 
 
-  selectedRating =
-    0;
+  selectedRating = 0;
 
 
   for(
@@ -2981,135 +1745,13 @@ async function submitFeedback(){
 }
 
 
-/* =====================================================
+/* =========================================
    START
-===================================================== */
+========================================= */
 
-async function start(){
-
-  try{
-
-    /*
-     Step 1
-    */
-
-    if(
-      !initializeSupabase()
-    ){
-
-      hideLoading();
-
-      return;
-
-    }
-
-
-    /*
-     Step 2
-    */
-
-    const restaurantOK =
-      await loadRestaurant();
-
-
-    if(!restaurantOK){
-
-      hideLoading();
-
-      return;
-
-    }
-
-
-    /*
-     Step 3
-    */
-
-    const tableOK =
-      await loadTable();
-
-
-    if(!tableOK){
-
-      hideLoading();
-
-      return;
-
-    }
-
-
-    /*
-     Step 4
-    */
-
-    await loadMenu();
-
-
-    /*
-     Step 5
-    */
-
-    await loadOldOrder();
-
-
-    /*
-     FINISHED
-    */
-
-    hideLoading();
-
-
-    console.log(
-      "Customer page loaded successfully."
-    );
-
-
-  }catch(error){
-
-    console.error(
-      "START ERROR:",
-      error
-    );
-
-
-    showError(
-      "Page load error: " +
-      (
-        error.message ||
-        "Unknown error"
-      )
-    );
-
-
-    hideLoading();
-
-  }
-
-}
-
-
-/* =====================================================
-   PAGE START
-===================================================== */
-
-if(
-  document.readyState ===
-  "loading"
-){
-
-  document.addEventListener(
-    "DOMContentLoaded",
-    start
-  );
-
-}else{
-
-  start();
-
-}
+loadRestaurant();
 
 </script>
 
 </body>
-
 </html>
