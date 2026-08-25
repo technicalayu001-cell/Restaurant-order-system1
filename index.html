@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Restaurant Customer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Restaurant Menu</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -279,6 +280,8 @@ header h1{
   color:#777;
 }
 
+/* BILL */
+
 .bill-box{
   display:none;
   background:#f8fff9;
@@ -358,14 +361,34 @@ header h1{
   border-radius:8px;
 }
 
-.error-box{
+/* ERROR */
+
+#errorScreen{
   display:none;
+  margin:20px 15px;
+  padding:20px;
   background:#ffe5e5;
-  color:#9b0000;
-  padding:15px;
-  border-radius:12px;
-  margin-bottom:18px;
-  line-height:1.5;
+  border:1px solid #ff7777;
+  border-radius:14px;
+  color:#900;
+}
+
+#errorScreen h3{
+  margin-bottom:10px;
+}
+
+#errorDetails{
+  margin-top:10px;
+  font-size:13px;
+  word-break:break-word;
+}
+
+.retry{
+  margin-top:15px;
+  background:#111;
+  color:white;
+  padding:12px 20px;
+  border-radius:9px;
 }
 
 @media(max-width:600px){
@@ -382,9 +405,6 @@ header h1{
     grid-template-columns:1fr;
   }
 
-  .steps{
-    font-size:10px;
-  }
 }
 </style>
 </head>
@@ -392,13 +412,41 @@ header h1{
 <body>
 
 <header>
-  <h1 id="restaurantName">🍽️ Restaurant</h1>
-  <p>Fresh Food • Great Taste</p>
+
+  <h1 id="restaurantName">
+    🍽️ Restaurant
+  </h1>
+
+  <p>
+    Fresh Food • Great Taste
+  </p>
+
 </header>
+
+
+<div id="errorScreen">
+
+  <h3>⚠️ Something went wrong</h3>
+
+  <div id="errorDetails">
+    Restaurant load नहीं हुआ.
+  </div>
+
+  <button
+    class="retry"
+    onclick="start()">
+
+    🔄 Try Again
+
+  </button>
+
+</div>
+
 
 <div class="container">
 
-<div id="errorBox" class="error-box"></div>
+
+<!-- TABLE -->
 
 <div class="card welcome">
 
@@ -409,32 +457,56 @@ header h1{
   </p>
 
   <div class="table">
+
     🪑 Table No:
-    <strong id="tableNumber">Loading...</strong>
+
+    <strong id="tableNumber">
+      Loading...
+    </strong>
+
   </div>
 
 </div>
 
-<h2 class="section-title">📋 Menu</h2>
+
+<!-- MENU -->
+
+<h2 class="section-title">
+  📋 Menu
+</h2>
 
 <div id="menu" class="menu">
+
   <div class="loading">
     Loading menu...
   </div>
+
 </div>
+
+
+<!-- CART -->
 
 <div class="card">
 
-  <h2>🛒 Your Cart</h2>
+  <h2>
+    🛒 Your Cart
+  </h2>
 
-  <div id="cartItems" style="margin-top:12px">
+  <div
+    id="cartItems"
+    style="margin-top:12px">
+
     <p style="color:#777">
       Your cart is empty.
     </p>
+
   </div>
 
   <div class="total">
-    Total: ₹<span id="total">0</span>
+
+    Total: ₹
+    <span id="total">0</span>
+
   </div>
 
   <button
@@ -446,52 +518,102 @@ header h1{
 
   </button>
 
-  <div id="message" class="message"></div>
+  <div
+    id="message"
+    class="message">
+  </div>
 
 </div>
 
-<div id="orderBox" class="card order-box">
 
-  <h2>📦 My Order</h2>
+<!-- ORDER -->
+
+<div
+  id="orderBox"
+  class="card order-box">
+
+  <h2>
+    📦 My Order
+  </h2>
 
   <div class="order-id">
+
     Order:
-    <strong id="orderId">-</strong>
+
+    <strong id="orderId">
+      -
+    </strong>
+
   </div>
 
   <div class="status">
 
-    <div id="statusText" class="status-text">
+    <div
+      id="statusText"
+      class="status-text">
+
       🆕 Order Received
+
     </div>
+
 
     <div class="steps">
 
-      <div id="stepNew" class="step active">
-        🆕<br>Received
+      <div
+        id="stepNew"
+        class="step active">
+
+        🆕<br>
+        Received
+
       </div>
 
-      <div id="stepPreparing" class="step">
-        👨‍🍳<br>Preparing
+      <div
+        id="stepPreparing"
+        class="step">
+
+        👨‍🍳<br>
+        Preparing
+
       </div>
 
-      <div id="stepReady" class="step">
-        🔵<br>Ready
+      <div
+        id="stepReady"
+        class="step">
+
+        🔵<br>
+        Ready
+
       </div>
 
-      <div id="stepDelivered" class="step">
-        ✅<br>Delivered
+      <div
+        id="stepDelivered"
+        class="step">
+
+        ✅<br>
+        Delivered
+
       </div>
 
     </div>
 
+
     <div class="time">
+
       ⏱️ Estimated:
-      <span id="estimated">15</span>
+
+      <span id="estimated">
+        15
+      </span>
+
       minutes
+
     </div>
 
   </div>
+
+
+  <!-- ACTIONS -->
 
   <div class="actions">
 
@@ -513,33 +635,63 @@ header h1{
 
   </div>
 
-  <div id="feedbackBox" class="feedback-box">
 
-    <h3>⭐ Give Feedback</h3>
+  <!-- FEEDBACK -->
+
+  <div
+    id="feedbackBox"
+    class="feedback-box">
+
+    <h3>
+      ⭐ Give Feedback
+    </h3>
 
     <div class="stars">
 
-      <button class="star" id="star1"
-        onclick="setRating(1)">★</button>
+      <button
+        class="star"
+        id="star1"
+        onclick="setRating(1)">
+        ★
+      </button>
 
-      <button class="star" id="star2"
-        onclick="setRating(2)">★</button>
+      <button
+        class="star"
+        id="star2"
+        onclick="setRating(2)">
+        ★
+      </button>
 
-      <button class="star" id="star3"
-        onclick="setRating(3)">★</button>
+      <button
+        class="star"
+        id="star3"
+        onclick="setRating(3)">
+        ★
+      </button>
 
-      <button class="star" id="star4"
-        onclick="setRating(4)">★</button>
+      <button
+        class="star"
+        id="star4"
+        onclick="setRating(4)">
+        ★
+      </button>
 
-      <button class="star" id="star5"
-        onclick="setRating(5)">★</button>
+      <button
+        class="star"
+        id="star5"
+        onclick="setRating(5)">
+        ★
+      </button>
 
     </div>
+
 
     <textarea
       id="feedbackText"
       class="feedback-text"
-      placeholder="आपका feedback लिखें..."></textarea>
+      placeholder="आपका feedback लिखें...">
+    </textarea>
+
 
     <button
       class="submit-feedback"
@@ -553,41 +705,81 @@ header h1{
 
 </div>
 
-<div id="billBox" class="card bill-box">
+
+<!-- BILL -->
+
+<div
+  id="billBox"
+  class="card bill-box">
 
   <div class="bill-notice">
+
     🧾 आपका Bill तैयार है!
+
   </div>
 
-  <h2>🧾 Your Bill</h2>
+  <h2>
+    🧾 Your Bill
+  </h2>
+
 
   <div style="margin-top:12px">
 
     <div class="bill-row">
+
       <span>Order</span>
-      <strong id="billOrder">-</strong>
+
+      <strong id="billOrder">
+        -
+      </strong>
+
     </div>
 
+
     <div class="bill-row">
+
       <span>Table</span>
-      <strong id="billTable">-</strong>
+
+      <strong id="billTable">
+        -
+      </strong>
+
     </div>
 
+
     <div class="bill-row">
+
       <span>Payment Method</span>
-      <strong id="billPaymentMethod">-</strong>
+
+      <strong id="billPaymentMethod">
+        -
+      </strong>
+
     </div>
 
+
     <div class="bill-row">
+
       <span>Payment Status</span>
-      <strong id="billPaymentStatus">Pending</strong>
+
+      <strong id="billPaymentStatus">
+        Pending
+      </strong>
+
     </div>
+
 
     <div class="bill-total">
-      Total: ₹<span id="billTotal">0</span>
+
+      Total: ₹
+      <span id="billTotal">
+        0
+      </span>
+
     </div>
 
   </div>
+
 
   <button
     id="payButton"
@@ -602,17 +794,25 @@ header h1{
 
 </div>
 
-<div id="customerNotification"
-     class="notification-box">
+
+<!-- NOTIFICATION -->
+
+<div
+  id="customerNotification"
+  class="notification-box">
 
   <h3 id="customerNotificationTitle">
     🔔 Notification
   </h3>
 
-  <div id="customerNotificationText"></div>
+  <div id="customerNotificationText">
+  </div>
 
-  <button onclick="closeCustomerNotification()">
+  <button
+    onclick="closeCustomerNotification()">
+
     Close
+
   </button>
 
 </div>
@@ -621,8 +821,12 @@ header h1{
 <script>
 
 /* =========================================
-   SUPABASE CONNECTION
+   SUPABASE
 ========================================= */
+
+/*
+ EXACT DETAILS PROVIDED BY YOU
+*/
 
 const SUPABASE_URL =
 "https://ltpjjckiaaonpetbzfvn.supabase.co";
@@ -630,39 +834,56 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
 "sb_publishable_skzmVVxdVcKTQaUbwqEaIg_-KDmA-3L";
 
-let supabaseClient;
 
-try{
-
-  supabaseClient =
-    window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    );
-
-}catch(error){
-
-  showError(
-    "Supabase connection error: " +
-    error.message
-  );
-
-}
+let supabaseClient = null;
 
 
 /* =========================================
-   VARIABLES
+   SAFE SUPABASE INITIALIZATION
 ========================================= */
 
-let restaurantId = null;
-let tableId = null;
-let cart = [];
-let currentOrderId = null;
-let selectedRating = 0;
-let realtimeChannel = null;
-let currentBill = null;
-let restaurantPaymentData = null;
-let isPlacingOrder = false;
+function initializeSupabase(){
+
+  try{
+
+    if(
+      !window.supabase ||
+      !window.supabase.createClient
+    ){
+
+      throw new Error(
+        "Supabase JavaScript library load नहीं हुई."
+      );
+
+    }
+
+
+    supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
+    return true;
+
+  }catch(error){
+
+    console.error(
+      "Supabase initialization error:",
+      error
+    );
+
+    showError(
+      "Supabase initialize नहीं हुआ.",
+      error.message
+    );
+
+    return false;
+
+  }
+
+}
 
 
 /* =========================================
@@ -674,24 +895,91 @@ new URLSearchParams(
   window.location.search
 );
 
-const tableNumber =
-Number(params.get("table")) || 1;
+let tableNumber =
+Number(
+  params.get("table")
+) || 1;
 
 
 /* =========================================
-   ERROR
+   VARIABLES
 ========================================= */
 
-function showError(text){
+let restaurantId = null;
+let tableId = null;
 
-  const box =
-    document.getElementById("errorBox");
+let cart = [];
 
-  if(!box) return;
+let currentOrderId = null;
 
-  box.style.display = "block";
+let selectedRating = 0;
 
-  box.innerText = text;
+let realtimeChannel = null;
+
+let isPlacingOrder = false;
+
+let currentBill = null;
+
+let restaurantPaymentData = {};
+
+
+/* =========================================
+   ERROR SCREEN
+========================================= */
+
+function showError(title,details){
+
+  const screen =
+    document.getElementById(
+      "errorScreen"
+    );
+
+  const detailsBox =
+    document.getElementById(
+      "errorDetails"
+    );
+
+
+  screen.style.display =
+    "block";
+
+
+  detailsBox.innerHTML =
+    "<strong>" +
+    escapeHTML(title || "") +
+    "</strong><br><br>" +
+    escapeHTML(
+      details ||
+      "Unknown error"
+    );
+
+}
+
+
+function hideError(){
+
+  document.getElementById(
+    "errorScreen"
+  ).style.display =
+  "none";
+
+}
+
+
+/* =========================================
+   ESCAPE
+========================================= */
+
+function escapeHTML(value){
+
+  return String(
+    value ?? ""
+  )
+  .replace(/&/g,"&amp;")
+  .replace(/</g,"&lt;")
+  .replace(/>/g,"&gt;")
+  .replace(/"/g,"&quot;")
+  .replace(/'/g,"&#039;");
 
 }
 
@@ -703,27 +991,15 @@ function showError(text){
 function showMessage(text){
 
   const box =
-    document.getElementById("message");
+    document.getElementById(
+      "message"
+    );
 
-  box.style.display = "block";
+  box.style.display =
+    "block";
 
-  box.innerText = text;
-
-}
-
-
-/* =========================================
-   ESCAPE
-========================================= */
-
-function escapeHTML(value){
-
-  return String(value ?? "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
+  box.innerText =
+    text;
 
 }
 
@@ -734,11 +1010,19 @@ function escapeHTML(value){
 
 async function requestNotifications(){
 
-  if(!("Notification" in window)){
+  if(
+    !("Notification" in window)
+  ){
+
     return;
+
   }
 
-  if(Notification.permission === "default"){
+
+  if(
+    Notification.permission ===
+    "default"
+  ){
 
     try{
 
@@ -755,7 +1039,10 @@ async function requestNotifications(){
 }
 
 
-function sendCustomerNotification(title,body){
+function sendCustomerNotification(
+  title,
+  body
+){
 
   const key =
     "notification-" +
@@ -763,31 +1050,49 @@ function sendCustomerNotification(title,body){
     "-" +
     title;
 
-  if(sessionStorage.getItem(key)){
+
+  if(
+    sessionStorage.getItem(key)
+  ){
+
     return;
+
   }
 
-  sessionStorage.setItem(key,"true");
+
+  sessionStorage.setItem(
+    key,
+    "true"
+  );
+
 
   const box =
     document.getElementById(
       "customerNotification"
     );
 
+
   document.getElementById(
     "customerNotificationTitle"
-  ).innerText = title;
+  ).innerText =
+  title;
+
 
   document.getElementById(
     "customerNotificationText"
-  ).innerText = body;
+  ).innerText =
+  body;
 
-  box.classList.add("show");
+
+  box.classList.add(
+    "show"
+  );
 
 
   if(
     "Notification" in window &&
-    Notification.permission === "granted"
+    Notification.permission ===
+    "granted"
   ){
 
     try{
@@ -816,7 +1121,9 @@ function closeCustomerNotification(){
     .getElementById(
       "customerNotification"
     )
-    .classList.remove("show");
+    .classList.remove(
+      "show"
+    );
 
 }
 
@@ -827,13 +1134,12 @@ function closeCustomerNotification(){
 
 async function loadRestaurant(){
 
-  if(!supabaseClient){
-
-    return;
-
-  }
-
   try{
+
+    console.log(
+      "Loading restaurant..."
+    );
+
 
     const result =
       await supabaseClient
@@ -843,30 +1149,26 @@ async function loadRestaurant(){
         .maybeSingle();
 
 
+    console.log(
+      "Restaurant result:",
+      result
+    );
+
+
     if(result.error){
 
-      console.error(
-        "Restaurant error:",
-        result.error
-      );
-
-      showError(
-        "Restaurant load नहीं हुआ: " +
+      throw new Error(
         result.error.message
       );
-
-      return;
 
     }
 
 
     if(!result.data){
 
-      showError(
-        "Restaurant table में कोई restaurant नहीं मिला."
+      throw new Error(
+        "restaurants table में कोई restaurant record नहीं मिला."
       );
-
-      return;
 
     }
 
@@ -876,7 +1178,9 @@ async function loadRestaurant(){
 
 
     document
-      .getElementById("restaurantName")
+      .getElementById(
+        "restaurantName"
+      )
       .innerText =
       "🍽️ " +
       (
@@ -888,18 +1192,23 @@ async function loadRestaurant(){
     restaurantPaymentData = {
 
       upi_id:
-        result.data.upi_id || "",
+        result.data.upi_id ||
+        "",
 
       upi_qr_url:
-        result.data.upi_qr_url || ""
+        result.data.upi_qr_url ||
+        ""
 
     };
 
 
     await loadTable();
 
+
     if(!tableId){
+
       return;
+
     }
 
 
@@ -907,13 +1216,16 @@ async function loadRestaurant(){
 
     await loadOldOrder();
 
-
   }catch(error){
 
-    console.error(error);
+    console.error(
+      "Restaurant error:",
+      error
+    );
+
 
     showError(
-      "Restaurant load error: " +
+      "Restaurant load नहीं हुआ.",
       error.message
     );
 
@@ -923,13 +1235,15 @@ async function loadRestaurant(){
 
 
 /* =========================================
-   LOAD TABLE
+   TABLE
 ========================================= */
 
 async function loadTable(){
 
   document
-    .getElementById("tableNumber")
+    .getElementById(
+      "tableNumber"
+    )
     .innerText =
     tableNumber;
 
@@ -957,28 +1271,24 @@ async function loadTable(){
 
   if(result.error){
 
-    console.error(result.error);
-
-    showError(
-      "Table load नहीं हुआ: " +
+    throw new Error(
+      "Table load error: " +
       result.error.message
     );
-
-    return;
 
   }
 
 
   if(!result.data){
 
-    showError(
-      "Table " +
-      tableNumber +
-      " active नहीं है."
+    showMessage(
+      "यह table active नहीं है."
     );
 
     document
-      .getElementById("tableNumber")
+      .getElementById(
+        "tableNumber"
+      )
       .innerText =
       "Not Found";
 
@@ -992,7 +1302,9 @@ async function loadTable(){
 
 
   document
-    .getElementById("tableNumber")
+    .getElementById(
+      "tableNumber"
+    )
     .innerText =
     result.data.table_number;
 
@@ -1000,13 +1312,16 @@ async function loadTable(){
 
 
 /* =========================================
-   LOAD MENU
+   MENU
 ========================================= */
 
 async function loadMenu(){
 
   const menu =
-    document.getElementById("menu");
+    document.getElementById(
+      "menu"
+    );
+
 
   menu.innerHTML =
     '<div class="loading">Loading menu...</div>';
@@ -1034,17 +1349,14 @@ async function loadMenu(){
 
   if(result.error){
 
-    console.error(result.error);
-
     menu.innerHTML =
       '<div class="loading">Menu load नहीं हुआ.</div>';
 
-    showError(
+
+    throw new Error(
       "Menu load error: " +
       result.error.message
     );
-
-    return;
 
   }
 
@@ -1062,129 +1374,74 @@ async function loadMenu(){
   }
 
 
-  menu.innerHTML = "";
+  menu.innerHTML =
+  "";
 
 
-  result.data.forEach(item => {
+  result.data.forEach(
+    item => {
 
-    const card =
-      document.createElement("div");
-
-    card.className = "food";
-
-
-    const image =
-      item.image_url ||
-      "https://via.placeholder.com/600x400?text=Food";
+      const card =
+        document.createElement(
+          "div"
+        );
 
 
-    card.innerHTML = `
+      card.className =
+        "food";
 
-      <img
-        src="${escapeHTML(image)}"
-        onerror="
+
+      const image =
+        item.image_url ||
+        "https://via.placeholder.com/600x400?text=Food";
+
+
+      card.innerHTML = `
+
+        <img
+          src="${escapeHTML(image)}"
+          onerror="
           this.src='https://via.placeholder.com/600x400?text=Food'
-        "
-      >
+          "
+        >
 
-      <div class="food-info">
+        <div class="food-info">
 
-        <h3>
-          ${escapeHTML(item.name)}
-        </h3>
+          <h3>
+            ${escapeHTML(item.name)}
+          </h3>
 
-        <p class="description">
-          ${escapeHTML(
-            item.description || ""
-          )}
-        </p>
+          <p class="description">
+            ${escapeHTML(
+              item.description || ""
+            )}
+          </p>
 
-        <div class="price">
-          ₹${Number(
-            item.price || 0
-          ).toFixed(0)}
+          <div class="price">
+            ₹${Number(
+              item.price || 0
+            ).toFixed(0)}
+          </div>
+
+          <button
+            class="add"
+            onclick="addToCart('${item.id}')">
+
+            ➕ Add to Cart
+
+          </button>
+
         </div>
 
-        <button
-          class="add"
-          onclick="addToCart('${item.id}')">
-
-          ➕ Add to Cart
-
-        </button>
-
-      </div>
-
-    `;
-
-    menu.appendChild(card);
-
-  });
-
-}
+      `;
 
 
-/* =========================================
-   ADD CART
-========================================= */
+      menu.appendChild(
+        card
+      );
 
-async function addToCart(id){
-
-  const result =
-    await supabaseClient
-      .from("menu_items")
-      .select(
-        "id,name,price"
-      )
-      .eq(
-        "id",
-        id
-      )
-      .single();
-
-
-  if(result.error){
-
-    alert(
-      "Food add नहीं हुआ: " +
-      result.error.message
-    );
-
-    return;
-
-  }
-
-
-  const existing =
-    cart.find(
-      item => item.id === id
-    );
-
-
-  if(existing){
-
-    existing.quantity++;
-
-  }else{
-
-    cart.push({
-
-      id:result.data.id,
-
-      name:result.data.name,
-
-      price:Number(
-        result.data.price || 0
-      ),
-
-      quantity:1
-
-    });
-
-  }
-
-
-  updateCart();
+    }
+  );
 
 }
 
@@ -1193,6 +1450,78 @@ async function addToCart(id){
    CART
 ========================================= */
 
+async function addToCart(id){
+
+  try{
+
+    const result =
+      await supabaseClient
+        .from("menu_items")
+        .select(
+          "id,name,price"
+        )
+        .eq(
+          "id",
+          id
+        )
+        .single();
+
+
+    if(result.error){
+
+      throw result.error;
+
+    }
+
+
+    const existing =
+      cart.find(
+        item =>
+        item.id === id
+      );
+
+
+    if(existing){
+
+      existing.quantity++;
+
+    }else{
+
+      cart.push({
+
+        id:
+          result.data.id,
+
+        name:
+          result.data.name,
+
+        price:
+          Number(
+            result.data.price
+          ),
+
+        quantity:1
+
+      });
+
+    }
+
+
+    updateCart();
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Food add नहीं हुआ."
+    );
+
+  }
+
+}
+
+
 function updateCart(){
 
   const box =
@@ -1200,7 +1529,9 @@ function updateCart(){
       "cartItems"
     );
 
-  box.innerHTML = "";
+
+  box.innerHTML =
+  "";
 
 
   if(cart.length === 0){
@@ -1210,7 +1541,8 @@ function updateCart(){
 
     document.getElementById(
       "total"
-    ).innerText = "0";
+    ).innerText =
+    "0";
 
     return;
 
@@ -1220,82 +1552,98 @@ function updateCart(){
   let total = 0;
 
 
-  cart.forEach((item,index)=>{
+  cart.forEach(
+    (item,index) => {
 
-    total +=
-      item.price *
-      item.quantity;
-
-
-    const row =
-      document.createElement("div");
-
-    row.className =
-      "cart-item";
+      total +=
+        item.price *
+        item.quantity;
 
 
-    row.innerHTML = `
-
-      <div>
-        <strong>
-          ${escapeHTML(item.name)}
-        </strong>
-
-        <br>
-
-        ₹${item.price}
-      </div>
-
-      <div class="qty">
-
-        <button
-          onclick="changeQty(${index},-1)">
-          −
-        </button>
-
-        <strong>
-          ${item.quantity}
-        </strong>
-
-        <button
-          onclick="changeQty(${index},1)">
-          +
-        </button>
-
-      </div>
-
-    `;
+      const row =
+        document.createElement(
+          "div"
+        );
 
 
-    box.appendChild(row);
+      row.className =
+        "cart-item";
 
-  });
+
+      row.innerHTML = `
+
+        <div>
+
+          <strong>
+            ${escapeHTML(
+              item.name
+            )}
+          </strong>
+
+          <br>
+
+          ₹${item.price}
+
+        </div>
+
+        <div class="qty">
+
+          <button
+            onclick="changeQty(${index},-1)">
+            −
+          </button>
+
+          <strong>
+            ${item.quantity}
+          </strong>
+
+          <button
+            onclick="changeQty(${index},1)">
+            +
+          </button>
+
+        </div>
+
+      `;
+
+
+      box.appendChild(
+        row
+      );
+
+    }
+  );
 
 
   document.getElementById(
     "total"
   ).innerText =
-    total.toFixed(0);
+  total.toFixed(0);
 
 }
 
 
-/* =========================================
-   QUANTITY
-========================================= */
-
 function changeQty(index,value){
 
   if(!cart[index]){
+
     return;
+
   }
 
-  cart[index].quantity += value;
+
+  cart[index].quantity +=
+    value;
 
 
-  if(cart[index].quantity <= 0){
+  if(
+    cart[index].quantity <= 0
+  ){
 
-    cart.splice(index,1);
+    cart.splice(
+      index,
+      1
+    );
 
   }
 
@@ -1312,7 +1660,9 @@ function changeQty(index,value){
 async function placeOrder(){
 
   if(isPlacingOrder){
+
     return;
+
   }
 
 
@@ -1327,7 +1677,10 @@ async function placeOrder(){
   }
 
 
-  if(!restaurantId || !tableId){
+  if(
+    !restaurantId ||
+    !tableId
+  ){
 
     alert(
       "Restaurant/Table information missing."
@@ -1338,7 +1691,8 @@ async function placeOrder(){
   }
 
 
-  isPlacingOrder = true;
+  isPlacingOrder =
+  true;
 
 
   const button =
@@ -1346,10 +1700,13 @@ async function placeOrder(){
       "placeButton"
     );
 
-  button.disabled = true;
+
+  button.disabled =
+  true;
+
 
   button.innerText =
-    "⏳ Placing Order...";
+  "⏳ Placing Order...";
 
 
   try{
@@ -1357,13 +1714,15 @@ async function placeOrder(){
     let total = 0;
 
 
-    cart.forEach(item=>{
+    cart.forEach(
+      item => {
 
-      total +=
-        item.price *
-        item.quantity;
+        total +=
+          item.price *
+          item.quantity;
 
-    });
+      }
+    );
 
 
     const orderResult =
@@ -1387,7 +1746,7 @@ async function placeOrder(){
             total,
 
           payment_method:
-            "upi",
+            "cash",
 
           payment_status:
             "pending"
@@ -1411,27 +1770,31 @@ async function placeOrder(){
 
 
     const orderItems =
-      cart.map(item=>({
+      cart.map(
+        item => ({
 
-        order_id:
-          order.id,
+          order_id:
+            order.id,
 
-        menu_item_id:
-          item.id,
+          menu_item_id:
+            item.id,
 
-        quantity:
-          item.quantity,
+          quantity:
+            item.quantity,
 
-        price:
-          item.price
+          price:
+            item.price
 
-      }));
+        })
+      );
 
 
     const itemResult =
       await supabaseClient
         .from("order_items")
-        .insert(orderItems);
+        .insert(
+          orderItems
+        );
 
 
     if(itemResult.error){
@@ -1443,6 +1806,7 @@ async function placeOrder(){
           "id",
           order.id
         );
+
 
       throw new Error(
         itemResult.error.message
@@ -1463,10 +1827,14 @@ async function placeOrder(){
 
     cart = [];
 
+
     updateCart();
 
 
-    showOrder(order);
+    showOrder(
+      order
+    );
+
 
     subscribeToOrder(
       order.id
@@ -1474,27 +1842,33 @@ async function placeOrder(){
 
 
     button.innerText =
-      "✅ Order Placed";
-
+    "✅ Order Placed";
 
   }catch(error){
 
-    console.error(error);
+    console.error(
+      error
+    );
+
 
     alert(
       "Order place नहीं हुआ:\n" +
       error.message
     );
 
-    button.disabled = false;
+
+    button.disabled =
+    false;
+
 
     button.innerText =
-      "📦 Place Order";
+    "📦 Place Order";
 
   }
 
 
-  isPlacingOrder = false;
+  isPlacingOrder =
+  false;
 
 }
 
@@ -1506,34 +1880,49 @@ async function placeOrder(){
 function showOrder(order){
 
   document
-    .getElementById("orderBox")
+    .getElementById(
+      "orderBox"
+    )
     .style.display =
     "block";
 
 
   document
-    .getElementById("orderId")
+    .getElementById(
+      "orderId"
+    )
     .innerText =
-    String(order.id)
-      .substring(0,8);
+    String(
+      order.id
+    ).substring(
+      0,
+      8
+    );
 
 
   document
-    .getElementById("estimated")
+    .getElementById(
+      "estimated"
+    )
     .innerText =
-    order.estimated_minutes || 15;
+    order.estimated_minutes ||
+    15;
 
 
   updateStatus(
-    order.status || "new"
+    order.status ||
+    "new"
   );
 
 
   if(
-    order.bill_generated === true
+    order.bill_generated ===
+    true
   ){
 
-    showBill(order);
+    showBill(
+      order
+    );
 
   }else{
 
@@ -1551,25 +1940,33 @@ function showOrder(order){
 function updateStatus(status){
 
   const steps = [
+
     "stepNew",
+
     "stepPreparing",
+
     "stepReady",
+
     "stepDelivered"
+
   ];
 
 
-  steps.forEach(id=>{
+  steps.forEach(
+    id => {
 
-    document
-      .getElementById(id)
-      .classList.remove(
-        "active"
-      );
+      document
+        .getElementById(id)
+        .classList.remove(
+          "active"
+        );
 
-  });
+    }
+  );
 
 
-  let activeIndex = 0;
+  let activeIndex =
+    0;
 
 
   if(
@@ -1577,7 +1974,8 @@ function updateStatus(status){
     status === "accepted"
   ){
 
-    activeIndex = 0;
+    activeIndex =
+    0;
 
     document
       .getElementById(
@@ -1592,7 +1990,8 @@ function updateStatus(status){
     status === "preparing"
   ){
 
-    activeIndex = 1;
+    activeIndex =
+    1;
 
     document
       .getElementById(
@@ -1607,7 +2006,8 @@ function updateStatus(status){
     status === "ready"
   ){
 
-    activeIndex = 2;
+    activeIndex =
+    2;
 
     document
       .getElementById(
@@ -1622,7 +2022,8 @@ function updateStatus(status){
     status === "delivered"
   ){
 
-    activeIndex = 3;
+    activeIndex =
+    3;
 
     document
       .getElementById(
@@ -1658,7 +2059,9 @@ async function loadOldOrder(){
 
 
   if(!saved){
+
     return;
+
   }
 
 
@@ -1693,9 +2096,9 @@ async function loadOldOrder(){
 
   if(
     order.restaurant_id !==
-      restaurantId ||
+    restaurantId ||
     order.table_id !==
-      tableId
+    tableId
   ){
 
     return;
@@ -1707,7 +2110,10 @@ async function loadOldOrder(){
     order.id;
 
 
-  showOrder(order);
+  showOrder(
+    order
+  );
+
 
   subscribeToOrder(
     order.id
@@ -1723,7 +2129,9 @@ async function loadOldOrder(){
 function subscribeToOrder(orderId){
 
   if(!orderId){
+
     return;
+
   }
 
 
@@ -1734,6 +2142,9 @@ function subscribeToOrder(orderId){
         realtimeChannel
       );
 
+    realtimeChannel =
+    null;
+
   }
 
 
@@ -1741,26 +2152,32 @@ function subscribeToOrder(orderId){
     supabaseClient
       .channel(
         "customer-order-" +
-        orderId +
-        "-" +
-        Date.now()
+        orderId
       )
       .on(
         "postgres_changes",
         {
           event:"UPDATE",
+
           schema:"public",
+
           table:"orders",
+
           filter:
-            "id=eq." + orderId
+            "id=eq." +
+            orderId
+
         },
-        payload=>{
+        payload => {
 
-          const oldStatus =
-            payload.old?.status;
+          console.log(
+            "LIVE ORDER:",
+            payload.new
+          );
 
-          const newStatus =
-            payload.new?.status;
+
+          const old =
+            payload.old || {};
 
 
           showOrder(
@@ -1769,39 +2186,44 @@ function subscribeToOrder(orderId){
 
 
           if(
-            newStatus &&
-            newStatus !== oldStatus
+            payload.new.status !==
+            old.status
           ){
 
             if(
-              newStatus === "preparing"
+              payload.new.status ===
+              "preparing"
             ){
 
               sendCustomerNotification(
-                "👨‍🍳 Order Update",
-                "आपका order अब तैयार किया जा रहा है।"
+                "👨‍🍳 Order Preparing",
+                "आपका order अभी तैयार किया जा रहा है."
               );
 
             }
 
-            else if(
-              newStatus === "ready"
+
+            if(
+              payload.new.status ===
+              "ready"
             ){
 
               sendCustomerNotification(
-                "🔵 Order Ready",
-                "आपका order ready है।"
+                "🔵 Order Ready!",
+                "आपका order तैयार है."
               );
 
             }
 
-            else if(
-              newStatus === "delivered"
+
+            if(
+              payload.new.status ===
+              "delivered"
             ){
 
               sendCustomerNotification(
                 "✅ Order Delivered",
-                "आपका order delivered हो गया है।"
+                "आपका order delivered हो गया है."
               );
 
             }
@@ -1810,32 +2232,30 @@ function subscribeToOrder(orderId){
 
 
           if(
-            payload.new.bill_generated === true &&
-            payload.old.bill_generated !== true
+            payload.new.bill_generated ===
+            true &&
+            old.bill_generated !==
+            true
           ){
+
+            const total =
+              Number(
+                payload.new.total ||
+                0
+              ).toFixed(2);
+
 
             sendCustomerNotification(
               "🧾 Bill Ready!",
               "आपका bill तैयार है। Total ₹" +
-              Number(
-                payload.new.total || 0
-              ).toFixed(2)
+              total
             );
 
           }
 
         }
       )
-      .subscribe(
-        status=>{
-
-          console.log(
-            "Realtime status:",
-            status
-          );
-
-        }
-      );
+      .subscribe();
 
 }
 
@@ -1851,20 +2271,32 @@ function showBill(order){
 
 
   document
-    .getElementById("billBox")
-    .classList.add("show");
+    .getElementById(
+      "billBox"
+    )
+    .classList.add(
+      "show"
+    );
 
 
   document
-    .getElementById("billOrder")
+    .getElementById(
+      "billOrder"
+    )
     .innerText =
     "#" +
-    String(order.id)
-      .substring(0,8);
+    String(
+      order.id
+    ).substring(
+      0,
+      8
+    );
 
 
   document
-    .getElementById("billTable")
+    .getElementById(
+      "billTable"
+    )
     .innerText =
     tableNumber;
 
@@ -1875,7 +2307,7 @@ function showBill(order){
     )
     .innerText =
     order.payment_method ||
-    "upi";
+    "cash";
 
 
   document
@@ -1888,10 +2320,13 @@ function showBill(order){
 
 
   document
-    .getElementById("billTotal")
+    .getElementById(
+      "billTotal"
+    )
     .innerText =
     Number(
-      order.total || 0
+      order.total ||
+      0
     ).toFixed(2);
 
 
@@ -1902,22 +2337,23 @@ function showBill(order){
 
 
   if(
-    order.payment_status === "paid"
+    order.payment_status ===
+    "paid"
   ){
 
     payButton.innerText =
-      "✅ Payment Completed";
+    "✅ Payment Completed";
 
     payButton.disabled =
-      true;
+    true;
 
   }else{
 
     payButton.innerText =
-      "💳 Pay Bill";
+    "💳 Pay Bill";
 
     payButton.disabled =
-      false;
+    false;
 
   }
 
@@ -1927,17 +2363,21 @@ function showBill(order){
 function hideBill(){
 
   document
-    .getElementById("billBox")
-    .classList.remove("show");
+    .getElementById(
+      "billBox"
+    )
+    .classList.remove(
+      "show"
+    );
 
 }
 
 
 /* =========================================
-   PAYMENT
+   PAY BILL
 ========================================= */
 
-function payBill(){
+async function payBill(){
 
   if(!currentBill){
 
@@ -1971,7 +2411,7 @@ function payBill(){
   if(!upi){
 
     alert(
-      "Restaurant ने UPI ID setup नहीं की है."
+      "Restaurant ने UPI payment setup नहीं किया है."
     );
 
     return;
@@ -1981,42 +2421,55 @@ function payBill(){
 
   const amount =
     Number(
-      currentBill.total || 0
+      currentBill.total ||
+      0
     ).toFixed(2);
 
 
   const restaurantName =
-    document
-      .getElementById(
-        "restaurantName"
-      )
-      .innerText
-      .replace(
-        "🍽️ ",
-        ""
-      );
+    (
+      document
+        .getElementById(
+          "restaurantName"
+        )
+        .innerText ||
+      "Restaurant"
+    )
+    .replace(
+      "🍽️ ",
+      ""
+    );
 
 
   const note =
     "Order " +
     String(
       currentBill.id
-    ).substring(0,8);
+    ).substring(
+      0,
+      8
+    );
 
 
   const upiUrl =
     "upi://pay" +
     "?pa=" +
-    encodeURIComponent(upi) +
+    encodeURIComponent(
+      upi
+    ) +
     "&pn=" +
     encodeURIComponent(
       restaurantName
     ) +
     "&am=" +
-    encodeURIComponent(amount) +
+    encodeURIComponent(
+      amount
+    ) +
     "&cu=INR" +
     "&tn=" +
-    encodeURIComponent(note);
+    encodeURIComponent(
+      note
+    );
 
 
   window.location.href =
@@ -2031,7 +2484,10 @@ function payBill(){
 
 async function callWaiter(){
 
-  if(!restaurantId || !tableId){
+  if(
+    !restaurantId ||
+    !tableId
+  ){
 
     alert(
       "Restaurant/Table information missing."
@@ -2042,41 +2498,52 @@ async function callWaiter(){
   }
 
 
-  const result =
-    await supabaseClient
-      .from("waiter_calls")
-      .insert({
+  try{
 
-        restaurant_id:
-          restaurantId,
+    const result =
+      await supabaseClient
+        .from("waiter_calls")
+        .insert({
 
-        table_number:
-          tableNumber,
+          restaurant_id:
+            restaurantId,
 
-        request_type:
-          "Waiter",
+          table_number:
+            tableNumber,
 
-        status:
-          "pending"
+          request_type:
+            "Waiter",
 
-      });
+          status:
+            "pending"
+
+        });
 
 
-  if(result.error){
+    if(result.error){
+
+      throw result.error;
+
+    }
+
+
+    alert(
+      "🔔 Waiter को बुला दिया गया है!"
+    );
+
+  }catch(error){
+
+    console.error(
+      error
+    );
+
 
     alert(
       "Waiter request नहीं भेजा गया:\n" +
-      result.error.message
+      error.message
     );
 
-    return;
-
   }
-
-
-  alert(
-    "🔔 Waiter को बुला दिया गया है!"
-  );
 
 }
 
@@ -2105,7 +2572,8 @@ function toggleFeedback(){
 
 
   box.style.display =
-    box.style.display === "block"
+    box.style.display ===
+    "block"
       ? "none"
       : "block";
 
@@ -2130,10 +2598,19 @@ function setRating(rating){
       );
 
 
-    star.classList.toggle(
-      "selected",
-      i <= rating
-    );
+    if(i <= rating){
+
+      star.classList.add(
+        "selected"
+      );
+
+    }else{
+
+      star.classList.remove(
+        "selected"
+      );
+
+    }
 
   }
 
@@ -2177,76 +2654,89 @@ async function submitFeedback(){
       .trim();
 
 
-  const result =
-    await supabaseClient
-      .from("feedback")
-      .insert({
+  try{
 
-        restaurant_id:
-          restaurantId,
+    const result =
+      await supabaseClient
+        .from("feedback")
+        .insert({
 
-        order_id:
-          currentOrderId,
+          restaurant_id:
+            restaurantId,
 
-        rating:
-          selectedRating,
+          order_id:
+            currentOrderId,
 
-        message:
-          text
+          rating:
+            selectedRating,
 
-      });
+          message:
+            text
+
+        });
 
 
-  if(result.error){
+    if(result.error){
+
+      throw result.error;
+
+    }
+
 
     alert(
-      "Feedback submit नहीं हुआ:\n" +
-      result.error.message
+      "⭐ Thank you for your feedback!"
     );
 
-    return;
-
-  }
-
-
-  alert(
-    "⭐ Thank you for your feedback!"
-  );
-
-
-  document
-    .getElementById(
-      "feedbackText"
-    )
-    .value = "";
-
-
-  selectedRating = 0;
-
-
-  for(
-    let i=1;
-    i<=5;
-    i++
-  ){
 
     document
       .getElementById(
-        "star" + i
+        "feedbackText"
       )
-      .classList.remove(
-        "selected"
-      );
+      .value =
+      "";
+
+
+    selectedRating =
+    0;
+
+
+    for(
+      let i=1;
+      i<=5;
+      i++
+    ){
+
+      document
+        .getElementById(
+          "star" + i
+        )
+        .classList.remove(
+          "selected"
+        );
+
+    }
+
+
+    document
+      .getElementById(
+        "feedbackBox"
+      )
+      .style.display =
+      "none";
+
+  }catch(error){
+
+    console.error(
+      error
+    );
+
+
+    alert(
+      "Feedback submit नहीं हुआ:\n" +
+      error.message
+    );
 
   }
-
-
-  document
-    .getElementById(
-      "feedbackBox"
-    )
-    .style.display =
-    "none";
 
 }
 
@@ -2257,24 +2747,46 @@ async function submitFeedback(){
 
 async function start(){
 
-  console.log(
-    "Customer website starting..."
-  );
-
-  console.log(
-    "Supabase URL:",
-    SUPABASE_URL
-  );
-
-  console.log(
-    "Table:",
-    tableNumber
-  );
+  hideError();
 
 
-  await requestNotifications();
+  document
+    .getElementById(
+      "menu"
+    )
+    .innerHTML =
+    '<div class="loading">Connecting to restaurant...</div>';
 
-  await loadRestaurant();
+
+  if(
+    !initializeSupabase()
+  ){
+
+    return;
+
+  }
+
+
+  try{
+
+    await requestNotifications();
+
+    await loadRestaurant();
+
+  }catch(error){
+
+    console.error(
+      "START ERROR:",
+      error
+    );
+
+
+    showError(
+      "Website load नहीं हुआ.",
+      error.message
+    );
+
+  }
 
 }
 
@@ -2283,7 +2795,10 @@ async function start(){
    RUN
 ========================================= */
 
-start();
+window.addEventListener(
+  "load",
+  start
+);
 
 </script>
 
