@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -9,6 +10,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+
 *{
   box-sizing:border-box;
   margin:0;
@@ -280,7 +282,10 @@ header h1{
   color:#777;
 }
 
-/* BILL */
+
+/* =========================================
+   BILL
+========================================= */
 
 .bill-box{
   display:none;
@@ -331,6 +336,36 @@ header h1{
   opacity:.6;
 }
 
+
+/* CASH PAYMENT */
+
+.cash-option{
+  margin-top:10px;
+  padding:11px;
+  background:#fff3cd;
+  color:#664d03;
+  border-radius:9px;
+  font-weight:bold;
+  text-align:center;
+}
+
+.cash-btn{
+  width:100%;
+  background:#ff9800;
+  color:white;
+  padding:14px;
+  border-radius:10px;
+  margin-top:10px;
+  font-size:15px;
+}
+
+.cash-btn:disabled{
+  opacity:.6;
+}
+
+
+/* NOTIFICATION */
+
 .notification-box{
   display:none;
   position:fixed;
@@ -360,6 +395,7 @@ header h1{
   padding:9px 15px;
   border-radius:8px;
 }
+
 
 /* ERROR */
 
@@ -391,6 +427,7 @@ header h1{
   border-radius:9px;
 }
 
+
 @media(max-width:600px){
 
   .container{
@@ -406,10 +443,17 @@ header h1{
   }
 
 }
+
 </style>
+
 </head>
 
 <body>
+
+
+<!-- =========================================
+     HEADER
+========================================= -->
 
 <header>
 
@@ -424,9 +468,15 @@ header h1{
 </header>
 
 
+<!-- =========================================
+     ERROR
+========================================= -->
+
 <div id="errorScreen">
 
-  <h3>⚠️ Something went wrong</h3>
+  <h3>
+    ⚠️ Something went wrong
+  </h3>
 
   <div id="errorDetails">
     Restaurant load नहीं हुआ.
@@ -446,11 +496,15 @@ header h1{
 <div class="container">
 
 
-<!-- TABLE -->
+<!-- =========================================
+     TABLE
+========================================= -->
 
 <div class="card welcome">
 
-  <h2>Welcome 👋</h2>
+  <h2>
+    Welcome 👋
+  </h2>
 
   <p style="margin-top:7px">
     Order directly from your table
@@ -469,13 +523,17 @@ header h1{
 </div>
 
 
-<!-- MENU -->
+<!-- =========================================
+     MENU
+========================================= -->
 
 <h2 class="section-title">
   📋 Menu
 </h2>
 
-<div id="menu" class="menu">
+<div
+  id="menu"
+  class="menu">
 
   <div class="loading">
     Loading menu...
@@ -484,7 +542,9 @@ header h1{
 </div>
 
 
-<!-- CART -->
+<!-- =========================================
+     CART
+========================================= -->
 
 <div class="card">
 
@@ -505,7 +565,9 @@ header h1{
   <div class="total">
 
     Total: ₹
-    <span id="total">0</span>
+    <span id="total">
+      0
+    </span>
 
   </div>
 
@@ -526,7 +588,9 @@ header h1{
 </div>
 
 
-<!-- ORDER -->
+<!-- =========================================
+     ORDER
+========================================= -->
 
 <div
   id="orderBox"
@@ -545,6 +609,7 @@ header h1{
     </strong>
 
   </div>
+
 
   <div class="status">
 
@@ -613,7 +678,9 @@ header h1{
   </div>
 
 
-  <!-- ACTIONS -->
+  <!-- =========================================
+       ACTIONS
+  ========================================= -->
 
   <div class="actions">
 
@@ -624,6 +691,7 @@ header h1{
       📞 Call Waiter
 
     </button>
+
 
     <button
       class="action-btn feedback"
@@ -636,7 +704,9 @@ header h1{
   </div>
 
 
-  <!-- FEEDBACK -->
+  <!-- =========================================
+       FEEDBACK
+  ========================================= -->
 
   <div
     id="feedbackBox"
@@ -706,7 +776,9 @@ header h1{
 </div>
 
 
-<!-- BILL -->
+<!-- =========================================
+     BILL
+========================================= -->
 
 <div
   id="billBox"
@@ -718,6 +790,7 @@ header h1{
 
   </div>
 
+
   <h2>
     🧾 Your Bill
   </h2>
@@ -725,9 +798,14 @@ header h1{
 
   <div style="margin-top:12px">
 
+
+    <!-- ORDER -->
+
     <div class="bill-row">
 
-      <span>Order</span>
+      <span>
+        Order
+      </span>
 
       <strong id="billOrder">
         -
@@ -736,9 +814,13 @@ header h1{
     </div>
 
 
+    <!-- TABLE -->
+
     <div class="bill-row">
 
-      <span>Table</span>
+      <span>
+        Table
+      </span>
 
       <strong id="billTable">
         -
@@ -747,20 +829,37 @@ header h1{
     </div>
 
 
+    <!-- PAYMENT METHOD -->
+
     <div class="bill-row">
 
-      <span>Payment Method</span>
+      <span>
+        Payment Method
+      </span>
 
       <strong id="billPaymentMethod">
-        -
+        Online
       </strong>
 
     </div>
 
 
+    <!-- CASH OPTION -->
+
+    <div class="cash-option">
+
+      💵 Cash (Call Waiter)
+
+    </div>
+
+
+    <!-- PAYMENT STATUS -->
+
     <div class="bill-row">
 
-      <span>Payment Status</span>
+      <span>
+        Payment Status
+      </span>
 
       <strong id="billPaymentStatus">
         Pending
@@ -769,9 +868,12 @@ header h1{
     </div>
 
 
+    <!-- TOTAL -->
+
     <div class="bill-total">
 
       Total: ₹
+
       <span id="billTotal">
         0
       </span>
@@ -780,6 +882,8 @@ header h1{
 
   </div>
 
+
+  <!-- ONLINE PAYMENT -->
 
   <button
     id="payButton"
@@ -790,12 +894,27 @@ header h1{
 
   </button>
 
-</div>
+
+  <!-- CASH PAYMENT -->
+
+  <button
+    id="cashButton"
+    class="cash-btn"
+    onclick="requestCashPayment()">
+
+    💵 Pay Cash — Call Waiter
+
+  </button>
 
 </div>
 
 
-<!-- NOTIFICATION -->
+</div>
+
+
+<!-- =========================================
+     CUSTOMER NOTIFICATION
+========================================= -->
 
 <div
   id="customerNotification"
@@ -820,16 +939,14 @@ header h1{
 
 <script>
 
+
 /* =========================================
    SUPABASE
 ========================================= */
 
-/*
- EXACT DETAILS PROVIDED BY YOU
-*/
-
 const SUPABASE_URL =
 "https://ltpjjckiaaonpetbzfvn.supabase.co";
+
 
 const SUPABASE_KEY =
 "sb_publishable_skzmVVxdVcKTQaUbwqEaIg_-KDmA-3L";
@@ -839,7 +956,7 @@ let supabaseClient = null;
 
 
 /* =========================================
-   SAFE SUPABASE INITIALIZATION
+   SUPABASE INITIALIZATION
 ========================================= */
 
 function initializeSupabase(){
@@ -874,10 +991,12 @@ function initializeSupabase(){
       error
     );
 
+
     showError(
       "Supabase initialize नहीं हुआ.",
       error.message
     );
+
 
     return false;
 
@@ -895,6 +1014,7 @@ new URLSearchParams(
   window.location.search
 );
 
+
 let tableNumber =
 Number(
   params.get("table")
@@ -906,6 +1026,7 @@ Number(
 ========================================= */
 
 let restaurantId = null;
+
 let tableId = null;
 
 let cart = [];
@@ -922,17 +1043,23 @@ let currentBill = null;
 
 let restaurantPaymentData = {};
 
+let cashRequestSent = false;
+
 
 /* =========================================
-   ERROR SCREEN
+   ERROR
 ========================================= */
 
-function showError(title,details){
+function showError(
+  title,
+  details
+){
 
   const screen =
     document.getElementById(
       "errorScreen"
     );
+
 
   const detailsBox =
     document.getElementById(
@@ -946,7 +1073,9 @@ function showError(title,details){
 
   detailsBox.innerHTML =
     "<strong>" +
-    escapeHTML(title || "") +
+    escapeHTML(
+      title || ""
+    ) +
     "</strong><br><br>" +
     escapeHTML(
       details ||
@@ -958,10 +1087,12 @@ function showError(title,details){
 
 function hideError(){
 
-  document.getElementById(
-    "errorScreen"
-  ).style.display =
-  "none";
+  document
+    .getElementById(
+      "errorScreen"
+    )
+    .style.display =
+    "none";
 
 }
 
@@ -975,11 +1106,26 @@ function escapeHTML(value){
   return String(
     value ?? ""
   )
-  .replace(/&/g,"&amp;")
-  .replace(/</g,"&lt;")
-  .replace(/>/g,"&gt;")
-  .replace(/"/g,"&quot;")
-  .replace(/'/g,"&#039;");
+  .replace(
+    /&/g,
+    "&amp;"
+  )
+  .replace(
+    /</g,
+    "&lt;"
+  )
+  .replace(
+    />/g,
+    "&gt;"
+  )
+  .replace(
+    /"/g,
+    "&quot;"
+  )
+  .replace(
+    /'/g,
+    "&#039;"
+  );
 
 }
 
@@ -995,8 +1141,10 @@ function showMessage(text){
       "message"
     );
 
+
   box.style.display =
     "block";
+
 
   box.innerText =
     text;
@@ -1005,7 +1153,7 @@ function showMessage(text){
 
 
 /* =========================================
-   NOTIFICATION
+   NOTIFICATIONS
 ========================================= */
 
 async function requestNotifications(){
@@ -1285,12 +1433,14 @@ async function loadTable(){
       "यह table active नहीं है."
     );
 
+
     document
       .getElementById(
         "tableNumber"
       )
       .innerText =
       "Not Found";
+
 
     return;
 
@@ -1513,6 +1663,7 @@ async function addToCart(id){
 
     console.error(error);
 
+
     alert(
       "Food add नहीं हुआ."
     );
@@ -1539,10 +1690,12 @@ function updateCart(){
     box.innerHTML =
       '<p style="color:#777">Your cart is empty.</p>';
 
+
     document.getElementById(
       "total"
     ).innerText =
     "0";
+
 
     return;
 
@@ -1623,7 +1776,10 @@ function updateCart(){
 }
 
 
-function changeQty(index,value){
+function changeQty(
+  index,
+  value
+){
 
   if(!cart[index]){
 
@@ -1725,6 +1881,11 @@ async function placeOrder(){
     );
 
 
+    /*
+      IMPORTANT:
+      New orders are ONLINE payment orders.
+    */
+
     const orderResult =
       await supabaseClient
         .from("orders")
@@ -1746,7 +1907,7 @@ async function placeOrder(){
             total,
 
           payment_method:
-            "cash",
+            "online",
 
           payment_status:
             "pending"
@@ -1977,6 +2138,7 @@ function updateStatus(status){
     activeIndex =
     0;
 
+
     document
       .getElementById(
         "statusText"
@@ -1986,12 +2148,14 @@ function updateStatus(status){
 
   }
 
+
   else if(
     status === "preparing"
   ){
 
     activeIndex =
     1;
+
 
     document
       .getElementById(
@@ -2002,12 +2166,14 @@ function updateStatus(status){
 
   }
 
+
   else if(
     status === "ready"
   ){
 
     activeIndex =
     2;
+
 
     document
       .getElementById(
@@ -2018,12 +2184,14 @@ function updateStatus(status){
 
   }
 
+
   else if(
     status === "delivered"
   ){
 
     activeIndex =
     3;
+
 
     document
       .getElementById(
@@ -2185,6 +2353,8 @@ function subscribeToOrder(orderId){
           );
 
 
+          /* ORDER STATUS NOTIFICATIONS */
+
           if(
             payload.new.status !==
             old.status
@@ -2230,6 +2400,8 @@ function subscribeToOrder(orderId){
 
           }
 
+
+          /* BILL NOTIFICATION */
 
           if(
             payload.new.bill_generated ===
@@ -2301,13 +2473,18 @@ function showBill(order){
     tableNumber;
 
 
+  /*
+    IMPORTANT:
+    Customer bill always shows ONLINE
+    because normal order payment is online.
+  */
+
   document
     .getElementById(
       "billPaymentMethod"
     )
     .innerText =
-    order.payment_method ||
-    "cash";
+    "Online";
 
 
   document
@@ -2315,8 +2492,9 @@ function showBill(order){
       "billPaymentStatus"
     )
     .innerText =
-    order.payment_status ||
-    "pending";
+    formatPaymentStatus(
+      order.payment_status
+    );
 
 
   document
@@ -2336,6 +2514,14 @@ function showBill(order){
     );
 
 
+  const cashButton =
+    document.getElementById(
+      "cashButton"
+    );
+
+
+  /* ONLINE PAYMENT */
+
   if(
     order.payment_status ===
     "paid"
@@ -2347,7 +2533,12 @@ function showBill(order){
     payButton.disabled =
     true;
 
-  }else{
+    cashButton.disabled =
+    true;
+
+  }
+
+  else{
 
     payButton.innerText =
     "💳 Pay Bill";
@@ -2355,10 +2546,55 @@ function showBill(order){
     payButton.disabled =
     false;
 
+
+    /*
+      Cash button remains available
+      unless cash request was already sent.
+    */
+
+    cashButton.disabled =
+    cashRequestSent;
+
   }
 
 }
 
+
+/* =========================================
+   PAYMENT STATUS FORMAT
+========================================= */
+
+function formatPaymentStatus(status){
+
+  if(status === "paid"){
+
+    return "Paid";
+
+  }
+
+
+  if(status === "requested"){
+
+    return "Payment Requested";
+
+  }
+
+
+  if(status === "failed"){
+
+    return "Failed";
+
+  }
+
+
+  return "Pending";
+
+}
+
+
+/* =========================================
+   HIDE BILL
+========================================= */
 
 function hideBill(){
 
@@ -2374,7 +2610,7 @@ function hideBill(){
 
 
 /* =========================================
-   PAY BILL
+   ONLINE PAY BILL
 ========================================= */
 
 async function payBill(){
@@ -2479,7 +2715,136 @@ async function payBill(){
 
 
 /* =========================================
-   WAITER
+   CASH — CALL WAITER
+========================================= */
+
+async function requestCashPayment(){
+
+  if(
+    !restaurantId ||
+    !tableId ||
+    !currentBill
+  ){
+
+    alert(
+      "Order/Bill information missing."
+    );
+
+    return;
+
+  }
+
+
+  if(
+    currentBill.payment_status ===
+    "paid"
+  ){
+
+    alert(
+      "यह bill पहले ही paid है."
+    );
+
+    return;
+
+  }
+
+
+  if(cashRequestSent){
+
+    alert(
+      "💵 Cash payment के लिए Waiter को पहले ही बुलाया जा चुका है."
+    );
+
+    return;
+
+  }
+
+
+  const cashButton =
+    document.getElementById(
+      "cashButton"
+    );
+
+
+  cashButton.disabled =
+  true;
+
+
+  cashButton.innerText =
+  "⏳ Calling Waiter...";
+
+
+  try{
+
+    const result =
+      await supabaseClient
+        .from("waiter_calls")
+        .insert({
+
+          restaurant_id:
+            restaurantId,
+
+          table_number:
+            tableNumber,
+
+          request_type:
+            "Cash Payment",
+
+          status:
+            "pending"
+
+        });
+
+
+    if(result.error){
+
+      throw result.error;
+
+    }
+
+
+    cashRequestSent =
+    true;
+
+
+    cashButton.innerText =
+    "✅ Waiter Called for Cash";
+
+
+    sendCustomerNotification(
+      "💵 Cash Payment",
+      "Cash payment के लिए Waiter को बुला दिया गया है."
+    );
+
+
+  }catch(error){
+
+    console.error(
+      "Cash request error:",
+      error
+    );
+
+
+    cashButton.disabled =
+    false;
+
+
+    cashButton.innerText =
+    "💵 Pay Cash — Call Waiter";
+
+
+    alert(
+      "Cash payment request नहीं भेजा गया:\n" +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================================
+   CALL WAITER
 ========================================= */
 
 async function callWaiter(){
@@ -2618,7 +2983,7 @@ function setRating(rating){
 
 
 /* =========================================
-   FEEDBACK SUBMIT
+   SUBMIT FEEDBACK
 ========================================= */
 
 async function submitFeedback(){
