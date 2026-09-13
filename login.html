@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Restaurant SaaS - Login</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -10,161 +11,86 @@
 <style>
 *{
   box-sizing:border-box;
-  margin:0;
-  padding:0;
 }
 
 body{
+  margin:0;
   min-height:100vh;
-  font-family:Arial,Helvetica,sans-serif;
-  background:linear-gradient(135deg,#fff7ed,#f8fafc,#eefdf5);
   display:flex;
   justify-content:center;
   align-items:center;
+  font-family:Arial, sans-serif;
+  background:linear-gradient(135deg,#fff7ed,#fef3c7);
   padding:20px;
-  color:#111827;
 }
 
 .card{
   width:100%;
-  max-width:430px;
+  max-width:420px;
   background:white;
   border-radius:24px;
-  padding:32px 25px;
+  padding:32px 24px;
   box-shadow:0 20px 60px rgba(0,0,0,.12);
+  text-align:center;
 }
 
 .logo{
-  width:70px;
-  height:70px;
+  width:72px;
+  height:72px;
   border-radius:20px;
-  background:linear-gradient(135deg,#ff7a00,#ffb000);
+  background:#f97316;
+  color:white;
   display:flex;
-  align-items:center;
   justify-content:center;
-  font-size:36px;
+  align-items:center;
+  font-size:38px;
   margin:0 auto 18px;
 }
 
 h1{
-  text-align:center;
-  font-size:26px;
-  margin-bottom:8px;
+  margin:0 0 8px;
+  font-size:25px;
 }
 
 .subtitle{
-  text-align:center;
-  color:#6b7280;
-  font-size:14px;
+  color:#64748b;
   margin-bottom:28px;
 }
 
-.google-btn{
+.google{
   width:100%;
-  height:52px;
-  border:1px solid #d1d5db;
-  border-radius:12px;
-  background:white;
-  font-size:16px;
-  font-weight:700;
-  cursor:pointer;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:10px;
-}
-
-.google-btn:hover{
-  background:#f9fafb;
-}
-
-.google-icon{
-  width:22px;
-  height:22px;
-}
-
-.divider{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin:24px 0;
-  color:#9ca3af;
-  font-size:13px;
-}
-
-.divider::before,
-.divider::after{
-  content:"";
-  height:1px;
-  background:#e5e7eb;
-  flex:1;
-}
-
-label{
-  display:block;
-  font-size:14px;
-  font-weight:600;
-  margin-bottom:7px;
-}
-
-input{
-  width:100%;
-  height:48px;
-  border:1px solid #d1d5db;
-  border-radius:11px;
-  padding:0 14px;
-  font-size:15px;
-  outline:none;
-  margin-bottom:15px;
-}
-
-input:focus{
-  border-color:#ff7a00;
-  box-shadow:0 0 0 3px rgba(255,122,0,.12);
-}
-
-.login-btn{
-  width:100%;
-  height:50px;
   border:0;
-  border-radius:11px;
+  padding:15px;
+  border-radius:12px;
   background:#111827;
   color:white;
   font-size:16px;
-  font-weight:700;
+  font-weight:bold;
   cursor:pointer;
 }
 
-.login-btn:disabled,
-.google-btn:disabled{
+.google:disabled{
   opacity:.6;
-  cursor:not-allowed;
 }
 
-.message{
-  display:none;
+.status{
   margin-top:18px;
-  padding:12px;
-  border-radius:10px;
-  text-align:center;
+  min-height:24px;
   font-size:14px;
 }
 
 .error{
-  background:#fff1f2;
-  color:#be123c;
+  color:#dc2626;
 }
 
 .success{
-  background:#ecfdf5;
-  color:#047857;
+  color:#16a34a;
 }
 
-.footer{
-  text-align:center;
-  margin-top:24px;
+.small{
+  margin-top:25px;
+  color:#94a3b8;
   font-size:12px;
-  color:#9ca3af;
 }
 </style>
 </head>
@@ -178,51 +104,17 @@ input:focus{
   <h1>Restaurant SaaS</h1>
 
   <div class="subtitle">
-    Manage your restaurant smarter
+    Manage your restaurant easily
   </div>
 
-  <button class="google-btn" id="googleBtn">
-    <svg class="google-icon" viewBox="0 0 24 24">
-      <path fill="#4285F4" d="M21.35 12.23c0-.79-.07-1.55-.22-2.27H12v4.3h5.24a4.48 4.48 0 0 1-1.94 2.94v2.45h3.14c1.84-1.69 2.91-4.18 2.91-7.42z"/>
-      <path fill="#34A853" d="M12 21.5c2.63 0 4.84-.87 6.45-2.35l-3.14-2.45c-.87.58-1.98.92-3.31.92-2.54 0-4.7-1.72-5.47-4.03H3.28v2.53A9.74 9.74 0 0 0 12 21.5z"/>
-      <path fill="#FBBC05" d="M6.53 13.59A5.86 5.86 0 0 1 6.22 12c0-.55.1-1.09.31-1.59V7.88H3.28A9.73 9.73 0 0 0 2.25 12c0 1.57.38 3.06 1.03 4.12l3.25-2.53z"/>
-      <path fill="#EA4335" d="M12 6.38c1.43 0 2.71.49 3.72 1.46l2.79-2.79C16.84 3.49 14.63 2.5 12 2.5a9.74 9.74 0 0 0-8.72 5.38l3.25 2.53C7.3 8.1 9.46 6.38 12 6.38z"/>
-    </svg>
+  <button id="googleBtn" class="google">
     Continue with Google
   </button>
 
-  <div class="divider">or login with email</div>
+  <div id="status" class="status"></div>
 
-  <form id="loginForm">
-
-    <label>Email</label>
-    <input
-      id="email"
-      type="email"
-      placeholder="Enter your email"
-      autocomplete="email"
-      required
-    >
-
-    <label>Password</label>
-    <input
-      id="password"
-      type="password"
-      placeholder="Enter your password"
-      autocomplete="current-password"
-      required
-    >
-
-    <button class="login-btn" id="loginBtn" type="submit">
-      Login
-    </button>
-
-  </form>
-
-  <div id="message" class="message"></div>
-
-  <div class="footer">
-    © 2026 Restaurant SaaS
+  <div class="small">
+    One Google account = One restaurant workspace
   </div>
 
 </div>
@@ -233,26 +125,32 @@ const SUPABASE_URL =
 "https://ltpjjckiaaonpetbzfvn.supabase.co";
 
 const SUPABASE_KEY =
-"sb_publishable_skzmVVxdVcKTQaUbwqEaIg_-KDmA-3L";
+"sb_publishable_skzmVVxdVcKTQaUbwEaIg_-KDmA-3L".replace(
+  "sb_publishable_skzmVVxdVcKTQaUbwEaIg_-KDmA-3L",
+  "sb_publishable_skzmVVxdVcKTQaUbwEaIg_-KDmA-3L"
+);
+
 
 /*
-  IMPORTANT:
-  Google login will return to the actual Admin folder.
+ IMPORTANT:
+ Agar tumhare Supabase dashboard mein publishable key
+ alag ho, to sirf upar SUPABASE_KEY ko apni current
+ publishable key se replace karna.
 */
+
 const ADMIN_URL =
-"https://technicalayu001-cell.github.io/Restaurant-order-system1/admin/";
+"https://technicalayu001-cell.github.io/Restaurant-order-system1/admin/index.html";
 
-const { createClient } = supabase;
-
-const db = createClient(
+const supabaseClient =
+supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY,
   {
     auth:{
-      flowType:"pkce",
-      detectSessionInUrl:false,
       persistSession:true,
-      autoRefreshToken:true
+      autoRefreshToken:true,
+      detectSessionInUrl:true,
+      flowType:"pkce"
     }
   }
 );
@@ -260,197 +158,109 @@ const db = createClient(
 const googleBtn =
 document.getElementById("googleBtn");
 
-const loginForm =
-document.getElementById("loginForm");
-
-const loginBtn =
-document.getElementById("loginBtn");
-
-const message =
-document.getElementById("message");
+const statusBox =
+document.getElementById("status");
 
 
-function showMessage(text,type="error"){
-
-  message.textContent=text;
-  message.className="message "+type;
-  message.style.display="block";
-
+function status(text,type=""){
+  statusBox.textContent=text;
+  statusBox.className="status "+type;
 }
 
 
-function hideMessage(){
-
-  message.style.display="none";
-
-}
-
-
-/*
-  Check existing login.
-*/
 async function checkExistingSession(){
 
   try{
 
-    const {
-      data,
-      error
-    } = await db.auth.getSession();
+    const {data,error} =
+      await supabaseClient.auth.getSession();
 
     if(error){
-      console.log(error);
+      console.error(error);
       return;
     }
 
     if(data && data.session){
 
-      window.location.replace(ADMIN_URL);
+      status("Already logged in. Opening admin...","success");
+
+      setTimeout(()=>{
+        window.location.replace(ADMIN_URL);
+      },500);
 
     }
 
-  }catch(err){
-
-    console.log(err);
-
+  }catch(error){
+    console.error(error);
   }
-
 }
 
 
-/*
-  GOOGLE LOGIN
-*/
-googleBtn.addEventListener("click",async()=>{
+supabaseClient.auth.onAuthStateChange(
+  (event,session)=>{
 
-  hideMessage();
+    console.log("AUTH EVENT:",event);
+
+    if(session){
+
+      status("Login successful. Opening admin...","success");
+
+      setTimeout(()=>{
+        window.location.replace(ADMIN_URL);
+      },300);
+
+    }
+
+  }
+);
+
+
+googleBtn.addEventListener("click",async()=>{
 
   googleBtn.disabled=true;
 
-  googleBtn.textContent="Opening Google...";
+  status("Opening Google login...");
 
   try{
 
-    const {
-      data,
-      error
-    } = await db.auth.signInWithOAuth({
+    const {error} =
+      await supabaseClient.auth.signInWithOAuth({
 
-      provider:"google",
+        provider:"google",
 
-      options:{
+        options:{
+          redirectTo:ADMIN_URL,
 
-        redirectTo:ADMIN_URL,
-
-        queryParams:{
-          access_type:"offline",
-          prompt:"select_account"
+          queryParams:{
+            access_type:"offline",
+            prompt:"select_account"
+          }
         }
 
-      }
-
-    });
+      });
 
     if(error){
 
-      throw error;
+      console.error(error);
 
+      status(
+        "Google login error: "+error.message,
+        "error"
+      );
+
+      googleBtn.disabled=false;
     }
 
-  }catch(err){
+  }catch(error){
 
-    console.error(err);
+    console.error(error);
 
-    showMessage(
-      err.message || "Google login failed."
+    status(
+      "Something went wrong: "+error.message,
+      "error"
     );
 
     googleBtn.disabled=false;
-
-    googleBtn.innerHTML=`
-      <span style="font-size:20px">G</span>
-      Continue with Google
-    `;
-
-  }
-
-});
-
-
-/*
-  EMAIL + PASSWORD LOGIN
-*/
-loginForm.addEventListener("submit",async(e)=>{
-
-  e.preventDefault();
-
-  hideMessage();
-
-  const email =
-    document.getElementById("email").value.trim();
-
-  const password =
-    document.getElementById("password").value;
-
-  if(!email || !password){
-
-    showMessage("Please enter email and password.");
-
-    return;
-
-  }
-
-  loginBtn.disabled=true;
-  loginBtn.textContent="Logging in...";
-
-  try{
-
-    const {
-      data,
-      error
-    } = await db.auth.signInWithPassword({
-
-      email,
-      password
-
-    });
-
-    if(error){
-
-      throw error;
-
-    }
-
-    if(!data.session){
-
-      throw new Error(
-        "Login successful but session was not created."
-      );
-
-    }
-
-    showMessage(
-      "Login successful. Opening Admin...",
-      "success"
-    );
-
-    setTimeout(()=>{
-
-      window.location.replace(ADMIN_URL);
-
-    },500);
-
-  }catch(err){
-
-    console.error(err);
-
-    showMessage(
-      err.message || "Invalid login credentials"
-    );
-
-    loginBtn.disabled=false;
-    loginBtn.textContent="Login";
-
   }
 
 });
