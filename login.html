@@ -1,495 +1,464 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Restaurant SaaS - Login</title>
 
-  <title>Restaurant SaaS - Login</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <meta name="theme-color" content="#ff6b00">
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+body{
+  min-height:100vh;
+  font-family:Arial,Helvetica,sans-serif;
+  background:linear-gradient(135deg,#fff7ed,#f8fafc,#eefdf5);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+  color:#111827;
+}
 
-    body {
-      min-height: 100vh;
-      font-family: Arial, Helvetica, sans-serif;
-      background:
-        linear-gradient(135deg, rgba(255,107,0,.95), rgba(255,170,0,.9)),
-        #ff6b00;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
+.card{
+  width:100%;
+  max-width:430px;
+  background:white;
+  border-radius:24px;
+  padding:32px 25px;
+  box-shadow:0 20px 60px rgba(0,0,0,.12);
+}
 
-    .container {
-      width: 100%;
-      max-width: 430px;
-    }
+.logo{
+  width:70px;
+  height:70px;
+  border-radius:20px;
+  background:linear-gradient(135deg,#ff7a00,#ffb000);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:36px;
+  margin:0 auto 18px;
+}
 
-    .card {
-      background: #ffffff;
-      border-radius: 24px;
-      padding: 35px 25px;
-      box-shadow: 0 20px 50px rgba(0,0,0,.20);
-      text-align: center;
-    }
+h1{
+  text-align:center;
+  font-size:26px;
+  margin-bottom:8px;
+}
 
-    .logo {
-      width: 75px;
-      height: 75px;
-      margin: 0 auto 18px;
-      border-radius: 20px;
-      background: linear-gradient(135deg, #ff6b00, #ff9800);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 38px;
-      box-shadow: 0 8px 20px rgba(255,107,0,.3);
-    }
+.subtitle{
+  text-align:center;
+  color:#6b7280;
+  font-size:14px;
+  margin-bottom:28px;
+}
 
-    h1 {
-      font-size: 27px;
-      color: #222;
-      margin-bottom: 8px;
-    }
+.google-btn{
+  width:100%;
+  height:52px;
+  border:1px solid #d1d5db;
+  border-radius:12px;
+  background:white;
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+}
 
-    .subtitle {
-      color: #777;
-      font-size: 15px;
-      line-height: 1.5;
-      margin-bottom: 28px;
-    }
+.google-btn:hover{
+  background:#f9fafb;
+}
 
-    .google-btn {
-      width: 100%;
-      border: 1px solid #ddd;
-      background: white;
-      color: #222;
-      height: 52px;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 12px;
-      transition: .2s;
-    }
+.google-icon{
+  width:22px;
+  height:22px;
+}
 
-    .google-btn:hover {
-      background: #f7f7f7;
-      transform: translateY(-1px);
-    }
+.divider{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:24px 0;
+  color:#9ca3af;
+  font-size:13px;
+}
 
-    .google-btn:disabled {
-      opacity: .6;
-      cursor: not-allowed;
-      transform: none;
-    }
+.divider::before,
+.divider::after{
+  content:"";
+  height:1px;
+  background:#e5e7eb;
+  flex:1;
+}
 
-    .google-icon {
-      width: 22px;
-      height: 22px;
-    }
+label{
+  display:block;
+  font-size:14px;
+  font-weight:600;
+  margin-bottom:7px;
+}
 
-    .message {
-      margin-top: 18px;
-      padding: 12px;
-      border-radius: 10px;
-      font-size: 14px;
-      display: none;
-      line-height: 1.4;
-    }
+input{
+  width:100%;
+  height:48px;
+  border:1px solid #d1d5db;
+  border-radius:11px;
+  padding:0 14px;
+  font-size:15px;
+  outline:none;
+  margin-bottom:15px;
+}
 
-    .error {
-      display: block;
-      background: #fff0f0;
-      color: #c62828;
-      border: 1px solid #ffcaca;
-    }
+input:focus{
+  border-color:#ff7a00;
+  box-shadow:0 0 0 3px rgba(255,122,0,.12);
+}
 
-    .success {
-      display: block;
-      background: #effbf3;
-      color: #16833b;
-      border: 1px solid #bde8ca;
-    }
+.login-btn{
+  width:100%;
+  height:50px;
+  border:0;
+  border-radius:11px;
+  background:#111827;
+  color:white;
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+}
 
-    .loading {
-      display: none;
-      margin-top: 18px;
-      color: #777;
-      font-size: 14px;
-    }
+.login-btn:disabled,
+.google-btn:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
 
-    .spinner {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 2px solid #ddd;
-      border-top-color: #ff6b00;
-      border-radius: 50%;
-      animation: spin .7s linear infinite;
-      vertical-align: middle;
-      margin-right: 6px;
-    }
+.message{
+  display:none;
+  margin-top:18px;
+  padding:12px;
+  border-radius:10px;
+  text-align:center;
+  font-size:14px;
+}
 
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
+.error{
+  background:#fff1f2;
+  color:#be123c;
+}
 
-    .trial {
-      margin-top: 25px;
-      padding: 14px;
-      background: #fff8ed;
-      border-radius: 12px;
-      color: #7a4a00;
-      font-size: 13px;
-      line-height: 1.5;
-    }
+.success{
+  background:#ecfdf5;
+  color:#047857;
+}
 
-    .footer {
-      margin-top: 22px;
-      color: #999;
-      font-size: 12px;
-      line-height: 1.5;
-    }
-
-    @media (max-width: 420px) {
-      .card {
-        padding: 30px 20px;
-      }
-
-      h1 {
-        font-size: 24px;
-      }
-    }
-  </style>
+.footer{
+  text-align:center;
+  margin-top:24px;
+  font-size:12px;
+  color:#9ca3af;
+}
+</style>
 </head>
 
 <body>
 
-  <div class="container">
+<div class="card">
 
-    <div class="card">
+  <div class="logo">🍽️</div>
 
-      <div class="logo">
-        🍽️
-      </div>
+  <h1>Restaurant SaaS</h1>
 
-      <h1>Restaurant SaaS</h1>
-
-      <p class="subtitle">
-        Manage your restaurant, orders, menu, tables and billing — all in one place.
-      </p>
-
-      <button
-        id="googleBtn"
-        class="google-btn"
-        onclick="loginWithGoogle()"
-      >
-        <svg
-          class="google-icon"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            fill="#4285F4"
-            d="M21.35 12.27c0-.79-.07-1.55-.2-2.27H12v4.3h5.24a4.48 4.48 0 0 1-1.94 2.94v2.45h3.14c1.84-1.69 2.91-4.18 2.91-7.42z"
-          />
-          <path
-            fill="#34A853"
-            d="M12 21.7c2.63 0 4.84-.87 6.45-2.36l-3.14-2.45c-.87.58-1.98.93-3.31.93-2.54 0-4.69-1.72-5.46-4.03H3.3v2.53A9.74 9.74 0 0 0 12 21.7z"
-          />
-          <path
-            fill="#FBBC05"
-            d="M6.54 13.79A5.85 5.85 0 0 1 6.23 12c0-.62.11-1.23.31-1.79V7.68H3.3A9.73 9.73 0 0 0 2.27 12c0 1.57.38 3.05 1.03 4.32l3.24-2.53z"
-          />
-          <path
-            fill="#EA4335"
-            d="M12 6.18c1.43 0 2.71.49 3.72 1.46l2.79-2.79C16.84 3.24 14.63 2.3 12 2.3a9.74 9.74 0 0 0-8.7 5.38l3.24 2.53C7.31 7.9 9.46 6.18 12 6.18z"
-          />
-        </svg>
-
-        Continue with Google
-      </button>
-
-      <div id="loading" class="loading">
-        <span class="spinner"></span>
-        Signing you in...
-      </div>
-
-      <div id="message" class="message"></div>
-
-      <div class="trial">
-        🎁 <strong>1-Day Free Trial</strong><br>
-        Start your restaurant management journey with a free trial.
-      </div>
-
-      <div class="footer">
-        By continuing, you agree to use Restaurant SaaS responsibly.
-      </div>
-
-    </div>
-
+  <div class="subtitle">
+    Manage your restaurant smarter
   </div>
 
+  <button class="google-btn" id="googleBtn">
+    <svg class="google-icon" viewBox="0 0 24 24">
+      <path fill="#4285F4" d="M21.35 12.23c0-.79-.07-1.55-.22-2.27H12v4.3h5.24a4.48 4.48 0 0 1-1.94 2.94v2.45h3.14c1.84-1.69 2.91-4.18 2.91-7.42z"/>
+      <path fill="#34A853" d="M12 21.5c2.63 0 4.84-.87 6.45-2.35l-3.14-2.45c-.87.58-1.98.92-3.31.92-2.54 0-4.7-1.72-5.47-4.03H3.28v2.53A9.74 9.74 0 0 0 12 21.5z"/>
+      <path fill="#FBBC05" d="M6.53 13.59A5.86 5.86 0 0 1 6.22 12c0-.55.1-1.09.31-1.59V7.88H3.28A9.73 9.73 0 0 0 2.25 12c0 1.57.38 3.06 1.03 4.12l3.25-2.53z"/>
+      <path fill="#EA4335" d="M12 6.38c1.43 0 2.71.49 3.72 1.46l2.79-2.79C16.84 3.49 14.63 2.5 12 2.5a9.74 9.74 0 0 0-8.72 5.38l3.25 2.53C7.3 8.1 9.46 6.38 12 6.38z"/>
+    </svg>
+    Continue with Google
+  </button>
 
-  <!-- Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <div class="divider">or login with email</div>
 
-  <script>
+  <form id="loginForm">
 
-    /* ================================
-       SUPABASE CONFIG
-    ================================= */
+    <label>Email</label>
+    <input
+      id="email"
+      type="email"
+      placeholder="Enter your email"
+      autocomplete="email"
+      required
+    >
 
-    const SUPABASE_URL =
-      "https://ltpjjckiaaonpetbzfvn.supabase.co";
+    <label>Password</label>
+    <input
+      id="password"
+      type="password"
+      placeholder="Enter your password"
+      autocomplete="current-password"
+      required
+    >
 
-    const SUPABASE_KEY =
-      "sb_publishable_skzmVVxdVcKTQaUbwqEaIg_-KDmA-3L";
+    <button class="login-btn" id="loginBtn" type="submit">
+      Login
+    </button>
+
+  </form>
+
+  <div id="message" class="message"></div>
+
+  <div class="footer">
+    © 2026 Restaurant SaaS
+  </div>
+
+</div>
+
+<script>
+
+const SUPABASE_URL =
+"https://ltpjjckiaaonpetbzfvn.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_skzmVVxdVcKTQaUbwqEaIg_-KDmA-3L";
+
+/*
+  IMPORTANT:
+  Google login will return to the actual Admin folder.
+*/
+const ADMIN_URL =
+"https://technicalayu001-cell.github.io/Restaurant-order-system1/admin/";
+
+const { createClient } = supabase;
+
+const db = createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  {
+    auth:{
+      flowType:"pkce",
+      detectSessionInUrl:false,
+      persistSession:true,
+      autoRefreshToken:true
+    }
+  }
+);
+
+const googleBtn =
+document.getElementById("googleBtn");
+
+const loginForm =
+document.getElementById("loginForm");
+
+const loginBtn =
+document.getElementById("loginBtn");
+
+const message =
+document.getElementById("message");
 
 
-    const supabaseClient =
-      window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-      );
+function showMessage(text,type="error"){
+
+  message.textContent=text;
+  message.className="message "+type;
+  message.style.display="block";
+
+}
 
 
-    /* ================================
-       IMPORTANT URL
-    ================================= */
+function hideMessage(){
 
-    const ADMIN_URL =
-      "https://technicalayu001-cell.github.io/Restaurant-order-system1/admin/";
+  message.style.display="none";
 
-
-    /* ================================
-       ELEMENTS
-    ================================= */
-
-    const googleBtn =
-      document.getElementById("googleBtn");
-
-    const loading =
-      document.getElementById("loading");
-
-    const message =
-      document.getElementById("message");
+}
 
 
-    /* ================================
-       MESSAGE
-    ================================= */
+/*
+  Check existing login.
+*/
+async function checkExistingSession(){
 
-    function showMessage(text, type = "error") {
+  try{
 
-      message.textContent = text;
+    const {
+      data,
+      error
+    } = await db.auth.getSession();
 
-      message.className =
-        "message " + type;
+    if(error){
+      console.log(error);
+      return;
+    }
+
+    if(data && data.session){
+
+      window.location.replace(ADMIN_URL);
 
     }
 
+  }catch(err){
 
-    function clearMessage() {
+    console.log(err);
 
-      message.textContent = "";
+  }
 
-      message.className = "message";
+}
 
-    }
 
+/*
+  GOOGLE LOGIN
+*/
+googleBtn.addEventListener("click",async()=>{
 
-    /* ================================
-       LOADING
-    ================================= */
+  hideMessage();
 
-    function setLoading(status) {
+  googleBtn.disabled=true;
 
-      if (status) {
+  googleBtn.textContent="Opening Google...";
 
-        loading.style.display = "block";
+  try{
 
-        googleBtn.disabled = true;
+    const {
+      data,
+      error
+    } = await db.auth.signInWithOAuth({
 
-      } else {
+      provider:"google",
 
-        loading.style.display = "none";
+      options:{
 
-        googleBtn.disabled = false;
+        redirectTo:ADMIN_URL,
 
-      }
-
-    }
-
-
-    /* ================================
-       GOOGLE LOGIN
-    ================================= */
-
-    async function loginWithGoogle() {
-
-      clearMessage();
-
-      setLoading(true);
-
-      try {
-
-        const { data, error } =
-          await supabaseClient.auth.signInWithOAuth({
-
-            provider: "google",
-
-            options: {
-
-              redirectTo: ADMIN_URL,
-
-              queryParams: {
-
-                access_type: "offline",
-
-                prompt: "select_account"
-
-              }
-
-            }
-
-          });
-
-
-        if (error) {
-
-          console.error(
-            "Google Login Error:",
-            error
-          );
-
-          setLoading(false);
-
-          showMessage(
-            "Google login failed: " +
-            error.message,
-            "error"
-          );
-
-          return;
-
-        }
-
-      } catch (error) {
-
-        console.error(error);
-
-        setLoading(false);
-
-        showMessage(
-          "Something went wrong. Please try again.",
-          "error"
-        );
-
-      }
-
-    }
-
-
-    /* ================================
-       CHECK EXISTING SESSION
-    ================================= */
-
-    async function checkSession() {
-
-      try {
-
-        const {
-          data: {
-            session
-          }
-        } =
-          await supabaseClient.auth.getSession();
-
-
-        if (session) {
-
-          console.log(
-            "Existing session found"
-          );
-
-          window.location.replace(
-            ADMIN_URL
-          );
-
-        }
-
-      } catch (error) {
-
-        console.error(
-          "Session check error:",
-          error
-        );
-
-      }
-
-    }
-
-
-    /* ================================
-       AUTH STATE CHANGE
-    ================================= */
-
-    supabaseClient.auth.onAuthStateChange(
-      async (event, session) => {
-
-        console.log(
-          "Auth event:",
-          event
-        );
-
-
-        if (
-          event === "SIGNED_IN" &&
-          session
-        ) {
-
-          showMessage(
-            "Login successful! Opening dashboard...",
-            "success"
-          );
-
-          setLoading(true);
-
-          setTimeout(() => {
-
-            window.location.replace(
-              ADMIN_URL
-            );
-
-          }, 500);
-
+        queryParams:{
+          access_type:"offline",
+          prompt:"select_account"
         }
 
       }
+
+    });
+
+    if(error){
+
+      throw error;
+
+    }
+
+  }catch(err){
+
+    console.error(err);
+
+    showMessage(
+      err.message || "Google login failed."
     );
 
+    googleBtn.disabled=false;
 
-    /* ================================
-       START
-    ================================= */
+    googleBtn.innerHTML=`
+      <span style="font-size:20px">G</span>
+      Continue with Google
+    `;
 
-    checkSession();
+  }
 
-  </script>
+});
+
+
+/*
+  EMAIL + PASSWORD LOGIN
+*/
+loginForm.addEventListener("submit",async(e)=>{
+
+  e.preventDefault();
+
+  hideMessage();
+
+  const email =
+    document.getElementById("email").value.trim();
+
+  const password =
+    document.getElementById("password").value;
+
+  if(!email || !password){
+
+    showMessage("Please enter email and password.");
+
+    return;
+
+  }
+
+  loginBtn.disabled=true;
+  loginBtn.textContent="Logging in...";
+
+  try{
+
+    const {
+      data,
+      error
+    } = await db.auth.signInWithPassword({
+
+      email,
+      password
+
+    });
+
+    if(error){
+
+      throw error;
+
+    }
+
+    if(!data.session){
+
+      throw new Error(
+        "Login successful but session was not created."
+      );
+
+    }
+
+    showMessage(
+      "Login successful. Opening Admin...",
+      "success"
+    );
+
+    setTimeout(()=>{
+
+      window.location.replace(ADMIN_URL);
+
+    },500);
+
+  }catch(err){
+
+    console.error(err);
+
+    showMessage(
+      err.message || "Invalid login credentials"
+    );
+
+    loginBtn.disabled=false;
+    loginBtn.textContent="Login";
+
+  }
+
+});
+
+
+checkExistingSession();
+
+</script>
 
 </body>
 </html>
