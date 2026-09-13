@@ -74,11 +74,11 @@
       align-items:center;
       justify-content:center;
       gap:12px;
-      transition:.2s;
     }
 
-    .google-btn:hover{
-      background:#f9fafb;
+    .google-btn:disabled{
+      cursor:not-allowed;
+      opacity:.6;
     }
 
     .google-icon{
@@ -91,6 +91,7 @@
       min-height:24px;
       color:#6b7280;
       font-size:14px;
+      line-height:1.5;
     }
 
     .trial{
@@ -147,138 +148,203 @@
 const SUPABASE_URL =
   "https://ltpjjckiaaonpetbzfvn.supabase.co";
 
+/*
+ IMPORTANT:
+ Supabase Dashboard → Settings → API
+ se apni CURRENT Publishable key copy karo
+ aur neeche paste karo.
+*/
 const SUPABASE_KEY =
-  "sb_publishable_skzmVVxdVcKTQaUbwqEaIg_-KDmA-3L";
+  "sb_publishable_skzmVVxdVcKTQaUbwqEaIg_-KDmA-3L"
+
 
 const ADMIN_URL =
   "https://technicalayu001-cell.github.io/Restaurant-order-system1/admin/index.html";
 
+
 const { createClient } = supabase;
 
+
+/*
+ Browser/GitHub Pages ke liye
+ Implicit Flow use kar rahe hain.
+
+ IMPORTANT:
+ PKCE nahi.
+ exchangeCodeForSession() nahi.
+*/
 const db = createClient(
   SUPABASE_URL,
   SUPABASE_KEY,
   {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true,
-      flowType: "pkce"
+    auth:{
+      persistSession:true,
+      autoRefreshToken:true,
+      detectSessionInUrl:true,
+      flowType:"implicit"
     }
   }
 );
 
-const googleBtn = document.getElementById("googleBtn");
-const statusBox = document.getElementById("status");
+
+const googleBtn =
+  document.getElementById("googleBtn");
+
+const statusBox =
+  document.getElementById("status");
 
 
-function setStatus(text){
-  statusBox.textContent = text;
+function setStatus(message){
+  statusBox.textContent = message;
 }
 
 
+/*
+ Existing session check
+*/
 async function checkExistingLogin(){
 
   try{
 
-    const { data, error } =
-      await db.auth.getSession();
+    const {
+      data,
+      error
+    } = await db.auth.getSession();
 
     if(error){
-      console.error(error);
+
+      console.error(
+        "Session check error:",
+        error
+      );
+
       return;
     }
 
+
     if(data && data.session){
 
-      setStatus("Already logged in. Opening Admin...");
+      setStatus(
+        "Already logged in. Opening Admin..."
+      );
 
-      window.location.replace(ADMIN_URL);
+      window.location.replace(
+        ADMIN_URL
+      );
 
     }
 
   }catch(error){
 
-    console.error(error);
+    console.error(
+      "Existing login error:",
+      error
+    );
 
   }
 
 }
 
 
+/*
+ Google Login
+*/
 async function googleLogin(){
 
   googleBtn.disabled = true;
-  googleBtn.style.opacity = "0.6";
 
-  setStatus("Opening Google login...");
+  setStatus(
+    "Opening Google login..."
+  );
 
   try{
 
-    const { error } =
-      await db.auth.signInWithOAuth({
+    const {
+      error
+    } = await db.auth.signInWithOAuth({
 
-        provider:"google",
+      provider:"google",
 
-        options:{
-          redirectTo:ADMIN_URL
-        }
+      options:{
+        redirectTo:ADMIN_URL
+      }
 
-      });
+    });
+
 
     if(error){
 
-      console.error(error);
+      console.error(
+        "Google login error:",
+        error
+      );
 
       setStatus(
-        "Login error: " + error.message
+        "Login error: " +
+        error.message
       );
 
       googleBtn.disabled = false;
-      googleBtn.style.opacity = "1";
 
+      return;
     }
+
+
+    /*
+     Normally browser Google page par
+     redirect ho jayega.
+    */
 
   }catch(error){
 
-    console.error(error);
+    console.error(
+      "Google login exception:",
+      error
+    );
 
     setStatus(
       "Something went wrong. Please try again."
     );
 
     googleBtn.disabled = false;
-    googleBtn.style.opacity = "1";
 
   }
 
 }
 
 
+/*
+ Auth state listener
+
+ OAuth ke baad Supabase session detect karega.
+*/
 db.auth.onAuthStateChange(
-  (event, session)=>{
+  (event, session) => {
 
     console.log(
-      "Auth event:",
+      "AUTH EVENT:",
       event,
+      "SESSION:",
       !!session
     );
 
-    if(
-      session &&
-      (
-        event === "SIGNED_IN" ||
-        event === "INITIAL_SESSION"
-      )
-    ){
+    if(session){
 
-      setStatus("Login successful. Opening Admin...");
+      setStatus(
+        "Login successful. Opening Admin..."
+      );
 
-      setTimeout(()=>{
+      /*
+       Small delay so Supabase session
+       storage complete ho jaye.
+      */
+      setTimeout(() => {
 
-        window.location.replace(ADMIN_URL);
+        window.location.replace(
+          ADMIN_URL
+        );
 
-      },500);
+      }, 700);
 
     }
 
@@ -292,6 +358,9 @@ googleBtn.addEventListener(
 );
 
 
+/*
+ Page open hote hi existing session check
+*/
 checkExistingLogin();
 
 </script>
