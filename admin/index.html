@@ -3836,4 +3836,1037 @@ async function printBill(orderId){
 
       <div class="line"></div>
 
-      <div class="total
+      <div class="total">
+        Total: ${money(order.total)}
+      </div>
+
+      <p class="center">
+        Thank you for visiting!
+      </p>
+
+      <script>
+
+        window.onload=function(){
+          window.print();
+        }
+
+      <\/script>
+
+    </body>
+
+    </html>
+
+  `);
+
+
+  w.document.close();
+
+}
+
+
+/* =========================================================
+   PAYMENTS
+========================================================= */
+
+async function loadPayments(){
+
+  if(!restaurant)
+    return;
+
+
+  $("upiId").value =
+    restaurant.upi_id || "";
+
+  $("upiQr").value =
+    restaurant.upi_qr_url || "";
+
+  $("taxPercent").value =
+    restaurant.tax_percent ?? 0;
+
+  $("servicePercent").value =
+    restaurant.service_charge_percent ?? 0;
+
+}
+
+
+async function savePayments(){
+
+  const {
+    error
+  } =
+    await db
+      .from("restaurants")
+      .update({
+
+        upi_id:
+          $("upiId").value.trim(),
+
+        upi_qr_url:
+          $("upiQr").value.trim(),
+
+        tax_percent:
+          Number(
+            $("taxPercent").value || 0
+          ),
+
+        service_charge_percent:
+          Number(
+            $("servicePercent").value || 0
+          )
+
+      })
+      .eq(
+        "id",
+        restaurantId
+      );
+
+
+  if(error){
+
+    toast(error.message);
+    return;
+
+  }
+
+
+  Object.assign(
+    restaurant,
+    {
+      upi_id:
+        $("upiId").value.trim(),
+
+      upi_qr_url:
+        $("upiQr").value.trim(),
+
+      tax_percent:
+        Number(
+          $("taxPercent").value || 0
+        ),
+
+      service_charge_percent:
+        Number(
+          $("servicePercent").value || 0
+        )
+    }
+  );
+
+
+  toast(
+    "Payment settings saved"
+  );
+
+}
+
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+function fillRestaurantForms(){
+
+  $("profileName").value =
+    restaurant.name || "";
+
+  $("profilePhone").value =
+    restaurant.phone || "";
+
+  $("profileAddress").value =
+    restaurant.address || "";
+
+  $("profileLogo").value =
+    restaurant.logo_url || "";
+
+  $("profileCover").value =
+    restaurant.cover_url || "";
+
+  $("profileOpening").value =
+    restaurant.opening_time || "";
+
+  $("profileClosing").value =
+    restaurant.closing_time || "";
+
+  $("profileAbout").value =
+    restaurant.about || "";
+
+}
+
+
+async function saveProfile(){
+
+  const update = {
+
+    name:
+      $("profileName").value.trim(),
+
+    phone:
+      $("profilePhone").value.trim(),
+
+    address:
+      $("profileAddress").value.trim(),
+
+    logo_url:
+      $("profileLogo").value.trim(),
+
+    cover_url:
+      $("profileCover").value.trim(),
+
+    opening_time:
+      $("profileOpening").value || null,
+
+    closing_time:
+      $("profileClosing").value || null,
+
+    about:
+      $("profileAbout").value.trim()
+
+  };
+
+
+  const {
+    error
+  } =
+    await db
+      .from("restaurants")
+      .update(update)
+      .eq(
+        "id",
+        restaurantId
+      );
+
+
+  if(error){
+
+    toast(error.message);
+    return;
+
+  }
+
+
+  Object.assign(
+    restaurant,
+    update
+  );
+
+
+  $("restaurantNameTop").textContent =
+    restaurant.name ||
+    "Restaurant Admin";
+
+
+  toast(
+    "Profile saved"
+  );
+
+}
+
+
+/* =========================================================
+   STAFF
+========================================================= */
+
+async function loadStaff(){
+
+  const {
+    data,
+    error
+  } =
+    await db
+      .from("staff")
+      .select("*")
+      .eq(
+        "restaurant_id",
+        restaurantId
+      )
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      );
+
+
+  if(error){
+
+    $("staffList").innerHTML =
+      `<div class="empty">
+        ${escapeHtml(error.message)}
+      </div>`;
+
+    return;
+
+  }
+
+
+  if(!data?.length){
+
+    $("staffList").innerHTML =
+      `<div class="empty">
+        No staff added.
+      </div>`;
+
+    return;
+
+  }
+
+
+  $("staffList").innerHTML =
+    `<div class="table-wrap">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          ${data.map(s=>`
+
+            <tr>
+
+              <td>
+                ${escapeHtml(
+                  s.email || "-"
+                )}
+              </td>
+
+              <td>
+                ${escapeHtml(
+                  s.role || "-"
+                )}
+              </td>
+
+              <td>
+                ${s.active === false
+                  ? "Inactive"
+                  : "Active"}
+              </td>
+
+            </tr>
+
+          `).join("")}
+
+        </tbody>
+
+      </table>
+
+    </div>`;
+
+}
+
+
+async function addStaff(){
+
+  const email =
+    $("staffEmail").value.trim();
+
+  const role =
+    $("staffRole").value;
+
+
+  if(!email){
+
+    toast(
+      "Enter staff email"
+    );
+
+    return;
+
+  }
+
+
+  const {
+    error
+  } =
+    await db
+      .from("staff")
+      .insert({
+
+        restaurant_id:
+          restaurantId,
+
+        email,
+
+        role,
+
+        active:true
+
+      });
+
+
+  if(error){
+
+    toast(error.message);
+    return;
+
+  }
+
+
+  $("staffEmail").value="";
+
+  toast(
+    "Staff added"
+  );
+
+  await loadStaff();
+
+}
+
+
+/* =========================================================
+   ANALYTICS
+========================================================= */
+
+async function loadAnalytics(){
+
+  const orders =
+    await getAllOrders();
+
+
+  const totalSales =
+    orders.reduce(
+      (sum,o)=>
+        sum + Number(o.total || 0),
+      0
+    );
+
+
+  const average =
+    orders.length
+    ? totalSales / orders.length
+    : 0;
+
+
+  $("analyticsOrders").textContent =
+    orders.length;
+
+  $("analyticsSales").textContent =
+    money(totalSales);
+
+  $("analyticsAverage").textContent =
+    money(average);
+
+
+  $("analyticsList").innerHTML =
+    orders.length
+    ? `<div class="table-wrap">
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>Order</th>
+              <th>Date</th>
+              <th>Total</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            ${orders.slice(0,30).map(o=>`
+
+              <tr>
+
+                <td>
+                  #${String(o.id).slice(0,8)}
+                </td>
+
+                <td>
+                  ${formatDate(o.created_at)}
+                </td>
+
+                <td>
+                  ${money(o.total)}
+                </td>
+
+                <td>
+                  ${statusBadge(o.status)}
+                </td>
+
+              </tr>
+
+            `).join("")}
+
+          </tbody>
+
+        </table>
+
+      </div>`
+    : `<div class="empty">
+        No analytics data.
+      </div>`;
+
+}
+
+
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+async function loadSettings(){
+
+  if(!restaurant)
+    return;
+
+
+  $("settingPrep").value =
+    restaurant.default_preparation_minutes ?? 15;
+
+  $("settingMinimum").value =
+    restaurant.minimum_order ?? 0;
+
+  $("settingOpen").value =
+    restaurant.is_open === false
+    ? "false"
+    : "true";
+
+}
+
+
+async function saveSettings(){
+
+  const update = {
+
+    default_preparation_minutes:
+      Number(
+        $("settingPrep").value || 15
+      ),
+
+    minimum_order:
+      Number(
+        $("settingMinimum").value || 0
+      ),
+
+    is_open:
+      $("settingOpen").value === "true"
+
+  };
+
+
+  const {
+    error
+  } =
+    await db
+      .from("restaurants")
+      .update(update)
+      .eq(
+        "id",
+        restaurantId
+      );
+
+
+  if(error){
+
+    toast(error.message);
+    return;
+
+  }
+
+
+  Object.assign(
+    restaurant,
+    update
+  );
+
+
+  toast(
+    "Settings saved"
+  );
+
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+function showPage(
+  page,
+  button
+){
+
+  document
+    .querySelectorAll(".page")
+    .forEach(p=>
+      p.classList.remove(
+        "active"
+      )
+    );
+
+
+  const target =
+    $("page-"+page);
+
+
+  if(target)
+    target.classList.add(
+      "active"
+    );
+
+
+  document
+    .querySelectorAll(".nav-btn")
+    .forEach(b=>
+      b.classList.remove(
+        "active"
+      )
+    );
+
+
+  if(button)
+    button.classList.add(
+      "active"
+    );
+
+
+  if(
+    page==="billing"
+  )
+    loadBilling();
+
+  if(
+    page==="analytics"
+  )
+    loadAnalytics();
+
+  if(
+    page==="orders"
+  )
+    loadOrders();
+
+  if(
+    page==="menu"
+  )
+    loadMenu();
+
+  if(
+    page==="tables"
+  )
+    loadTables();
+
+  if(
+    page==="waiters"
+  )
+    loadWaiters();
+
+  if(
+    page==="complaints"
+  )
+    loadComplaints();
+
+  if(
+    page==="feedback"
+  )
+    loadFeedback();
+
+
+  if(window.innerWidth<=800){
+
+    $("sidebar")
+      .classList.remove(
+        "open"
+      );
+
+  }
+
+}
+
+
+function showPageById(page){
+
+  const button =
+    [...document.querySelectorAll(".nav-btn")]
+      .find(b =>
+        b.getAttribute("onclick")
+        ?.includes(
+          `'${page}'`
+        )
+      );
+
+
+  showPage(
+    page,
+    button
+  );
+
+}
+
+
+function toggleSidebar(){
+
+  $("sidebar")
+    .classList.toggle(
+      "open"
+    );
+
+}
+
+
+/* =========================================================
+   REALTIME
+========================================================= */
+
+function startRealtime(){
+
+  if(!restaurantId)
+    return;
+
+
+  if(realtimeChannel){
+
+    db.removeChannel(
+      realtimeChannel
+    );
+
+  }
+
+
+  realtimeChannel =
+    db.channel(
+      "restaurant-admin-" +
+      restaurantId
+    );
+
+
+  realtimeChannel
+
+    .on(
+      "postgres_changes",
+      {
+        event:"*",
+        schema:"public",
+        table:"orders",
+        filter:
+          "restaurant_id=eq." +
+          restaurantId
+      },
+      async payload=>{
+
+        console.log(
+          "Order realtime:",
+          payload
+        );
+
+        await loadDashboard();
+        await loadOrders();
+
+      }
+    )
+
+    .on(
+      "postgres_changes",
+      {
+        event:"*",
+        schema:"public",
+        table:"waiter_calls",
+        filter:
+          "restaurant_id=eq." +
+          restaurantId
+      },
+      async payload=>{
+
+        console.log(
+          "Waiter realtime:",
+          payload
+        );
+
+        await loadWaiters();
+
+      }
+    )
+
+    .subscribe();
+
+}
+
+
+/* =========================================================
+   FALLBACK POLLING
+========================================================= */
+
+function startFallbackPolling(){
+
+  if(pollTimer)
+    clearInterval(
+      pollTimer
+    );
+
+
+  pollTimer =
+    setInterval(
+      checkForNewActivity,
+      10000
+    );
+
+}
+
+
+async function checkForNewActivity(){
+
+  try{
+
+    const orders =
+      await getTodayOrders();
+
+
+    const newestOrder =
+      orders[0];
+
+
+    const waiterResult =
+      await db
+        .from("waiter_calls")
+        .select("*")
+        .eq(
+          "restaurant_id",
+          restaurantId
+        )
+        .order(
+          "created_at",
+          {
+            ascending:false
+          }
+        )
+        .limit(1);
+
+
+    const newestWaiter =
+      waiterResult.data?.[0];
+
+
+    /*
+      First poll only initializes IDs.
+      It does not show fake new-order notification.
+    */
+
+    if(!pollInitialized){
+
+      lastOrderId =
+        newestOrder?.id || null;
+
+      lastWaiterId =
+        newestWaiter?.id || null;
+
+      pollInitialized = true;
+
+      return;
+
+    }
+
+
+    if(
+      newestOrder &&
+      newestOrder.id !== lastOrderId
+    ){
+
+      lastOrderId =
+        newestOrder.id;
+
+      notifyUser(
+        "New Order",
+        "A new restaurant order has arrived."
+      );
+
+      await loadDashboard();
+      await loadOrders();
+
+    }
+
+
+    if(
+      newestWaiter &&
+      newestWaiter.id !== lastWaiterId
+    ){
+
+      lastWaiterId =
+        newestWaiter.id;
+
+      notifyUser(
+        "Waiter Call",
+        "A customer requested assistance."
+      );
+
+      await loadWaiters();
+
+    }
+
+
+  }catch(error){
+
+    console.error(
+      "Polling error:",
+      error
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   NOTIFICATION
+========================================================= */
+
+function notifyUser(
+  title,
+  body
+){
+
+  toast(
+    "🔔 " +
+    title +
+    ": " +
+    body
+  );
+
+
+  if(
+    "Notification" in window &&
+    Notification.permission === "granted"
+  ){
+
+    try{
+
+      new Notification(
+        title,
+        {
+          body
+        }
+      );
+
+    }catch(e){}
+
+  }
+
+}
+
+
+if(
+  "Notification" in window &&
+  Notification.permission === "default"
+){
+
+  Notification.requestPermission()
+    .catch(()=>{});
+
+}
+
+
+/* =========================================================
+   MIDNIGHT REFRESH
+========================================================= */
+
+function startMidnightRefresh(){
+
+  if(midnightTimer)
+    clearTimeout(
+      midnightTimer
+    );
+
+
+  const now =
+    new Date();
+
+
+  const next =
+    new Date(now);
+
+
+  next.setDate(
+    next.getDate()+1
+  );
+
+  next.setHours(
+    0,0,2,0
+  );
+
+
+  const delay =
+    next.getTime() -
+    now.getTime();
+
+
+  midnightTimer =
+    setTimeout(
+      async()=>{
+
+        pollInitialized = false;
+        lastOrderId = null;
+        lastWaiterId = null;
+
+        await loadDashboard();
+        await loadOrders();
+
+        startMidnightRefresh();
+
+      },
+      Math.max(
+        delay,
+        1000
+      )
+    );
+
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+async function logout(){
+
+  await db.auth.signOut();
+
+  location.href =
+    "../login.html";
+
+}
+
+
+/* =========================================================
+   DATE
+========================================================= */
+
+function formatDate(value){
+
+  if(!value)
+    return "-";
+
+  try{
+
+    return new Date(value)
+      .toLocaleString(
+        "en-IN",
+        {
+          day:"2-digit",
+          month:"2-digit",
+          year:"numeric",
+          hour:"2-digit",
+          minute:"2-digit"
+        }
+      );
+
+  }catch(e){
+
+    return value;
+
+  }
+
+}
+
+
+/* =========================================================
+   START
+========================================================= */
+
+initAuth();
+
+</script>
+
+</body>
+</html>
