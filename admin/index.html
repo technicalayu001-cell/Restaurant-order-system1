@@ -2,971 +2,1503 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Restaurant Admin</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <style>
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
 
 body{
- margin:0;
- font-family:Arial,sans-serif;
- background:#f5f6f8;
- color:#222
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f5f7fb;
+  color:#222;
+}
+
+button,input,textarea,select{
+  font:inherit;
 }
 
 button{
- border:0;
- border-radius:8px;
- padding:10px 14px;
- cursor:pointer;
- font-weight:bold
+  cursor:pointer;
 }
 
-input,textarea,select{
- width:100%;
- padding:11px;
- border:1px solid #ddd;
- border-radius:8px;
- margin:6px 0 12px
+.hidden{
+  display:none!important;
 }
 
-textarea{
- min-height:90px
+/* ================= LOGIN LOADING ================= */
+
+#authLoading{
+  position:fixed;
+  inset:0;
+  background:#f5f7fb;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:99999;
 }
 
-.login{
- min-height:100vh;
- display:flex;
- align-items:center;
- justify-content:center;
- padding:20px
+.auth-box{
+  background:white;
+  width:min(420px,90%);
+  padding:35px 25px;
+  border-radius:22px;
+  text-align:center;
+  box-shadow:0 15px 45px rgba(0,0,0,.12);
 }
 
-.loginbox{
- width:100%;
- max-width:390px;
- background:#fff;
- padding:28px;
- border-radius:18px;
- box-shadow:0 5px 25px #0002
+.auth-logo{
+  font-size:48px;
+  margin-bottom:15px;
 }
 
-.loginbox h1{
- text-align:center
+.spinner{
+  width:28px;
+  height:28px;
+  border:3px solid #ddd;
+  border-top-color:#ff6b00;
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+  margin:20px auto;
 }
 
-.primary{
- background:#111;
- color:#fff
+@keyframes spin{
+  to{transform:rotate(360deg)}
 }
 
-.green{
- background:#198754;
- color:#fff
+.auth-error{
+  background:#fff0f0;
+  color:#c62828;
+  padding:12px;
+  border-radius:10px;
+  margin-top:15px;
+  font-size:14px;
 }
 
-.red{
- background:#dc3545;
- color:#fff
+.retry-btn{
+  border:0;
+  background:#ff6b00;
+  color:white;
+  padding:11px 20px;
+  border-radius:10px;
+  margin-top:15px;
 }
 
-.yellow{
- background:#ffc107;
- color:#111
+/* ================= APP ================= */
+
+#app{
+  display:none;
+  min-height:100vh;
 }
 
-.blue{
- background:#0d6efd;
- color:#fff
+.topbar{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  height:64px;
+  background:white;
+  border-bottom:1px solid #eee;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 20px;
+  z-index:1000;
 }
 
-.top{
- height:64px;
- background:#111;
- color:#fff;
- display:flex;
- align-items:center;
- justify-content:space-between;
- padding:0 18px;
- position:sticky;
- top:0;
- z-index:100
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:bold;
+  font-size:19px;
 }
 
-.topLeft{
- display:flex;
- align-items:center;
- gap:10px
+.brand-icon{
+  width:40px;
+  height:40px;
+  border-radius:12px;
+  background:#ff6b00;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:21px;
 }
 
-.menuBtn{
- display:none;
- background:#333;
- color:#fff
+.top-right{
+  display:flex;
+  align-items:center;
+  gap:12px;
 }
 
-.layout{
- display:flex;
- min-height:calc(100vh - 64px)
+.user-info{
+  display:flex;
+  align-items:center;
+  gap:8px;
 }
+
+.user-avatar{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  object-fit:cover;
+  background:#eee;
+}
+
+.logout{
+  border:0;
+  background:#111;
+  color:white;
+  padding:9px 13px;
+  border-radius:9px;
+}
+
+/* ================= SIDEBAR ================= */
 
 .sidebar{
- width:240px;
- background:#1b1b1b;
- padding:14px;
- flex-shrink:0
+  position:fixed;
+  top:64px;
+  bottom:0;
+  left:0;
+  width:235px;
+  background:#111;
+  color:white;
+  overflow-y:auto;
+  padding:15px 10px;
+  z-index:900;
 }
 
-.nav{
- display:block;
- width:100%;
- background:transparent;
- color:#fff;
- text-align:left;
- margin:3px 0
+.nav-title{
+  color:#888;
+  font-size:11px;
+  padding:12px 10px 7px;
+  text-transform:uppercase;
 }
 
-.nav.active,
-.nav:hover{
- background:#333
+.nav-btn{
+  width:100%;
+  border:0;
+  background:transparent;
+  color:#ddd;
+  text-align:left;
+  padding:12px 13px;
+  border-radius:9px;
+  margin:2px 0;
 }
 
-.main{
- flex:1;
- padding:20px;
- overflow:auto
+.nav-btn:hover,
+.nav-btn.active{
+  background:#ff6b00;
+  color:white;
+}
+
+/* ================= CONTENT ================= */
+
+.content{
+  margin-left:235px;
+  padding:88px 22px 30px;
 }
 
 .page{
- display:none
+  display:none;
 }
 
 .page.active{
- display:block
+  display:block;
 }
+
+.page-title{
+  font-size:25px;
+  font-weight:700;
+  margin-bottom:5px;
+}
+
+.page-subtitle{
+  color:#777;
+  margin-bottom:20px;
+}
+
+/* ================= CARDS ================= */
 
 .cards{
- display:grid;
- grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
- gap:15px;
- margin-top:18px
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:15px;
+  margin-bottom:20px;
 }
 
-.card,
-.panel,
-.tableCard,
-.foodCard,
-.itemCard{
- background:#fff;
- border-radius:14px;
- padding:18px;
- box-shadow:0 3px 14px #0001
+.card{
+  background:white;
+  border-radius:15px;
+  padding:18px;
+  box-shadow:0 3px 15px rgba(0,0,0,.05);
 }
 
-.card small{
- color:#777
+.card-label{
+  color:#777;
+  font-size:13px;
 }
 
-.card b{
- font-size:27px;
- display:block;
- margin-top:8px
+.card-value{
+  font-size:25px;
+  font-weight:bold;
+  margin-top:8px;
 }
+
+/* ================= PANELS ================= */
 
 .panel{
- margin-top:18px
+  background:white;
+  border-radius:15px;
+  padding:18px;
+  margin-bottom:20px;
+  box-shadow:0 3px 15px rgba(0,0,0,.05);
 }
 
-.panelHead{
- display:flex;
- justify-content:space-between;
- align-items:center;
- gap:10px;
- flex-wrap:wrap
+.panel-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:15px;
 }
 
-.order{
- border:1px solid #eee;
- border-radius:12px;
- padding:15px;
- margin:12px 0
+.panel-title{
+  font-size:18px;
+  font-weight:bold;
 }
 
-.order.new-alert{
- border:2px solid #dc3545;
- background:#fff5f5
+/* ================= BUTTONS ================= */
+
+.btn{
+  border:0;
+  padding:9px 13px;
+  border-radius:9px;
+  background:#ff6b00;
+  color:white;
 }
 
-.orderHead{
- display:flex;
- justify-content:space-between;
- gap:10px;
- flex-wrap:wrap
+.btn.dark{
+  background:#111;
 }
+
+.btn.green{
+  background:#159447;
+}
+
+.btn.red{
+  background:#d92d20;
+}
+
+.btn.gray{
+  background:#eee;
+  color:#222;
+}
+
+/* ================= TABLE ================= */
+
+.table-wrap{
+  width:100%;
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:650px;
+}
+
+th,td{
+  padding:12px 10px;
+  border-bottom:1px solid #eee;
+  text-align:left;
+  font-size:14px;
+}
+
+th{
+  color:#666;
+  font-size:12px;
+  background:#fafafa;
+}
+
+/* ================= STATUS ================= */
 
 .badge{
- background:#eee;
- padding:6px 10px;
- border-radius:20px;
- font-size:12px
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:bold;
 }
 
-.actions{
- display:flex;
- gap:7px;
- flex-wrap:wrap;
- margin-top:12px
+.badge.new{
+  background:#fff0df;
+  color:#d66a00;
 }
 
-.grid{
- display:grid;
- grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
- gap:15px
+.badge.preparing{
+  background:#e9f1ff;
+  color:#2563eb;
 }
 
-.tableCard{
- text-align:center
+.badge.ready{
+  background:#e8f9ed;
+  color:#16833b;
 }
 
-.qr{
- display:flex;
- justify-content:center;
- margin:12px
+.badge.completed{
+  background:#eee;
+  color:#555;
 }
 
-.foodCard img{
- width:100%;
- height:150px;
- object-fit:cover;
- border-radius:9px
+.badge.pending{
+  background:#fff0df;
+  color:#d66a00;
 }
 
-.foodBody{
- padding-top:10px
+.badge.paid{
+  background:#e8f9ed;
+  color:#16833b;
 }
+
+/* ================= GRID ================= */
+
+.grid2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+
+.grid3{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+}
+
+/* ================= FORM ================= */
+
+.form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+
+.form-group{
+  margin-bottom:13px;
+}
+
+.form-group.full{
+  grid-column:1/-1;
+}
+
+label{
+  display:block;
+  font-size:13px;
+  color:#666;
+  margin-bottom:6px;
+}
+
+input,textarea,select{
+  width:100%;
+  border:1px solid #ddd;
+  padding:11px;
+  border-radius:9px;
+  outline:none;
+  background:white;
+}
+
+input:focus,
+textarea:focus,
+select:focus{
+  border-color:#ff6b00;
+}
+
+textarea{
+  min-height:90px;
+  resize:vertical;
+}
+
+/* ================= ORDER CARD ================= */
+
+.order-card{
+  border:1px solid #eee;
+  border-radius:12px;
+  padding:15px;
+  margin-bottom:12px;
+}
+
+.order-head{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px;
+}
+
+.order-items{
+  background:#fafafa;
+  border-radius:9px;
+  padding:10px;
+  margin:10px 0;
+}
+
+.order-item{
+  display:flex;
+  justify-content:space-between;
+  padding:5px 0;
+  font-size:13px;
+}
+
+.order-actions{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+}
+
+/* ================= QR ================= */
+
+.qr-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+}
+
+.qr-card{
+  background:white;
+  border:1px solid #eee;
+  border-radius:13px;
+  padding:15px;
+  text-align:center;
+}
+
+.qr-card img{
+  width:150px;
+  height:150px;
+  object-fit:contain;
+  margin:8px auto;
+}
+
+/* ================= EMPTY ================= */
 
 .empty{
- text-align:center;
- padding:30px;
- color:#777
+  text-align:center;
+  padding:35px 15px;
+  color:#888;
 }
 
-.stat{
- font-size:13px;
- color:#666
+/* ================= TOAST ================= */
+
+#toast{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  background:#111;
+  color:white;
+  padding:13px 17px;
+  border-radius:10px;
+  display:none;
+  z-index:99999;
+  max-width:320px;
 }
 
-.notification{
- position:fixed;
- right:15px;
- top:80px;
- width:min(360px,calc(100% - 30px));
- background:#dc3545;
- color:#fff;
- padding:15px;
- border-radius:12px;
- box-shadow:0 5px 25px #0004;
- z-index:9999;
- display:none
+/* ================= MOBILE ================= */
+
+.menu-toggle{
+  display:none;
+  border:0;
+  background:#111;
+  color:white;
+  width:40px;
+  height:40px;
+  border-radius:9px;
+  font-size:20px;
 }
 
-.notification.show{
- display:block
-}
+@media(max-width:1100px){
+  .cards{
+    grid-template-columns:repeat(3,1fr);
+  }
 
-.notification h3{
- margin:0 0 7px
-}
-
-.notification button{
- background:#fff;
- color:#111;
- margin-top:8px
-}
-
-.waiter-alert{
- border:2px solid #dc3545!important;
- background:#fff0f0
-}
-
-.bill{
- border:1px solid #ddd;
- padding:15px;
- border-radius:12px;
- margin-bottom:12px
-}
-
-.bill.generated{
- border:2px solid #198754;
- background:#f1fff7
-}
-
-.billStatus{
- display:inline-block;
- padding:6px 10px;
- border-radius:20px;
- font-size:12px;
- background:#eee
-}
-
-.billStatus.ready{
- background:#d1e7dd;
- color:#0f5132
-}
-
-.status-dot{
- display:inline-block;
- width:10px;
- height:10px;
- border-radius:50%;
- background:#198754;
- margin-right:6px
-}
-
-.status-dot.off{
- background:#dc3545
+  .qr-grid{
+    grid-template-columns:repeat(3,1fr);
+  }
 }
 
 @media(max-width:800px){
 
- .menuBtn{
-  display:block
- }
+  .menu-toggle{
+    display:block;
+  }
 
- .sidebar{
-  position:fixed;
-  left:-250px;
-  top:64px;
-  bottom:0;
-  z-index:90;
-  transition:.2s
- }
+  .sidebar{
+    transform:translateX(-100%);
+    transition:.25s;
+  }
 
- .sidebar.open{
-  left:0
- }
+  .sidebar.open{
+    transform:translateX(0);
+  }
 
- .main{
-  padding:12px
- }
+  .content{
+    margin-left:0;
+    padding:82px 13px 25px;
+  }
 
- .grid{
-  grid-template-columns:repeat(2,minmax(0,1fr))
- }
+  .topbar{
+    padding:0 10px;
+  }
+
+  .brand span{
+    display:none;
+  }
+
+  .user-info{
+    display:none;
+  }
+
+  .cards{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .grid2,
+  .grid3,
+  .form-grid{
+    grid-template-columns:1fr;
+  }
+
+  .form-group.full{
+    grid-column:auto;
+  }
+
+  .qr-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
 }
 
-@media(max-width:500px){
+@media(max-width:450px){
 
- .grid{
-  grid-template-columns:1fr
- }
+  .cards{
+    grid-template-columns:1fr 1fr;
+    gap:9px;
+  }
 
- .cards{
-  grid-template-columns:1fr 1fr
- }
+  .card{
+    padding:13px;
+  }
 
- .top h2{
-  font-size:16px
- }
+  .card-value{
+    font-size:21px;
+  }
+
+  .qr-grid{
+    grid-template-columns:1fr;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<!-- LOGIN -->
-<div id="loginScreen" class="login">
- <div class="loginbox">
+<!-- ================= AUTH LOADING ================= -->
 
-  <h1>🔐 Restaurant Admin</h1>
+<div id="authLoading">
+  <div class="auth-box">
+    <div class="auth-logo">🍽️</div>
+    <h2>Restaurant Admin</h2>
+    <p style="color:#777;margin-top:8px">
+      Checking your Google login...
+    </p>
+    <div class="spinner"></div>
 
-  <label>Email</label>
-  <input id="email" type="email" placeholder="Admin email">
+    <div id="authError" class="auth-error hidden"></div>
 
-  <label>Password</label>
-  <input id="password" type="password" placeholder="Password">
-
-  <button class="primary" style="width:100%" onclick="login()">
-   Login
-  </button>
-
-  <p id="loginError" style="color:red;text-align:center"></p>
-
- </div>
+    <button
+      id="retryBtn"
+      class="retry-btn hidden"
+      onclick="location.href='../login.html'"
+    >
+      Back to Login
+    </button>
+  </div>
 </div>
 
 
-<!-- NOTIFICATION -->
-<div id="notification" class="notification">
- <h3 id="notificationTitle">🔔 Notification</h3>
- <div id="notificationText"></div>
- <button onclick="closeNotification()">Close</button>
+<!-- ================= MAIN APP ================= -->
+
+<div id="app">
+
+  <!-- TOPBAR -->
+
+  <header class="topbar">
+
+    <div class="brand">
+
+      <button
+        class="menu-toggle"
+        onclick="toggleSidebar()"
+      >
+        ☰
+      </button>
+
+      <div class="brand-icon">🍽️</div>
+
+      <span id="restaurantNameTop">
+        Restaurant Admin
+      </span>
+
+    </div>
+
+    <div class="top-right">
+
+      <div class="user-info">
+
+        <img
+          id="userAvatar"
+          class="user-avatar"
+          src=""
+          alt=""
+        >
+
+        <span id="userEmail"></span>
+
+      </div>
+
+      <button
+        class="logout"
+        onclick="logout()"
+      >
+        Logout
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <!-- SIDEBAR -->
+
+  <aside class="sidebar" id="sidebar">
+
+    <div class="nav-title">Main</div>
+
+    <button class="nav-btn active" onclick="showPage('dashboard',this)">
+      📊 Dashboard
+    </button>
+
+    <button class="nav-btn" onclick="showPage('orders',this)">
+      🛎️ Live Orders
+    </button>
+
+    <button class="nav-btn" onclick="showPage('menu',this)">
+      🍔 Menu Management
+    </button>
+
+    <button class="nav-btn" onclick="showPage('tables',this)">
+      🪑 Tables & QR
+    </button>
+
+    <div class="nav-title">Restaurant</div>
+
+    <button class="nav-btn" onclick="showPage('offers',this)">
+      🎁 Offers
+    </button>
+
+    <button class="nav-btn" onclick="showPage('waiters',this)">
+      🛎️ Waiter Calls
+    </button>
+
+    <button class="nav-btn" onclick="showPage('complaints',this)">
+      ⚠️ Complaints
+    </button>
+
+    <button class="nav-btn" onclick="showPage('feedback',this)">
+      ⭐ Feedback
+    </button>
+
+    <button class="nav-btn" onclick="showPage('billing',this)">
+      🧾 Billing
+    </button>
+
+    <button class="nav-btn" onclick="showPage('payments',this)">
+      💳 Payments
+    </button>
+
+    <button class="nav-btn" onclick="showPage('profile',this)">
+      🏪 Restaurant Profile
+    </button>
+
+    <div class="nav-title">Management</div>
+
+    <button class="nav-btn" onclick="showPage('staff',this)">
+      👥 Staff
+    </button>
+
+    <button class="nav-btn" onclick="showPage('analytics',this)">
+      📈 Analytics
+    </button>
+
+    <button class="nav-btn" onclick="showPage('settings',this)">
+      ⚙️ Settings
+    </button>
+
+  </aside>
+
+
+  <!-- CONTENT -->
+
+  <main class="content">
+
+
+    <!-- ================= DASHBOARD ================= -->
+
+    <section id="page-dashboard" class="page active">
+
+      <h1 class="page-title">Dashboard</h1>
+
+      <p class="page-subtitle">
+        Today's restaurant overview
+      </p>
+
+      <div class="cards">
+
+        <div class="card">
+          <div class="card-label">Today's Orders</div>
+          <div class="card-value" id="statOrders">0</div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Pending Orders</div>
+          <div class="card-value" id="statPending">0</div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Completed</div>
+          <div class="card-value" id="statCompleted">0</div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Today's Sales</div>
+          <div class="card-value" id="statSales">₹0</div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Active Tables</div>
+          <div class="card-value" id="statTables">0</div>
+        </div>
+
+      </div>
+
+
+      <div class="grid2">
+
+        <div class="panel">
+
+          <div class="panel-head">
+            <div class="panel-title">
+              Today's Orders
+            </div>
+
+            <button
+              class="btn"
+              onclick="loadDashboard()"
+            >
+              Refresh
+            </button>
+          </div>
+
+          <div id="dashboardOrders"></div>
+
+        </div>
+
+
+        <div class="panel">
+
+          <div class="panel-head">
+            <div class="panel-title">
+              Quick Actions
+            </div>
+          </div>
+
+          <div style="display:grid;gap:10px">
+
+            <button
+              class="btn"
+              onclick="showPageById('orders')"
+            >
+              🛎️ View Live Orders
+            </button>
+
+            <button
+              class="btn dark"
+              onclick="showPageById('menu')"
+            >
+              🍔 Manage Menu
+            </button>
+
+            <button
+              class="btn green"
+              onclick="showPageById('tables')"
+            >
+              🪑 Manage Tables & QR
+            </button>
+
+            <button
+              class="btn gray"
+              onclick="showPageById('billing')"
+            >
+              🧾 Open Billing
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= ORDERS ================= -->
+
+    <section id="page-orders" class="page">
+
+      <h1 class="page-title">Live Orders</h1>
+
+      <p class="page-subtitle">
+        Today's live orders
+      </p>
+
+      <div class="panel">
+
+        <div class="panel-head">
+
+          <div class="panel-title">
+            Orders
+          </div>
+
+          <button
+            class="btn"
+            onclick="loadOrders()"
+          >
+            🔄 Refresh
+          </button>
+
+        </div>
+
+        <div id="ordersList"></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= MENU ================= -->
+
+    <section id="page-menu" class="page">
+
+      <h1 class="page-title">Menu Management</h1>
+
+      <p class="page-subtitle">
+        Add, edit and manage your food menu
+      </p>
+
+      <div class="panel">
+
+        <div class="panel-head">
+          <div class="panel-title">
+            Add Menu Item
+          </div>
+        </div>
+
+        <form onsubmit="addMenuItem(event)">
+
+          <div class="form-grid">
+
+            <div class="form-group">
+              <label>Item Name</label>
+              <input id="menuName" required>
+            </div>
+
+            <div class="form-group">
+              <label>Price</label>
+              <input
+                id="menuPrice"
+                type="number"
+                min="0"
+                step="0.01"
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label>Category</label>
+              <input
+                id="menuCategory"
+                placeholder="Pizza, Burger, Drinks..."
+              >
+            </div>
+
+            <div class="form-group">
+              <label>Image URL</label>
+              <input
+                id="menuImage"
+                placeholder="https://..."
+              >
+            </div>
+
+            <div class="form-group">
+              <label>Veg / Non-Veg</label>
+              <select id="menuVeg">
+                <option value="true">Veg</option>
+                <option value="false">Non-Veg</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Available</label>
+              <select id="menuAvailable">
+                <option value="true">Available</option>
+                <option value="false">Not Available</option>
+              </select>
+            </div>
+
+          </div>
+
+          <button class="btn">
+            + Add Item
+          </button>
+
+        </form>
+
+      </div>
+
+
+      <div class="panel">
+
+        <div class="panel-head">
+          <div class="panel-title">
+            Menu Items
+          </div>
+        </div>
+
+        <div id="menuList"></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= TABLES ================= -->
+
+    <section id="page-tables" class="page">
+
+      <h1 class="page-title">Tables & QR</h1>
+
+      <p class="page-subtitle">
+        Generate QR codes for restaurant tables
+      </p>
+
+      <div class="panel">
+
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label>Number of Tables</label>
+            <input
+              id="tableCount"
+              type="number"
+              min="1"
+              max="100"
+              value="10"
+            >
+          </div>
+
+        </div>
+
+        <button
+          class="btn"
+          onclick="createTables()"
+        >
+          + Create Tables
+        </button>
+
+      </div>
+
+      <div class="panel">
+
+        <div class="panel-head">
+          <div class="panel-title">
+            Your Tables
+          </div>
+
+          <button
+            class="btn gray"
+            onclick="loadTables()"
+          >
+            Refresh
+          </button>
+        </div>
+
+        <div id="tablesList" class="qr-grid"></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= OFFERS ================= -->
+
+    <section id="page-offers" class="page">
+
+      <h1 class="page-title">Offers</h1>
+
+      <p class="page-subtitle">
+        Manage restaurant offers
+      </p>
+
+      <div class="panel">
+
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label>Offer Title</label>
+            <input id="offerTitle">
+          </div>
+
+          <div class="form-group">
+            <label>Discount</label>
+            <input
+              id="offerDiscount"
+              placeholder="20% OFF"
+            >
+          </div>
+
+          <div class="form-group full">
+            <label>Description</label>
+            <textarea id="offerDescription"></textarea>
+          </div>
+
+        </div>
+
+        <button
+          class="btn"
+          onclick="addOffer()"
+        >
+          + Add Offer
+        </button>
+
+      </div>
+
+      <div id="offersList"></div>
+
+    </section>
+
+
+    <!-- ================= WAITER ================= -->
+
+    <section id="page-waiters" class="page">
+
+      <h1 class="page-title">Waiter Calls</h1>
+
+      <p class="page-subtitle">
+        Customer requests from tables
+      </p>
+
+      <div class="panel">
+
+        <div id="waiterList"></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= COMPLAINTS ================= -->
+
+    <section id="page-complaints" class="page">
+
+      <h1 class="page-title">Complaints</h1>
+
+      <p class="page-subtitle">
+        Customer complaints
+      </p>
+
+      <div class="panel">
+
+        <div id="complaintsList"></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= FEEDBACK ================= -->
+
+    <section id="page-feedback" class="page">
+
+      <h1 class="page-title">Feedback</h1>
+
+      <p class="page-subtitle">
+        Customer ratings and messages
+      </p>
+
+      <div class="panel">
+
+        <div id="feedbackList"></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= BILLING ================= -->
+
+    <section id="page-billing" class="page">
+
+      <h1 class="page-title">Billing</h1>
+
+      <p class="page-subtitle">
+        All historical orders and bills
+      </p>
+
+      <div class="panel">
+
+        <div class="panel-head">
+
+          <div class="panel-title">
+            All Orders
+          </div>
+
+          <button
+            class="btn"
+            onclick="loadBilling()"
+          >
+            Refresh
+          </button>
+
+        </div>
+
+        <div id="billingList"></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= PAYMENTS ================= -->
+
+    <section id="page-payments" class="page">
+
+      <h1 class="page-title">Payments</h1>
+
+      <p class="page-subtitle">
+        Configure UPI and billing charges
+      </p>
+
+      <div class="panel">
+
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label>UPI ID</label>
+            <input id="upiId">
+          </div>
+
+          <div class="form-group">
+            <label>UPI QR Image URL</label>
+            <input id="upiQr">
+          </div>
+
+          <div class="form-group">
+            <label>Tax %</label>
+            <input
+              id="taxPercent"
+              type="number"
+              step="0.01"
+            >
+          </div>
+
+          <div class="form-group">
+            <label>Service Charge %</label>
+            <input
+              id="servicePercent"
+              type="number"
+              step="0.01"
+            >
+          </div>
+
+        </div>
+
+        <button
+          class="btn"
+          onclick="savePayments()"
+        >
+          Save Payment Settings
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= PROFILE ================= -->
+
+    <section id="page-profile" class="page">
+
+      <h1 class="page-title">Restaurant Profile</h1>
+
+      <p class="page-subtitle">
+        Update your restaurant information
+      </p>
+
+      <div class="panel">
+
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label>Restaurant Name</label>
+            <input id="profileName">
+          </div>
+
+          <div class="form-group">
+            <label>Phone</label>
+            <input id="profilePhone">
+          </div>
+
+          <div class="form-group full">
+            <label>Address</label>
+            <input id="profileAddress">
+          </div>
+
+          <div class="form-group">
+            <label>Logo URL</label>
+            <input id="profileLogo">
+          </div>
+
+          <div class="form-group">
+            <label>Cover URL</label>
+            <input id="profileCover">
+          </div>
+
+          <div class="form-group">
+            <label>Opening Time</label>
+            <input
+              id="profileOpening"
+              type="time"
+            >
+          </div>
+
+          <div class="form-group">
+            <label>Closing Time</label>
+            <input
+              id="profileClosing"
+              type="time"
+            >
+          </div>
+
+          <div class="form-group full">
+            <label>About Restaurant</label>
+            <textarea id="profileAbout"></textarea>
+          </div>
+
+        </div>
+
+        <button
+          class="btn"
+          onclick="saveProfile()"
+        >
+          Save Profile
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= STAFF ================= -->
+
+    <section id="page-staff" class="page">
+
+      <h1 class="page-title">Staff</h1>
+
+      <p class="page-subtitle">
+        Restaurant staff management
+      </p>
+
+      <div class="panel">
+
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label>Staff Email</label>
+            <input id="staffEmail" type="email">
+          </div>
+
+          <div class="form-group">
+            <label>Role</label>
+
+            <select id="staffRole">
+              <option value="manager">Manager</option>
+              <option value="waiter">Waiter</option>
+              <option value="kitchen">Kitchen</option>
+            </select>
+
+          </div>
+
+        </div>
+
+        <button
+          class="btn"
+          onclick="addStaff()"
+        >
+          + Add Staff
+        </button>
+
+      </div>
+
+      <div class="panel">
+
+        <div id="staffList"></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= ANALYTICS ================= -->
+
+    <section id="page-analytics" class="page">
+
+      <h1 class="page-title">Analytics</h1>
+
+      <p class="page-subtitle">
+        Restaurant performance
+      </p>
+
+      <div class="cards">
+
+        <div class="card">
+          <div class="card-label">
+            Total Orders
+          </div>
+          <div class="card-value" id="analyticsOrders">
+            0
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">
+            Total Sales
+          </div>
+          <div class="card-value" id="analyticsSales">
+            ₹0
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">
+            Average Order
+          </div>
+          <div class="card-value" id="analyticsAverage">
+            ₹0
+          </div>
+        </div>
+
+      </div>
+
+      <div class="panel">
+
+        <div class="panel-title">
+          Recent Orders
+        </div>
+
+        <div id="analyticsList"></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= SETTINGS ================= -->
+
+    <section id="page-settings" class="page">
+
+      <h1 class="page-title">Settings</h1>
+
+      <p class="page-subtitle">
+        Restaurant operational settings
+      </p>
+
+      <div class="panel">
+
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label>Default Preparation Time</label>
+
+            <input
+              id="settingPrep"
+              type="number"
+              min="1"
+            >
+
+          </div>
+
+          <div class="form-group">
+            <label>Minimum Order</label>
+
+            <input
+              id="settingMinimum"
+              type="number"
+              min="0"
+              step="0.01"
+            >
+
+          </div>
+
+          <div class="form-group">
+            <label>Restaurant Status</label>
+
+            <select id="settingOpen">
+
+              <option value="true">
+                Open
+              </option>
+
+              <option value="false">
+                Closed
+              </option>
+
+            </select>
+
+          </div>
+
+        </div>
+
+        <button
+          class="btn"
+          onclick="saveSettings()"
+        >
+          Save Settings
+        </button>
+
+      </div>
+
+    </section>
+
+
+  </main>
+
 </div>
 
 
-<!-- APP -->
-<div id="app" style="display:none">
-
-<header class="top">
-
- <div class="topLeft">
-
-  <button class="menuBtn" onclick="toggleSidebar()">☰</button>
-
-  <h2 id="restaurantTitle">
-   Restaurant Admin
-  </h2>
-
- </div>
-
- <div>
-
-  <span id="realtimeStatus">
-   <span class="status-dot off"></span>
-   Connecting
-  </span>
-
-  <button class="red" onclick="logout()">
-   Logout
-  </button>
-
- </div>
-
-</header>
-
-
-<div class="layout">
-
-<!-- SIDEBAR -->
-<aside id="sidebar" class="sidebar">
-
- <button class="nav active" onclick="page('dashboard',this)">
-  📊 Dashboard
- </button>
-
- <button class="nav" onclick="page('orders',this)">
-  🔔 Live Orders
- </button>
-
- <button class="nav" onclick="page('menu',this)">
-  📋 Menu
- </button>
-
- <button class="nav" onclick="page('tables',this)">
-  🪑 Tables + QR
- </button>
-
- <button class="nav" onclick="page('offers',this)">
-  🎁 Offers
- </button>
-
- <button class="nav" onclick="page('waiter',this)">
-  🔔 Waiter Calls
- </button>
-
- <button class="nav" onclick="page('complaints',this)">
-  ⚠️ Complaints
- </button>
-
- <button class="nav" onclick="page('feedback',this)">
-  ⭐ Feedback
- </button>
-
- <button class="nav" onclick="page('billing',this)">
-  🧾 Billing
- </button>
-
- <button class="nav" onclick="page('payments',this)">
-  💰 Payments
- </button>
-
- <button class="nav" onclick="page('profile',this)">
-  🏪 Restaurant Profile
- </button>
-
- <button class="nav" onclick="page('staff',this)">
-  👥 Staff
- </button>
-
- <button class="nav" onclick="page('analytics',this)">
-  📈 Analytics
- </button>
-
- <button class="nav" onclick="page('settings',this)">
-  ⚙️ Settings
- </button>
-
-</aside>
-
-
-<main class="main">
-
-
-<!-- DASHBOARD -->
-<section id="dashboard" class="page active">
-
- <h1>📊 Dashboard</h1>
-
- <div class="cards">
-
-  <div class="card">
-   <small>Today's Orders</small>
-   <b id="dOrders">0</b>
-  </div>
-
-  <div class="card">
-   <small>Pending Orders</small>
-   <b id="dPending">0</b>
-  </div>
-
-  <div class="card">
-   <small>Completed Orders</small>
-   <b id="dCompleted">0</b>
-  </div>
-
-  <div class="card">
-   <small>Today's Sales</small>
-   <b>₹<span id="dSales">0</span></b>
-  </div>
-
-  <div class="card">
-   <small>Active Tables</small>
-   <b id="dTables">0</b>
-  </div>
-
-  <div class="card">
-   <small>Pending Waiter Calls</small>
-   <b id="dWaiter">0</b>
-  </div>
-
-  <div class="card">
-   <small>Pending Complaints</small>
-   <b id="dComplaints">0</b>
-  </div>
-
- </div>
-
-
- <div class="panel">
-
-  <div class="panelHead">
-
-   <h2>🔔 Today's Latest Orders</h2>
-
-   <button class="primary" onclick="loadDashboard()">
-    Refresh
-   </button>
-
-  </div>
-
-  <div id="dashOrders"></div>
-
- </div>
-
-</section>
-
-
-<!-- ORDERS -->
-<section id="orders" class="page">
-
- <h1>🔔 Live Order Management</h1>
-
- <div class="panel">
-
-  <div class="panelHead">
-
-   <h2>Today's Orders</h2>
-
-   <button class="primary" onclick="loadOrders()">
-    🔄 Refresh
-   </button>
-
-  </div>
-
-  <div id="ordersList"></div>
-
- </div>
-
-</section>
-
-
-<!-- MENU -->
-<section id="menu" class="page">
-
- <h1>📋 Menu Management</h1>
-
- <div class="panel">
-
-  <h2>➕ Add Food</h2>
-
-  <input id="foodName" placeholder="Food name">
-
-  <input id="foodPrice" type="number" placeholder="Price">
-
-  <input id="foodCategory" placeholder="Category">
-
-  <input id="foodImage" placeholder="Image URL">
-
-  <textarea id="foodDescription" placeholder="Description"></textarea>
-
-  <select id="foodVeg">
-
-   <option value="true">
-    🥗 Veg
-   </option>
-
-   <option value="false">
-    🍗 Non-Veg
-   </option>
-
-  </select>
-
-  <button class="primary" onclick="addFood()">
-   Add Food
-  </button>
-
- </div>
-
-
- <div class="panel">
-
-  <h2>🍽️ Menu Items</h2>
-
-  <div id="menuList" class="grid"></div>
-
- </div>
-
-</section>
-
-
-<!-- TABLES -->
-<section id="tables" class="page">
-
- <h1>🪑 Tables + QR</h1>
-
- <div class="panel">
-
-  <p>
-   Create Table 1 to 50.
-   Every table gets a separate QR.
-  </p>
-
-  <button class="primary" onclick="createTables()">
-   ⚡ Create Table 1–50
-  </button>
-
- </div>
-
- <div id="tableList" class="grid"></div>
-
-</section>
-
-
-<!-- OFFERS -->
-<section id="offers" class="page">
-
- <h1>🎁 Offers</h1>
-
- <div class="panel">
-
-  <input id="offerTitle" placeholder="Offer title">
-
-  <textarea id="offerDesc" placeholder="Description"></textarea>
-
-  <input id="offerDiscount" placeholder="Discount e.g. 20% OFF">
-
-  <input id="offerImage" placeholder="Image URL">
-
-  <button class="primary" onclick="addOffer()">
-   ➕ Add Offer
-  </button>
-
- </div>
-
- <div class="panel">
-
-  <div id="offerList"></div>
-
- </div>
-
-</section>
-
-
-<!-- WAITER -->
-<section id="waiter" class="page">
-
- <h1>🔔 Waiter Calls</h1>
-
- <div class="panel">
-
-  <div id="waiterList"></div>
-
- </div>
-
-</section>
-
-
-<!-- COMPLAINTS -->
-<section id="complaints" class="page">
-
- <h1>⚠️ Complaints</h1>
-
- <div class="panel">
-
-  <div id="complaintList"></div>
-
- </div>
-
-</section>
-
-
-<!-- FEEDBACK -->
-<section id="feedback" class="page">
-
- <h1>⭐ Feedback</h1>
-
- <div class="cards">
-
-  <div class="card">
-
-   <small>Average Rating</small>
-
-   <b>
-    ⭐ <span id="averageRating">0</span>/5
-   </b>
-
-  </div>
-
- </div>
-
- <div class="panel">
-
-  <div id="feedbackList"></div>
-
- </div>
-
-</section>
-
-
-<!-- BILLING -->
-<section id="billing" class="page">
-
- <h1>🧾 Billing</h1>
-
- <div class="panel">
-
-  <div class="panelHead">
-
-   <h2>All Orders / Bills</h2>
-
-   <button class="primary" onclick="loadBilling()">
-    🔄 Refresh
-   </button>
-
-  </div>
-
-  <div id="billingList"></div>
-
- </div>
-
-</section>
-
-
-<!-- PAYMENTS -->
-<section id="payments" class="page">
-
- <h1>💰 Payment Settings</h1>
-
- <div class="panel">
-
-  <label>UPI ID</label>
-
-  <input id="upiId">
-
-  <label>UPI QR Image URL</label>
-
-  <input id="upiQR">
-
-  <label>Tax Percentage</label>
-
-  <input id="tax" type="number">
-
-  <label>Service Charge Percentage</label>
-
-  <input id="service" type="number">
-
-  <button class="primary" onclick="savePayments()">
-   💾 Save
-  </button>
-
- </div>
-
-</section>
-
-
-<!-- PROFILE -->
-<section id="profile" class="page">
-
- <h1>🏪 Restaurant Profile</h1>
-
- <div class="panel">
-
-  <label>Restaurant Name</label>
-  <input id="pName">
-
-  <label>Logo URL</label>
-  <input id="pLogo">
-
-  <label>Cover URL</label>
-  <input id="pCover">
-
-  <label>Address</label>
-  <textarea id="pAddress"></textarea>
-
-  <label>Phone</label>
-  <input id="pPhone">
-
-  <label>Opening Time</label>
-  <input id="pOpen" type="time">
-
-  <label>Closing Time</label>
-  <input id="pClose" type="time">
-
-  <label>Maps URL</label>
-  <input id="pMaps">
-
-  <label>About</label>
-  <textarea id="pAbout"></textarea>
-
-  <button class="primary" onclick="saveProfile()">
-   💾 Save Profile
-  </button>
-
- </div>
-
-</section>
-
-
-<!-- STAFF -->
-<section id="staff" class="page">
-
- <h1>👥 Staff</h1>
-
- <div class="panel">
-
-  <input id="staffName" placeholder="Staff name">
-
-  <input id="staffEmail" placeholder="Staff email">
-
-  <select id="staffRole">
-
-   <option value="manager">
-    Manager
-   </option>
-
-   <option value="waiter">
-    Waiter
-   </option>
-
-   <option value="kitchen">
-    Kitchen
-   </option>
-
-  </select>
-
-  <button class="primary" onclick="addStaff()">
-   ➕ Add Staff
-  </button>
-
- </div>
-
- <div class="panel">
-
-  <div id="staffList"></div>
-
- </div>
-
-</section>
-
-
-<!-- ANALYTICS -->
-<section id="analytics" class="page">
-
- <h1>📈 Analytics</h1>
-
- <div class="cards">
-
-  <div class="card">
-   <small>Total Orders</small>
-   <b id="aOrders">0</b>
-  </div>
-
-  <div class="card">
-   <small>Total Sales</small>
-   <b>₹<span id="aSales">0</span></b>
-  </div>
-
-  <div class="card">
-   <small>Average Order</small>
-   <b>₹<span id="aAverage">0</span></b>
-  </div>
-
- </div>
-
-</section>
-
-
-<!-- SETTINGS -->
-<section id="settings" class="page">
-
- <h1>⚙️ Settings</h1>
-
- <div class="panel">
-
-  <label>
-   Default Estimated Time
-  </label>
-
-  <input id="settingTime" type="number">
-
-  <label>
-   Minimum Order
-  </label>
-
-  <input id="settingMinimum" type="number">
-
-  <label>
-   Restaurant Status
-  </label>
-
-  <select id="settingOpen">
-
-   <option value="true">
-    🟢 Open
-   </option>
-
-   <option value="false">
-    🔴 Closed
-   </option>
-
-  </select>
-
-  <button class="primary" onclick="saveSettings()">
-   💾 Save Settings
-  </button>
-
- </div>
-
-</section>
-
-
-</main>
-</div>
-</div>
+<div id="toast"></div>
 
 
 <script>
@@ -983,15 +1515,8 @@ const SUPABASE_KEY =
 
 const db =
 window.supabase.createClient(
- SUPABASE_URL,
- SUPABASE_KEY,
- {
-  auth:{
-   persistSession:true,
-   autoRefreshToken:true,
-   detectSessionInUrl:true
-  }
- }
+  SUPABASE_URL,
+  SUPABASE_KEY
 );
 
 
@@ -999,1718 +1524,958 @@ window.supabase.createClient(
    GLOBAL VARIABLES
 ========================================================= */
 
+let currentUser = null;
+let restaurant = null;
 let restaurantId = null;
 
-let orderChannel = null;
-let waiterChannel = null;
-
-let notificationAudio = null;
-
-let billingOrders = [];
-
-let pollingTimer = null;
-
-let dayRefreshTimer = null;
+let realtimeChannel = null;
 
 let lastOrderId = null;
 let lastWaiterId = null;
-
 let pollInitialized = false;
+let pollTimer = null;
+let midnightTimer = null;
 
 
 /* =========================================================
-   LOGIN
+   HELPERS
 ========================================================= */
 
-async function login(){
+function $(id){
+  return document.getElementById(id);
+}
 
- const email =
- document.getElementById("email").value.trim();
 
- const password =
- document.getElementById("password").value;
+function toast(message){
 
- const errorBox =
- document.getElementById("loginError");
+  const el = $("toast");
 
- if(!email || !password){
+  el.textContent = message;
 
-  errorBox.innerText =
-  "Email और password डालो.";
+  el.style.display = "block";
 
-  return;
- }
+  clearTimeout(window.toastTimer);
 
- const {error} =
- await db.auth.signInWithPassword({
-  email,
-  password
- });
+  window.toastTimer =
+    setTimeout(()=>{
+      el.style.display = "none";
+    },3000);
+}
 
- if(error){
 
-  errorBox.innerText =
-  "❌ " + error.message;
+function money(value){
 
-  return;
- }
+  return "₹" +
+    Number(value || 0).toLocaleString(
+      "en-IN",
+      {
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+      }
+    );
+}
 
- await start();
+
+function escapeHtml(value){
+
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+
+function statusBadge(status){
+
+  const s =
+    String(status || "new").toLowerCase();
+
+  let cls = "new";
+
+  if(s==="preparing") cls="preparing";
+  if(s==="ready") cls="ready";
+  if(
+    s==="completed" ||
+    s==="delivered" ||
+    s==="cancelled"
+  ) cls="completed";
+
+  return `
+    <span class="badge ${cls}">
+      ${escapeHtml(status || "new")}
+    </span>
+  `;
 }
 
 
 /* =========================================================
-   LOGOUT
+   AUTH
 ========================================================= */
 
-async function logout(){
-
- try{
-
-  if(orderChannel){
-   await db.removeChannel(orderChannel);
-   orderChannel=null;
-  }
-
-  if(waiterChannel){
-   await db.removeChannel(waiterChannel);
-   waiterChannel=null;
-  }
-
-  if(pollingTimer){
-   clearInterval(pollingTimer);
-   pollingTimer=null;
-  }
-
-  if(dayRefreshTimer){
-   clearTimeout(dayRefreshTimer);
-   dayRefreshTimer=null;
-  }
-
-  await db.auth.signOut();
-
- }catch(e){
-
-  console.error(e);
-
- }
-
- location.reload();
-}
-
-
-/* =========================================================
-   START APP
-========================================================= */
-
-async function start(){
-
- const {data,error} =
- await db.auth.getSession();
-
- if(error){
-
-  console.error(error);
-
-  return;
- }
-
- if(!data.session){
-
-  document.getElementById("loginScreen")
-   .style.display="flex";
-
-  document.getElementById("app")
-   .style.display="none";
-
-  return;
- }
-
- document.getElementById("loginScreen")
-  .style.display="none";
-
- document.getElementById("app")
-  .style.display="block";
-
-
- /* Notification permission */
-
- if(
-  "Notification" in window &&
-  Notification.permission==="default"
- ){
+async function initAuth(){
 
   try{
-   await Notification.requestPermission();
-  }catch(e){}
 
- }
+    const {
+      data,
+      error
+    } = await db.auth.getSession();
+
+    if(error){
+      throw error;
+    }
+
+    if(!data.session){
+
+      showAuthError(
+        "Google login session nahi mila. Please login again."
+      );
+
+      return;
+    }
+
+    currentUser =
+      data.session.user;
+
+    await startAdmin();
+
+  }catch(error){
+
+    console.error(error);
+
+    showAuthError(
+      "Authentication error: " +
+      error.message
+    );
+
+  }
+}
 
 
- const loaded =
- await loadRestaurant();
+function showAuthError(message){
 
- if(!loaded) return;
+  $("authError").textContent =
+    message;
+
+  $("authError").classList.remove(
+    "hidden"
+  );
+
+  $("retryBtn").classList.remove(
+    "hidden"
+  );
+}
 
 
- await startRealtime();
+db.auth.onAuthStateChange(
+  (event,session)=>{
 
- startFallbackPolling();
+    console.log(
+      "Auth:",
+      event
+    );
 
- startDailyRefresh();
+    if(
+      event === "SIGNED_OUT"
+    ){
+
+      location.href =
+        "../login.html";
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   START ADMIN
+========================================================= */
+
+async function startAdmin(){
+
+  $("userEmail").textContent =
+    currentUser.email || "";
+
+  if(
+    currentUser.user_metadata?.avatar_url
+  ){
+
+    $("userAvatar").src =
+      currentUser.user_metadata.avatar_url;
+
+  }else{
+
+    $("userAvatar").style.display =
+      "none";
+
+  }
+
+
+  await loadRestaurant();
+
+  if(!restaurant){
+
+    showAuthError(
+      "Is Google account ke liye restaurant nahi mila."
+    );
+
+    return;
+  }
+
+
+  $("authLoading").style.display =
+    "none";
+
+  $("app").style.display =
+    "block";
+
+
+  await loadAll();
+
+  startRealtime();
+
+  startFallbackPolling();
+
+  startMidnightRefresh();
 
 }
 
 
 /* =========================================================
-   LOAD RESTAURANT
+   RESTAURANT / MULTI TENANT
 ========================================================= */
 
 async function loadRestaurant(){
 
- const {data,error} =
- await db
- .from("restaurants")
- .select("*")
- .limit(1);
+  /*
+    First try restaurant_users membership.
+  */
 
- if(error){
-
-  console.error(error);
-
-  alert(
-   "Restaurant load error:\n\n"+
-   error.message
-  );
-
-  return false;
- }
-
- if(!data || !data.length){
-
-  alert(
-   "❌ Restaurant नहीं मिला.\n\n"+
-   "Supabase restaurants table में record होना चाहिए."
-  );
-
-  return false;
- }
-
- const r=data[0];
-
- restaurantId=r.id;
-
- document.getElementById(
-  "restaurantTitle"
- ).innerText =
- r.name || "Restaurant Admin";
+  const {
+    data: membership,
+    error: membershipError
+  } =
+    await db
+      .from("restaurant_users")
+      .select(`
+        restaurant_id,
+        role
+      `)
+      .eq(
+        "user_id",
+        currentUser.id
+      )
+      .limit(1)
+      .maybeSingle();
 
 
- fillProfile(r);
- fillPayments(r);
- fillSettings(r);
-
- await loadDashboard();
-
- return true;
-}
-
-
-/* =========================================================
-   REALTIME STATUS
-========================================================= */
-
-function setRealtimeStatus(on,text){
-
- document.getElementById(
-  "realtimeStatus"
- ).innerHTML =
-
- '<span class="status-dot '+
- (on ? "" : "off")+
- '"></span>'+
- text;
-}
-
-
-/* =========================================================
-   REALTIME
-========================================================= */
-
-async function startRealtime(){
-
- if(!restaurantId) return;
-
-
- if(orderChannel){
-
-  await db.removeChannel(orderChannel);
-
-  orderChannel=null;
- }
-
-
- if(waiterChannel){
-
-  await db.removeChannel(waiterChannel);
-
-  waiterChannel=null;
- }
-
-
- setRealtimeStatus(false,"Connecting");
-
-
- /* ---------------- ORDERS ---------------- */
-
- orderChannel =
- db.channel(
-  "admin-orders-"+restaurantId+"-"+Date.now()
- )
- .on(
-  "postgres_changes",
-  {
-   event:"*",
-   schema:"public",
-   table:"orders",
-   filter:"restaurant_id=eq."+restaurantId
-  },
-
-  async payload => {
-
-   if(payload.eventType==="INSERT"){
-
-    showNotification(
-     "📦 नया Order आया!",
-     "नया customer order आया है."
-    );
-
-    playNotificationSound();
-
-    browserNotification(
-     "📦 New Order",
-     "नया customer order आया है."
-    );
-
-   }
-
-   await loadOrders();
-
-   await loadDashboard();
-
-   await loadBillingIfVisible();
-
-  }
-
- )
- .subscribe(status => {
-
-  if(status==="SUBSCRIBED"){
-
-   setRealtimeStatus(true,"Live");
-
-  }else if(
-   status==="CHANNEL_ERROR" ||
-   status==="TIMED_OUT"
+  if(
+    !membershipError &&
+    membership?.restaurant_id
   ){
 
-   setRealtimeStatus(false,"Polling");
+    restaurantId =
+      membership.restaurant_id;
+
+    const result =
+      await db
+        .from("restaurants")
+        .select("*")
+        .eq("id",restaurantId)
+        .maybeSingle();
+
+    restaurant =
+      result.data || null;
 
   }
 
- });
 
+  /*
+    Fallback: owner_user_id
+  */
 
- /* ---------------- WAITER ---------------- */
+  if(!restaurant){
 
- waiterChannel =
- db.channel(
-  "admin-waiter-"+restaurantId+"-"+Date.now()
- )
- .on(
-  "postgres_changes",
-  {
-   event:"*",
-   schema:"public",
-   table:"waiter_calls",
-   filter:"restaurant_id=eq."+restaurantId
-  },
+    const result =
+      await db
+        .from("restaurants")
+        .select("*")
+        .eq(
+          "owner_user_id",
+          currentUser.id
+        )
+        .maybeSingle();
 
-  async payload => {
+    if(result.data){
 
-   if(payload.eventType==="INSERT"){
+      restaurant =
+        result.data;
 
-    showNotification(
-     "🔔 Waiter Call!",
-     "Customer ने waiter को बुलाया है."
-    );
+      restaurantId =
+        result.data.id;
 
-    playNotificationSound();
-
-    browserNotification(
-     "🔔 Waiter Call",
-     "Customer ने waiter को बुलाया है."
-    );
-
-   }
-
-   await loadWaiter();
-
-   await loadDashboard();
+    }
 
   }
 
- )
- .subscribe(status => {
 
-  if(status==="SUBSCRIBED"){
+  /*
+    Final fallback for an already-existing
+    single restaurant project.
+    This helps your current setup continue working.
+  */
 
-   setRealtimeStatus(true,"Live");
+  if(!restaurant){
 
-  }else if(
-   status==="CHANNEL_ERROR" ||
-   status==="TIMED_OUT"
-  ){
+    const result =
+      await db
+        .from("restaurants")
+        .select("*")
+        .limit(1)
+        .maybeSingle();
 
-   setRealtimeStatus(false,"Polling");
+    if(result.data){
+
+      restaurant =
+        result.data;
+
+      restaurantId =
+        result.data.id;
+
+    }
 
   }
 
- });
+
+  if(restaurant){
+
+    $("restaurantNameTop").textContent =
+      restaurant.name ||
+      "Restaurant Admin";
+
+    fillRestaurantForms();
+
+  }
 
 }
 
 
 /* =========================================================
-   TODAY DATE RANGE
-   LOCAL TIME
+   LOAD ALL
+========================================================= */
+
+async function loadAll(){
+
+  await loadDashboard();
+  await loadOrders();
+  await loadMenu();
+  await loadTables();
+  await loadOffers();
+  await loadWaiters();
+  await loadComplaints();
+  await loadFeedback();
+  await loadBilling();
+  await loadPayments();
+  await loadProfile();
+  await loadStaff();
+  await loadAnalytics();
+  await loadSettings();
+
+}
+
+
+/* =========================================================
+   TODAY RANGE
 ========================================================= */
 
 function getTodayRange(){
 
- const now = new Date();
+  const now =
+    new Date();
 
- const start = new Date(now);
+  const start =
+    new Date(now);
 
- start.setHours(
-  0,0,0,0
- );
+  start.setHours(
+    0,0,0,0
+  );
 
- const end = new Date(start);
+  const end =
+    new Date(start);
 
- end.setDate(
-  end.getDate()+1
- );
+  end.setDate(
+    end.getDate()+1
+  );
 
- return {
-  start:start.toISOString(),
-  end:end.toISOString()
- };
+  return {
+    start,
+    end
+  };
 
 }
 
 
 /* =========================================================
-   TODAY ORDERS
-   ONLY TODAY
+   ORDERS
 ========================================================= */
 
 async function getTodayOrders(){
 
- if(!restaurantId) return [];
+  if(!restaurantId)
+    return [];
 
- const range =
- getTodayRange();
+  const {
+    start,
+    end
+  } = getTodayRange();
 
- const {data,error} =
- await db
- .from("orders")
- .select("*")
- .eq("restaurant_id",restaurantId)
- .gte("created_at",range.start)
- .lt("created_at",range.end)
- .order("created_at",{ascending:false});
 
- if(error){
+  const {
+    data,
+    error
+  } =
+    await db
+      .from("orders")
+      .select("*")
+      .eq(
+        "restaurant_id",
+        restaurantId
+      )
+      .gte(
+        "created_at",
+        start.toISOString()
+      )
+      .lt(
+        "created_at",
+        end.toISOString()
+      )
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      );
 
-  console.error(
-   "Today's Orders:",
-   error
-  );
 
-  return [];
- }
+  if(error){
 
- return data || [];
+    console.error(error);
+
+    return [];
+
+  }
+
+  return data || [];
+
 }
 
-
-/* =========================================================
-   ALL ORDERS
-   BILLING + ANALYTICS
-========================================================= */
 
 async function getAllOrders(){
 
- if(!restaurantId) return [];
+  if(!restaurantId)
+    return [];
 
- const {data,error} =
- await db
- .from("orders")
- .select("*")
- .eq("restaurant_id",restaurantId)
- .order("created_at",{ascending:false});
-
- if(error){
-
-  console.error(
-   "All Orders:",
-   error
-  );
-
-  return [];
- }
-
- return data || [];
-}
+  const {
+    data,
+    error
+  } =
+    await db
+      .from("orders")
+      .select("*")
+      .eq(
+        "restaurant_id",
+        restaurantId
+      )
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      );
 
 
-/* =========================================================
-   TABLE NUMBER
-========================================================= */
+  if(error){
 
-async function getTableNumber(id){
+    console.error(error);
 
- if(!id) return "-";
+    return [];
 
- const {data,error} =
- await db
- .from("restaurant_tables")
- .select("table_number")
- .eq("id",id)
- .maybeSingle();
+  }
 
- if(error){
+  return data || [];
 
-  console.error(error);
-
-  return "-";
- }
-
- return data?.table_number ?? "-";
 }
 
 
 /* =========================================================
    DASHBOARD
-   ONLY TODAY
 ========================================================= */
 
 async function loadDashboard(){
 
- if(!restaurantId) return;
+  const orders =
+    await getTodayOrders();
 
- const orders =
- await getTodayOrders();
+  const pending =
+    orders.filter(o =>
+      ![
+        "completed",
+        "delivered",
+        "cancelled"
+      ].includes(
+        String(o.status).toLowerCase()
+      )
+    );
 
+  const completed =
+    orders.filter(o =>
+      [
+        "completed",
+        "delivered"
+      ].includes(
+        String(o.status).toLowerCase()
+      )
+    );
 
- const sales =
- orders.reduce(
-  (a,o)=>
-   a + Number(o.total || 0),
-  0
- );
-
-
- const pending =
- orders.filter(
-  o =>
-  ![
-   "delivered",
-   "cancelled"
-  ].includes(o.status)
- ).length;
-
-
- const completed =
- orders.filter(
-  o =>
-  o.status==="delivered"
- ).length;
-
-
- document.getElementById(
-  "dOrders"
- ).innerText =
- orders.length;
+  const sales =
+    orders.reduce(
+      (sum,o)=>
+        sum + Number(o.total || 0),
+      0
+    );
 
 
- document.getElementById(
-  "dPending"
- ).innerText =
- pending;
+  $("statOrders").textContent =
+    orders.length;
+
+  $("statPending").textContent =
+    pending.length;
+
+  $("statCompleted").textContent =
+    completed.length;
+
+  $("statSales").textContent =
+    money(sales);
 
 
- document.getElementById(
-  "dCompleted"
- ).innerText =
- completed;
+  const tables =
+    await db
+      .from("restaurant_tables")
+      .select("id")
+      .eq(
+        "restaurant_id",
+        restaurantId
+      )
+      .eq(
+        "active",
+        true
+      );
 
 
- document.getElementById(
-  "dSales"
- ).innerText =
- sales.toFixed(0);
+  $("statTables").textContent =
+    tables.data?.length || 0;
 
 
- const {count:tables} =
- await db
- .from("restaurant_tables")
- .select(
-  "id",
-  {
-   count:"exact",
-   head:true
+  const container =
+    $("dashboardOrders");
+
+
+  if(!orders.length){
+
+    container.innerHTML =
+      `<div class="empty">
+        No orders today
+      </div>`;
+
+    return;
+
   }
- )
- .eq(
-  "restaurant_id",
-  restaurantId
- )
- .eq(
-  "active",
-  true
- );
 
 
- document.getElementById(
-  "dTables"
- ).innerText =
- tables || 0;
+  container.innerHTML =
+    orders
+      .slice(0,8)
+      .map(renderSmallOrder)
+      .join("");
+
+}
 
 
- const {count:complaints} =
- await db
- .from("complaints")
- .select(
-  "id",
-  {
-   count:"exact",
-   head:true
-  }
- )
- .eq(
-  "restaurant_id",
-  restaurantId
- )
- .neq(
-  "status",
-  "resolved"
- );
+function renderSmallOrder(order){
 
+  return `
+    <div
+      style="
+        display:flex;
+        justify-content:space-between;
+        padding:10px 0;
+        border-bottom:1px solid #eee;
+      "
+    >
 
- document.getElementById(
-  "dComplaints"
- ).innerText =
- complaints || 0;
+      <div>
+        <strong>
+          #${escapeHtml(
+            String(order.id).slice(0,8)
+          )}
+        </strong>
 
+        <div style="font-size:12px;color:#777">
+          Table:
+          ${escapeHtml(
+            order.table_number || "-"
+          )}
+        </div>
+      </div>
 
- const {count:waiter} =
- await db
- .from("waiter_calls")
- .select(
-  "id",
-  {
-   count:"exact",
-   head:true
-  }
- )
- .eq(
-  "restaurant_id",
-  restaurantId
- )
- .eq(
-  "status",
-  "pending"
- );
+      <div style="text-align:right">
 
+        <strong>
+          ${money(order.total)}
+        </strong>
 
- document.getElementById(
-  "dWaiter"
- ).innerText =
- waiter || 0;
+        <div>
+          ${statusBadge(order.status)}
+        </div>
 
+      </div>
 
- await renderOrders(
-  orders.slice(0,5),
-  "dashOrders"
- );
+    </div>
+  `;
 
 }
 
 
 /* =========================================================
    LIVE ORDERS
-   ONLY TODAY
 ========================================================= */
 
 async function loadOrders(){
 
- const orders =
- await getTodayOrders();
+  const orders =
+    await getTodayOrders();
 
- await renderOrders(
-  orders,
-  "ordersList"
- );
+  const box =
+    $("ordersList");
 
-}
 
+  if(!orders.length){
 
-/* =========================================================
-   RENDER ORDERS
-========================================================= */
-
-async function renderOrders(
- orders,
- target
-){
-
- const box =
- document.getElementById(target);
-
- if(!box) return;
-
-
- if(!orders.length){
-
-  box.innerHTML =
-  "<div class='empty'>आज कोई order नहीं है.</div>";
-
-  return;
- }
-
-
- box.innerHTML="";
-
-
- for(const o of orders){
-
-  const table =
-  await getTableNumber(o.table_id);
-
-
-  const div =
-  document.createElement("div");
-
-
-  div.className =
-  "order"+
-  (
-   o.status==="new"
-   ? " new-alert"
-   : ""
-  );
-
-
-  div.innerHTML = `
-
-   <div class="orderHead">
-
-    <div>
-
-     <strong>
-      Order #${esc(
-       String(o.id).slice(0,8)
-      )}
-     </strong>
-
-     <br>
-
-     🪑 Table:
-     <strong>
-      ${esc(table)}
-     </strong>
-
-     <br>
-
-     <span class="stat">
-      ${
-       o.created_at
-       ? new Date(
-          o.created_at
-         ).toLocaleString()
-       : ""
-      }
-     </span>
-
-    </div>
-
-
-    <div class="badge">
-     ${esc(o.status || "new")}
-    </div>
-
-   </div>
-
-
-   <div style="margin-top:12px">
-
-    💰 Total:
-    <strong>
-     ₹${Number(
-      o.total || 0
-     ).toFixed(2)}
-    </strong>
-
-    <br>
-
-    💳 Payment:
-    ${esc(
-     o.payment_method || "cash"
-    )}
-
-    -
-
-    ${esc(
-     o.payment_status || "pending"
-    )}
-
-   </div>
-
-
-   <div class="actions">
-
-    <button
-     class="green"
-     onclick="changeStatus('${o.id}','accepted')"
-    >
-     Accept
-    </button>
-
-
-    <button
-     class="yellow"
-     onclick="changeStatus('${o.id}','preparing')"
-    >
-     Preparing
-    </button>
-
-
-    <button
-     class="blue"
-     onclick="changeStatus('${o.id}','ready')"
-    >
-     Ready
-    </button>
-
-
-    <button
-     class="primary"
-     onclick="changeStatus('${o.id}','delivered')"
-    >
-     Delivered
-    </button>
-
-   </div>
-
-  `;
-
-
-  box.appendChild(div);
-
- }
-
-}
-
-
-/* =========================================================
-   CHANGE ORDER STATUS
-========================================================= */
-
-async function changeStatus(
- id,
- value
-){
-
- const {error} =
- await db
- .from("orders")
- .update({
-  status:value,
-  updated_at:new Date().toISOString()
- })
- .eq("id",id)
- .eq(
-  "restaurant_id",
-  restaurantId
- );
-
-
- if(error){
-
-  alert(error.message);
-
-  return;
- }
-
-
- await loadOrders();
-
- await loadDashboard();
-
-}
-
-
-/* =========================================================
-   NOTIFICATION
-========================================================= */
-
-function showNotification(t,x){
-
- document.getElementById(
-  "notificationTitle"
- ).innerText=t;
-
- document.getElementById(
-  "notificationText"
- ).innerText=x;
-
- document.getElementById(
-  "notification"
- ).classList.add("show");
-
-
- setTimeout(
-  closeNotification,
-  7000
- );
-
-}
-
-
-function closeNotification(){
-
- document.getElementById(
-  "notification"
- ).classList.remove("show");
-
-}
-
-
-/* =========================================================
-   SOUND
-========================================================= */
-
-function playNotificationSound(){
-
- try{
-
-  if(!notificationAudio){
-
-   notificationAudio =
-   new Audio(
-    "https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
-   );
-
-   notificationAudio.volume=.8;
-
-  }
-
-  notificationAudio.currentTime=0;
-
-  notificationAudio
-   .play()
-   .catch(()=>{});
-
- }catch(e){}
-
-}
-
-
-/* =========================================================
-   BROWSER NOTIFICATION
-========================================================= */
-
-function browserNotification(
- title,
- body
-){
-
- if(
-  "Notification" in window &&
-  Notification.permission==="granted"
- ){
-
-  try{
-
-   new Notification(
-    title,
-    {
-     body:body
-    }
-   );
-
-  }catch(e){}
-
- }
-
-}
-
-
-/* =========================================================
-   FALLBACK POLLING
-   EVERY 10 SECONDS
-========================================================= */
-
-function startFallbackPolling(){
-
- if(pollingTimer){
-
-  clearInterval(pollingTimer);
-
- }
-
-
- pollingTimer =
- setInterval(
-  async()=>{
-
-   if(
-    !restaurantId ||
-    document.visibilityState!=="visible"
-   ){
+    box.innerHTML =
+      `<div class="empty">
+        No live orders today.
+      </div>`;
 
     return;
 
-   }
+  }
 
 
-   const orders =
-   await getTodayOrders();
+  const orderIds =
+    orders.map(o=>o.id);
 
 
-   const newestOrder =
-   orders.length
-   ? orders[0]
-   : null;
+  const {
+    data:itemRows
+  } =
+    await db
+      .from("order_items")
+      .select(`
+        order_id,
+        menu_item_id,
+        quantity,
+        price,
+        menu_items(name)
+      `)
+      .in(
+        "order_id",
+        orderIds
+      );
 
 
-   const {data:waiters} =
-   await db
-   .from("waiter_calls")
-   .select("*")
-   .eq(
-    "restaurant_id",
-    restaurantId
-   )
-   .eq(
-    "status",
-    "pending"
-   )
-   .order(
-    "created_at",
-    {
-     ascending:false
-    }
-   )
-   .limit(1);
+  const itemsByOrder = {};
 
+  (itemRows || []).forEach(item=>{
 
-   const newestWaiter =
-   waiters?.[0] || null;
+    if(!itemsByOrder[item.order_id])
+      itemsByOrder[item.order_id]=[];
 
+    itemsByOrder[item.order_id].push(item);
 
-   /* First polling run:
-      don't show duplicate notification
-   */
+  });
 
-   if(!pollInitialized){
-
-    lastOrderId =
-    newestOrder?.id || null;
-
-    lastWaiterId =
-    newestWaiter?.id || null;
-
-    pollInitialized=true;
-
-   }else{
-
-
-    /* NEW ORDER */
-
-    if(
-     newestOrder &&
-     newestOrder.id !== lastOrderId
-    ){
-
-     lastOrderId =
-     newestOrder.id;
-
-
-     showNotification(
-      "📦 नया Order आया!",
-      "Polling से नया customer order मिला."
-     );
-
-     playNotificationSound();
-
-     browserNotification(
-      "📦 New Order",
-      "नया customer order आया है."
-     );
-
-    }
-
-
-    /* No orders today */
-
-    if(!newestOrder){
-
-     lastOrderId=null;
-
-    }
-
-
-    /* NEW WAITER CALL */
-
-    if(
-     newestWaiter &&
-     newestWaiter.id !== lastWaiterId
-    ){
-
-     lastWaiterId =
-     newestWaiter.id;
-
-
-     showNotification(
-      "🔔 Waiter Call!",
-      "Customer ने waiter को बुलाया है."
-     );
-
-     playNotificationSound();
-
-     browserNotification(
-      "🔔 Waiter Call",
-      "Customer ने waiter को बुलाया है."
-     );
-
-    }
-
-
-    if(!newestWaiter){
-
-     lastWaiterId=null;
-
-    }
-
-   }
-
-
-   await loadDashboard();
-
-   await loadOrders();
-
-   await loadWaiter();
-
-  },
-  10000
- );
-
-}
-
-
-/* =========================================================
-   MIDNIGHT AUTO REFRESH
-========================================================= */
-
-function startDailyRefresh(){
-
- if(dayRefreshTimer){
-
-  clearTimeout(dayRefreshTimer);
-
- }
-
-
- const now =
- new Date();
-
-
- const next =
- new Date(now);
-
-
- next.setDate(
-  next.getDate()+1
- );
-
-
- next.setHours(
-  0,0,2,0
- );
-
-
- const delay =
- next.getTime() -
- now.getTime();
-
-
- dayRefreshTimer =
- setTimeout(
-  async()=>{
-
-   console.log(
-    "🌙 New day started. Refreshing today's data..."
-   );
-
-
-   lastOrderId=null;
-
-
-   await loadDashboard();
-
-   await loadOrders();
-
-
-   startDailyRefresh();
-
-  },
-  Math.max(
-   delay,
-   1000
-  )
- );
-
-}
-
-
-/* =========================================================
-   PAGE NAVIGATION
-========================================================= */
-
-function page(id,btn){
-
- document
- .querySelectorAll(".page")
- .forEach(
-  x =>
-  x.classList.remove("active")
- );
-
-
- const target =
- document.getElementById(id);
-
-
- if(target){
-
-  target.classList.add("active");
-
- }
-
-
- document
- .querySelectorAll(".nav")
- .forEach(
-  x =>
-  x.classList.remove("active")
- );
-
-
- if(btn){
-
-  btn.classList.add("active");
-
- }
-
-
- if(id==="dashboard")
-  loadDashboard();
-
- if(id==="orders")
-  loadOrders();
-
- if(id==="menu")
-  loadMenu();
-
- if(id==="tables")
-  loadTables();
-
- if(id==="offers")
-  loadOffers();
-
- if(id==="waiter")
-  loadWaiter();
-
- if(id==="complaints")
-  loadComplaints();
-
- if(id==="feedback")
-  loadFeedback();
-
- if(id==="billing")
-  loadBilling();
-
- if(id==="payments")
-  fillPaymentsPage();
-
- if(id==="profile")
-  loadProfile();
-
- if(id==="staff")
-  loadStaff();
-
- if(id==="analytics")
-  loadAnalytics();
-
- if(id==="settings")
-  loadSettings();
-
-}
-
-
-/* =========================================================
-   BILLING
-   ALL ORDERS
-========================================================= */
-
-async function loadBilling(){
-
- const orders =
- await getAllOrders();
-
-
- billingOrders =
- orders;
-
-
- const box =
- document.getElementById(
-  "billingList"
- );
-
-
- if(!orders.length){
 
   box.innerHTML =
-  "<div class='empty'>No bills yet.</div>";
+    orders
+      .map(order =>
+        renderOrderCard(
+          order,
+          itemsByOrder[order.id] || []
+        )
+      )
+      .join("");
 
-  return;
- }
-
-
- box.innerHTML="";
-
-
- for(const o of orders){
-
-  const table =
-  await getTableNumber(
-   o.table_id
-  );
+}
 
 
-  const generated =
-  o.bill_generated === true;
+function renderOrderCard(
+  order,
+  items
+){
+
+  const status =
+    String(
+      order.status || "new"
+    ).toLowerCase();
 
 
-  const d =
-  document.createElement("div");
+  let nextButton = "";
 
 
-  d.className =
-  "bill"+
-  (
-   generated
-   ? " generated"
-   : ""
-  );
+  if(status==="new"){
+
+    nextButton = `
+      <button
+        class="btn"
+        onclick="updateOrderStatus('${order.id}','preparing')"
+      >
+        Start Preparing
+      </button>
+    `;
+
+  }else if(status==="preparing"){
+
+    nextButton = `
+      <button
+        class="btn green"
+        onclick="updateOrderStatus('${order.id}','ready')"
+      >
+        Mark Ready
+      </button>
+    `;
+
+  }else if(status==="ready"){
+
+    nextButton = `
+      <button
+        class="btn green"
+        onclick="updateOrderStatus('${order.id}','completed')"
+      >
+        Complete
+      </button>
+    `;
+
+  }
 
 
-  d.innerHTML = `
+  const itemsHtml =
+    items.length
+    ? items.map(item=>`
 
-   <h3>
-    🧾 Order #
-    ${esc(
-     String(o.id).slice(0,8)
-    )}
-   </h3>
+      <div class="order-item">
 
+        <span>
+          ${item.quantity} ×
+          ${escapeHtml(
+            item.menu_items?.name ||
+            "Item"
+          )}
+        </span>
 
-   <p>
-    🪑 Table:
-    <strong>
-     ${esc(table)}
-    </strong>
-   </p>
+        <strong>
+          ${money(
+            Number(item.price || 0) *
+            Number(item.quantity || 0)
+          )}
+        </strong>
 
+      </div>
 
-   <p>
-    📅 Date:
-    ${o.created_at
-     ? new Date(
-        o.created_at
-       ).toLocaleString()
-     : "-"
-    }
-   </p>
-
-
-   <p>
-    💰 Total:
-    <strong>
-     ₹${Number(
-      o.total || 0
-     ).toFixed(2)}
-    </strong>
-   </p>
+    `).join("")
+    : `<div style="color:#888">
+        Items unavailable
+      </div>`;
 
 
-   <p>
-    💳 Payment:
-    ${esc(
-     o.payment_method ||
-     "cash"
-    )}
-   </p>
+  return `
+    <div class="order-card">
+
+      <div class="order-head">
+
+        <div>
+
+          <strong>
+            Order #${escapeHtml(
+              String(order.id).slice(0,8)
+            )}
+          </strong>
+
+          <div
+            style="
+              font-size:12px;
+              color:#777;
+              margin-top:4px;
+            "
+          >
+            Table:
+            ${escapeHtml(
+              order.table_number || "-"
+            )}
+          </div>
+
+        </div>
+
+        <div>
+          ${statusBadge(order.status)}
+        </div>
+
+      </div>
 
 
-   <p>
-    📌 Payment Status:
-    ${esc(
-     o.payment_status ||
-     "pending"
-    )}
-   </p>
+      <div class="order-items">
+
+        ${itemsHtml}
+
+      </div>
 
 
-   <p>
-    📦 Order Status:
-    ${esc(
-     o.status ||
-     "new"
-    )}
-   </p>
+      <div
+        style="
+          display:flex;
+          justify-content:space-between;
+          margin-bottom:12px;
+        "
+      >
+
+        <strong>
+          Total
+        </strong>
+
+        <strong>
+          ${money(order.total)}
+        </strong>
+
+      </div>
 
 
-   ${
-    generated
+      <div class="order-actions">
 
-    ?
+        ${nextButton}
 
-    `
-     <span class="billStatus ready">
-      ✅ Bill Customer को भेज दिया गया
-     </span>
-    `
+        <button
+          class="btn gray"
+          onclick="editEstimatedTime('${order.id}')"
+        >
+          ⏱ Time
+        </button>
 
-    :
+        <button
+          class="btn dark"
+          onclick="printBill('${order.id}')"
+        >
+          🧾 Bill
+        </button>
 
-    `
-     <span class="billStatus">
-      ⏳ Bill अभी Generate नहीं हुआ
-     </span>
-    `
-   }
+      </div>
 
-
-   <div class="actions">
-
-    <button
-     class="green"
-     onclick="generateBill('${o.id}')"
-    >
-     🧾 Generate Bill
-    </button>
-
-
-    <button
-     class="primary"
-     onclick="printBill('${o.id}')"
-    >
-     🖨️ Print
-    </button>
-
-   </div>
-
+    </div>
   `;
 
+}
 
-  box.appendChild(d);
 
- }
+async function updateOrderStatus(
+  id,
+  status
+){
+
+  const {
+    error
+  } =
+    await db
+      .from("orders")
+      .update({
+        status
+      })
+      .eq(
+        "id",
+        id
+      )
+      .eq(
+        "restaurant_id",
+        restaurantId
+      );
+
+
+  if(error){
+
+    toast(
+      "Error: " + error.message
+    );
+
+    return;
+
+  }
+
+
+  toast(
+    "Order updated"
+  );
+
+  await loadDashboard();
+  await loadOrders();
 
 }
 
 
-/* =========================================================
-   BILLING ONLY IF PAGE VISIBLE
-========================================================= */
+async function editEstimatedTime(id){
 
-async function loadBillingIfVisible(){
+  const value =
+    prompt(
+      "Estimated preparation time in minutes:",
+      "15"
+    );
 
- const billingPage =
- document.getElementById(
-  "billing"
- );
-
-
- if(
-  billingPage &&
-  billingPage.classList.contains("active")
- ){
-
-  await loadBilling();
-
- }
-
-}
+  if(
+    value === null ||
+    !value.trim()
+  )
+    return;
 
 
-/* =========================================================
-   GENERATE BILL
-========================================================= */
+  const {
+    error
+  } =
+    await db
+      .from("orders")
+      .update({
+        estimated_minutes:
+          Number(value)
+      })
+      .eq(
+        "id",
+        id
+      )
+      .eq(
+        "restaurant_id",
+        restaurantId
+      );
 
-async function generateBill(id){
 
- /*
-  billingOrders contains ALL orders
- */
+  if(error){
 
- const o =
- billingOrders.find(
-  x => x.id===id
- );
+    toast(error.message);
+    return;
+
+  }
 
 
- if(!o){
-
-  alert(
-   "Bill data नहीं मिला."
+  toast(
+    "Estimated time updated"
   );
-
-  return;
- }
-
-
- const restaurantName =
- document.getElementById(
-  "restaurantTitle"
- ).innerText ||
- "Restaurant";
-
-
- const msg =
-
- `🧾 ${restaurantName}
-
-Order #${String(o.id).slice(0,8)}
-
-💰 Total: ₹${Number(
- o.total || 0
- ).toFixed(2)}
-
-आपका bill तैयार है।`;
-
-
- const {error} =
- await db
- .from("orders")
- .update({
-
-  bill_generated:true,
-
-  bill_generated_at:
-   new Date().toISOString(),
-
-  bill_message:msg,
-
-  bill_customer_notified:false
-
- })
- .eq(
-  "id",
-  id
- )
- .eq(
-  "restaurant_id",
-  restaurantId
- );
-
-
- if(error){
-
-  alert(error.message);
-
-  return;
- }
-
-
- showNotification(
-  "🧾 Bill Generated",
-  "Customer के order web पर bill भेज दिया गया."
- );
-
-
- await loadBilling();
-
-}
-
-
-/* =========================================================
-   PRINT BILL
-========================================================= */
-
-async function printBill(id){
-
- const o =
- billingOrders.find(
-  x => x.id===id
- );
-
-
- if(!o){
-
-  alert(
-   "Bill data नहीं मिला."
-  );
-
-  return;
- }
-
-
- const table =
- await getTableNumber(
-  o.table_id
- );
-
-
- const w =
- window.open(
-  "",
-  "_blank"
- );
-
-
- if(!w){
-
-  alert(
-   "Popup blocked है."
-  );
-
-  return;
- }
-
-
- const restaurantName =
- esc(
-  document.getElementById(
-   "restaurantTitle"
-  ).innerText
- );
-
-
- w.document.write(`
-
-  <html>
-
-  <head>
-
-   <title>
-    Restaurant Bill
-   </title>
-
-  </head>
-
-  <body
-   style="
-    font-family:Arial;
-    max-width:420px;
-    margin:auto;
-    padding:25px
-   "
-  >
-
-   <h1 style="text-align:center">
-    ${restaurantName}
-   </h1>
-
-
-   <h2 style="text-align:center">
-    🧾 BILL
-   </h2>
-
-
-   <hr>
-
-
-   <p>
-    Order:
-    #${esc(
-     String(o.id).slice(0,8)
-    )}
-   </p>
-
-
-   <p>
-    Table:
-    ${esc(table)}
-   </p>
-
-
-   <p>
-    Date:
-    ${
-     o.created_at
-     ? new Date(
-        o.created_at
-       ).toLocaleString()
-     : "-"
-    }
-   </p>
-
-
-   <p>
-    Payment:
-    ${esc(
-     o.payment_method ||
-     "cash"
-    )}
-   </p>
-
-
-   <hr>
-
-
-   <h2>
-    Total:
-    ₹${Number(
-     o.total || 0
-    ).toFixed(2)}
-   </h2>
-
-
-   <p style="text-align:center">
-    Thank you for visiting!
-   </p>
-
-
-   <script>
-    window.onload=()=>{
-     window.print()
-    }
-   <\/script>
-
-  </body>
-
-  </html>
-
- `);
-
-
- w.document.close();
 
 }
 
@@ -2721,472 +2486,507 @@ async function printBill(id){
 
 async function loadMenu(){
 
- const {
-  data,
-  error
- } =
- await db
- .from("menu_items")
- .select("*")
- .eq(
-  "restaurant_id",
-  restaurantId
- )
- .order(
-  "created_at",
-  {
-   ascending:false
-  }
- );
-
-
- const box =
- document.getElementById(
-  "menuList"
- );
-
-
- if(error){
-
-  box.innerHTML =
-  "<p>"+
-  esc(error.message)+
-  "</p>";
-
-  return;
- }
-
-
- if(!data?.length){
-
-  box.innerHTML =
-  "<div class='empty'>No menu items.</div>";
-
-  return;
- }
-
-
- box.innerHTML =
- data.map(
-  i => `
-
-   <div class="foodCard">
-
-    <img
-     src="${esc(
-      i.image_url ||
-      "https://via.placeholder.com/400x250"
-     )}"
-    >
-
-
-    <div class="foodBody">
-
-     <h3>
-      ${esc(i.name)}
-     </h3>
-
-
-     <p>
-      ₹${Number(
-       i.price || 0
-      )}
-     </p>
-
-
-     <p>
-      ${
-       i.is_veg
-       ? "🥗 Veg"
-       : "🍗 Non-Veg"
-      }
-     </p>
-
-
-     <p>
-      ${
-       i.is_available
-       ? "✅ Available"
-       : "❌ Out of Stock"
-      }
-     </p>
-
-
-     <button
-      class="${
-       i.is_available
-       ? "red"
-       : "green"
-      }"
-      onclick="
-       toggleFood(
-        '${i.id}',
-        ${!i.is_available}
-       )
-      "
-     >
-      ${
-       i.is_available
-       ? "Out of Stock"
-       : "Available"
-      }
-     </button>
-
-    </div>
-
-   </div>
-
-  `
- ).join("");
-
-}
-
-
-/* =========================================================
-   ADD FOOD
-========================================================= */
-
-async function addFood(){
-
- const n =
- document.getElementById(
-  "foodName"
- ).value.trim();
-
-
- const p =
- Number(
-  document.getElementById(
-   "foodPrice"
-  ).value
- );
-
-
- if(!n || !p){
-
-  alert(
-   "Food name और price डालो."
-  );
-
-  return;
- }
-
-
- const {error} =
- await db
- .from("menu_items")
- .insert({
-
-  restaurant_id:
-   restaurantId,
-
-  name:n,
-
-  price:p,
-
-  category:
-   document.getElementById(
-    "foodCategory"
-   ).value,
-
-  image_url:
-   document.getElementById(
-    "foodImage"
-   ).value,
-
-  description:
-   document.getElementById(
-    "foodDescription"
-   ).value,
-
-  is_veg:
-   document.getElementById(
-    "foodVeg"
-   ).value==="true",
-
-  is_available:true
-
- });
-
-
- if(error){
-
-  alert(error.message);
-
-  return;
- }
-
-
- alert(
-  "✅ Food added!"
- );
-
-
- document.getElementById(
-  "foodName"
- ).value="";
-
-
- document.getElementById(
-  "foodPrice"
- ).value="";
-
-
- await loadMenu();
-
-}
-
-
-/* =========================================================
-   TOGGLE FOOD
-========================================================= */
-
-async function toggleFood(
- id,
- v
-){
-
- const {error} =
- await db
- .from("menu_items")
- .update({
-  is_available:v
- })
- .eq(
-  "id",
-  id
- );
-
-
- if(error){
-
-  alert(error.message);
-
- }else{
-
-  await loadMenu();
-
- }
-
-}
-
-
-/* =========================================================
-   TABLES
-========================================================= */
-
-async function createTables(){
-
- for(
-  let i=1;
-  i<=50;
-  i++
- ){
-
-  const {error} =
-  await db
-  .from("restaurant_tables")
-  .upsert(
-   {
-    restaurant_id:
-     restaurantId,
-
-    table_number:i,
-
-    active:true
-   },
-   {
-    onConflict:
-     "restaurant_id,table_number"
-   }
-  );
+  const {
+    data,
+    error
+  } =
+    await db
+      .from("menu_items")
+      .select("*")
+      .eq(
+        "restaurant_id",
+        restaurantId
+      )
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      );
 
 
   if(error){
 
-   console.error(
-    "Table "+i,
-    error
-   );
+    $("menuList").innerHTML =
+      `<div class="empty">
+        ${escapeHtml(error.message)}
+      </div>`;
+
+    return;
 
   }
 
- }
+
+  if(!data?.length){
+
+    $("menuList").innerHTML =
+      `<div class="empty">
+        No menu items yet.
+      </div>`;
+
+    return;
+
+  }
 
 
- alert(
-  "✅ Table 1–50 created!"
- );
+  $("menuList").innerHTML = `
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Type</th>
+            <th>Available</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          ${data.map(item=>`
+
+            <tr>
+
+              <td>
+                <strong>
+                  ${escapeHtml(item.name)}
+                </strong>
+              </td>
+
+              <td>
+                ${escapeHtml(
+                  item.category || "-"
+                )}
+              </td>
+
+              <td>
+                ${money(item.price)}
+              </td>
+
+              <td>
+                ${
+                  item.is_veg === false
+                  ? "🔴 Non-Veg"
+                  : "🟢 Veg"
+                }
+              </td>
+
+              <td>
+                ${
+                  item.is_available
+                  ? "✅ Yes"
+                  : "❌ No"
+                }
+              </td>
+
+              <td>
+
+                <button
+                  class="btn gray"
+                  onclick="toggleMenuItem(
+                    '${item.id}',
+                    ${item.is_available}
+                  )"
+                >
+                  Toggle
+                </button>
+
+                <button
+                  class="btn red"
+                  onclick="deleteMenuItem('${item.id}')"
+                >
+                  Delete
+                </button>
+
+              </td>
+
+            </tr>
+
+          `).join("")}
+
+        </tbody>
+
+      </table>
+
+    </div>
+  `;
+
+}
 
 
- await loadTables();
+async function addMenuItem(event){
+
+  event.preventDefault();
+
+
+  const payload = {
+
+    restaurant_id:
+      restaurantId,
+
+    name:
+      $("menuName").value.trim(),
+
+    price:
+      Number($("menuPrice").value),
+
+    category:
+      $("menuCategory").value.trim(),
+
+    image_url:
+      $("menuImage").value.trim() || null,
+
+    is_veg:
+      $("menuVeg").value === "true",
+
+    is_available:
+      $("menuAvailable").value === "true"
+
+  };
+
+
+  const {
+    error
+  } =
+    await db
+      .from("menu_items")
+      .insert(payload);
+
+
+  if(error){
+
+    toast(error.message);
+    return;
+
+  }
+
+
+  event.target.reset();
+
+  toast(
+    "Menu item added"
+  );
+
+  await loadMenu();
+
+}
+
+
+async function toggleMenuItem(
+  id,
+  current
+){
+
+  const {
+    error
+  } =
+    await db
+      .from("menu_items")
+      .update({
+        is_available:!current
+      })
+      .eq(
+        "id",
+        id
+      )
+      .eq(
+        "restaurant_id",
+        restaurantId
+      );
+
+
+  if(error){
+
+    toast(error.message);
+    return;
+
+  }
+
+
+  await loadMenu();
+
+}
+
+
+async function deleteMenuItem(id){
+
+  if(
+    !confirm(
+      "Delete this menu item?"
+    )
+  )
+    return;
+
+
+  const {
+    error
+  } =
+    await db
+      .from("menu_items")
+      .delete()
+      .eq(
+        "id",
+        id
+      )
+      .eq(
+        "restaurant_id",
+        restaurantId
+      );
+
+
+  if(error){
+
+    toast(error.message);
+    return;
+
+  }
+
+
+  await loadMenu();
 
 }
 
 
 /* =========================================================
-   LOAD TABLES
+   TABLES + QR
 ========================================================= */
 
 async function loadTables(){
 
- const {
-  data,
-  error
- } =
- await db
- .from("restaurant_tables")
- .select("*")
- .eq(
-  "restaurant_id",
-  restaurantId
- )
- .order(
-  "table_number"
- );
+  const {
+    data,
+    error
+  } =
+    await db
+      .from("restaurant_tables")
+      .select("*")
+      .eq(
+        "restaurant_id",
+        restaurantId
+      )
+      .order(
+        "table_number",
+        {
+          ascending:true
+        }
+      );
 
 
- const box =
- document.getElementById(
-  "tableList"
- );
+  if(error){
+
+    $("tablesList").innerHTML =
+      `<div class="empty">
+        ${escapeHtml(error.message)}
+      </div>`;
+
+    return;
+
+  }
 
 
- if(error){
+  if(!data?.length){
 
-  box.innerHTML =
-  "<p>"+
-  esc(error.message)+
-  "</p>";
+    $("tablesList").innerHTML =
+      `<div class="empty">
+        No tables created.
+      </div>`;
 
-  return;
- }
+    return;
 
-
- if(!data?.length){
-
-  box.innerHTML =
-  "<div class='empty'>Create Table 1–50</div>";
-
-  return;
- }
+  }
 
 
- box.innerHTML="";
+  const base =
+    new URL(
+      "../index.html",
+      location.href
+    ).href;
 
 
- const base =
- new URL(
-  "../index.html",
-  location.href
- ).href;
+  $("tablesList").innerHTML =
+    data.map(t=>{
+
+      const url =
+        base +
+        "?table=" +
+        encodeURIComponent(
+          t.table_number
+        );
 
 
- data.forEach(t=>{
-
-  const c =
-  document.createElement(
-   "div"
-  );
+      const qr =
+        "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" +
+        encodeURIComponent(url);
 
 
-  c.className =
-  "tableCard";
+      return `
 
+        <div class="qr-card">
 
-  c.innerHTML = `
+          <h3>
+            Table ${escapeHtml(
+              t.table_number
+            )}
+          </h3>
 
-   <h2>
-    🪑 Table ${t.table_number}
-   </h2>
+          <img
+            src="${qr}"
+            alt="QR"
+          >
 
+          <div
+            style="
+              font-size:11px;
+              color:#777;
+              word-break:break-all;
+            "
+          >
+            ${escapeHtml(url)}
+          </div>
 
-   <div
-    class="qr"
-    id="qr-${t.table_number}"
-   ></div>
+          <br>
 
+          <button
+            class="btn"
+            onclick="window.open('${qr}','_blank')"
+          >
+            Open QR
+          </button>
 
-   <div class="stat">
-    Scan to Order
-   </div>
+          <button
+            class="btn dark"
+            onclick="printQR('${escapeHtml(t.table_number)}','${qr}')"
+          >
+            Print
+          </button>
 
-   <br>
+        </div>
 
+      `;
 
-   <button
-    class="primary"
-    onclick="
-     downloadQR(
-      ${t.table_number}
-     )
-    "
-   >
-    ⬇️ Download
-   </button>
-
-  `;
-
-
-  box.appendChild(c);
-
-
-  new QRCode(
-   document.getElementById(
-    "qr-"+t.table_number
-   ),
-   {
-    text:
-     base+
-     "?table="+
-     t.table_number,
-
-    width:160,
-
-    height:160,
-
-    correctLevel:
-     QRCode.CorrectLevel.H
-   }
-  );
-
- });
+    }).join("");
 
 }
 
 
-/* =========================================================
-   DOWNLOAD QR
-========================================================= */
+async function createTables(){
 
-function downloadQR(n){
-
- const canvas =
- document.querySelector(
-  "#qr-"+n+" canvas"
- );
+  const count =
+    Number(
+      $("tableCount").value
+    );
 
 
- if(!canvas) return;
+  if(
+    !count ||
+    count < 1 ||
+    count > 100
+  ){
+
+    toast(
+      "Enter tables between 1 and 100"
+    );
+
+    return;
+
+  }
 
 
- const a =
- document.createElement(
-  "a"
- );
+  const rows =
+    Array.from(
+      {length:count},
+      (_,i)=>({
+        restaurant_id:
+          restaurantId,
+        table_number:
+          i+1,
+        active:true
+      })
+    );
 
 
- a.download =
- "Table-"+n+"-QR.png";
+  const {
+    error
+  } =
+    await db
+      .from("restaurant_tables")
+      .upsert(
+        rows,
+        {
+          onConflict:
+            "restaurant_id,table_number"
+        }
+      );
 
 
- a.href =
- canvas.toDataURL(
-  "image/png"
- );
+  if(error){
+
+    toast(error.message);
+    return;
+
+  }
 
 
- a.click();
+  toast(
+    "Tables created"
+  );
+
+  await loadTables();
+
+}
+
+
+function printQR(
+  table,
+  qr
+){
+
+  const w =
+    window.open(
+      "",
+      "_blank"
+    );
+
+  w.document.write(`
+    <html>
+    <head>
+      <title>Table ${table} QR</title>
+      <style>
+        body{
+          text-align:center;
+          font-family:Arial;
+          padding:40px;
+        }
+        img{
+          width:300px;
+        }
+      </style>
+    </head>
+
+    <body>
+
+      <h1>
+        Table ${table}
+      </h1>
+
+      <img src="${qr}">
+
+      <script>
+        window.onload=function(){
+          window.print();
+        }
+      <\/script>
+
+    </body>
+    </html>
+  `);
+
+  w.document.close();
 
 }
 
@@ -3197,214 +2997,148 @@ function downloadQR(n){
 
 async function loadOffers(){
 
- const {
-  data,
-  error
- } =
- await db
- .from("offers")
- .select("*")
- .eq(
-  "restaurant_id",
-  restaurantId
- )
- .order(
-  "created_at",
-  {
-   ascending:false
-  }
- );
-
-
- const box =
- document.getElementById(
-  "offerList"
- );
-
-
- if(error){
-
-  box.innerHTML =
-  "<p>"+
-  esc(error.message)+
-  "</p>";
-
-  return;
- }
-
-
- if(!data?.length){
-
-  box.innerHTML =
-  "<div class='empty'>No offers.</div>";
-
-  return;
- }
-
-
- box.innerHTML =
- data.map(
-  o => `
-
-   <div class="itemCard">
-
-    <h3>
-     ${esc(o.title)}
-    </h3>
-
-
-    <p>
-     ${esc(
-      o.description || ""
-     )}
-    </p>
-
-
-    <p>
-     <strong>
-      ${esc(
-       o.discount || ""
-      )}
-     </strong>
-    </p>
-
-
-    <p>
-     ${
-      o.active
-      ? "🟢 Active"
-      : "🔴 Inactive"
-     }
-    </p>
-
-
-    <button
-     class="${
-      o.active
-      ? "red"
-      : "green"
-     }"
-     onclick="
-      toggleOffer(
-       '${o.id}',
-       ${!o.active}
+  const {
+    data,
+    error
+  } =
+    await db
+      .from("offers")
+      .select("*")
+      .eq(
+        "restaurant_id",
+        restaurantId
       )
-     "
-    >
-     ${
-      o.active
-      ? "Deactivate"
-      : "Activate"
-     }
-    </button>
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      );
 
-   </div>
 
-  `
- ).join("");
+  if(error){
+
+    $("offersList").innerHTML =
+      `<div class="panel">
+        ${escapeHtml(error.message)}
+      </div>`;
+
+    return;
+
+  }
+
+
+  if(!data?.length){
+
+    $("offersList").innerHTML =
+      `<div class="panel empty">
+        No offers.
+      </div>`;
+
+    return;
+
+  }
+
+
+  $("offersList").innerHTML =
+    data.map(o=>`
+
+      <div class="panel">
+
+        <div class="panel-head">
+
+          <div>
+
+            <strong>
+              ${escapeHtml(
+                o.title || "Offer"
+              )}
+            </strong>
+
+            <div
+              style="
+                color:#777;
+                margin-top:5px;
+              "
+            >
+              ${escapeHtml(
+                o.description || ""
+              )}
+            </div>
+
+          </div>
+
+          <strong>
+            ${escapeHtml(
+              o.discount || ""
+            )}
+          </strong>
+
+        </div>
+
+      </div>
+
+    `).join("");
 
 }
 
-
-/* =========================================================
-   ADD OFFER
-========================================================= */
 
 async function addOffer(){
 
- const title =
- document.getElementById(
-  "offerTitle"
- ).value.trim();
+  const title =
+    $("offerTitle").value.trim();
+
+  if(!title){
+
+    toast(
+      "Enter offer title"
+    );
+
+    return;
+
+  }
 
 
- if(!title){
+  const {
+    error
+  } =
+    await db
+      .from("offers")
+      .insert({
 
-  alert(
-   "Offer title डालो."
-  );
+        restaurant_id:
+          restaurantId,
 
-  return;
- }
+        title,
 
+        discount:
+          $("offerDiscount").value.trim(),
 
- const {error} =
- await db
- .from("offers")
- .insert({
+        description:
+          $("offerDescription").value.trim(),
 
-  restaurant_id:
-   restaurantId,
+        is_active:true
 
-  title:title,
-
-  description:
-   document.getElementById(
-    "offerDesc"
-   ).value,
-
-  discount:
-   document.getElementById(
-    "offerDiscount"
-   ).value,
-
-  image_url:
-   document.getElementById(
-    "offerImage"
-   ).value,
-
-  active:true
-
- });
+      });
 
 
- if(error){
+  if(error){
 
-  alert(error.message);
+    toast(error.message);
+    return;
 
- }else{
+  }
 
-  alert(
-   "✅ Offer added!"
+
+  $("offerTitle").value="";
+  $("offerDiscount").value="";
+  $("offerDescription").value="";
+
+  toast(
+    "Offer added"
   );
 
   await loadOffers();
-
- }
-
-}
-
-
-/* =========================================================
-   TOGGLE OFFER
-========================================================= */
-
-async function toggleOffer(
- id,
- v
-){
-
- const {error} =
- await db
- .from("offers")
- .update({
-  active:v
- })
- .eq(
-  "id",
-  id
- );
-
-
- if(error){
-
-  alert(error.message);
-
- }else{
-
-  await loadOffers();
-
- }
 
 }
 
@@ -3413,193 +3147,152 @@ async function toggleOffer(
    WAITER CALLS
 ========================================================= */
 
-async function loadWaiter(){
+async function loadWaiters(){
 
- const {
-  data,
-  error
- } =
- await db
- .from("waiter_calls")
- .select("*")
- .eq(
-  "restaurant_id",
-  restaurantId
- )
- .order(
-  "created_at",
-  {
-   ascending:false
-  }
- );
-
-
- const box =
- document.getElementById(
-  "waiterList"
- );
+  const {
+    data,
+    error
+  } =
+    await db
+      .from("waiter_calls")
+      .select("*")
+      .eq(
+        "restaurant_id",
+        restaurantId
+      )
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      )
+      .limit(100);
 
 
- if(error){
+  if(error){
 
-  box.innerHTML =
-  "<p>"+
-  esc(error.message)+
-  "</p>";
+    $("waiterList").innerHTML =
+      `<div class="empty">
+        ${escapeHtml(error.message)}
+      </div>`;
 
-  return;
- }
-
-
- if(!data?.length){
-
-  box.innerHTML =
-  "<div class='empty'>No waiter calls.</div>";
-
-  return;
- }
-
-
- box.innerHTML="";
-
-
- for(const x of data){
-
-  let table =
-  x.table_number || "-";
-
-
-  if(
-   !x.table_number &&
-   x.table_id
-  ){
-
-   table =
-   await getTableNumber(
-    x.table_id
-   );
+    return;
 
   }
 
 
-  const d =
-  document.createElement(
-   "div"
-  );
+  if(!data?.length){
+
+    $("waiterList").innerHTML =
+      `<div class="empty">
+        No waiter calls.
+      </div>`;
+
+    return;
+
+  }
 
 
-  d.className =
-  "itemCard"+
-  (
-   x.status==="pending"
-   ? " waiter-alert"
-   : ""
-  );
+  $("waiterList").innerHTML =
+    `<div class="table-wrap">
 
+      <table>
 
-  d.innerHTML = `
+        <thead>
+          <tr>
+            <th>Table</th>
+            <th>Request</th>
+            <th>Status</th>
+            <th>Time</th>
+            <th>Action</th>
+          </tr>
+        </thead>
 
-   <h3>
-    🔔 Table ${esc(table)}
-   </h3>
+        <tbody>
 
+          ${data.map(x=>`
 
-   <p>
-    ${esc(
-     x.request_type ||
-     "Customer requested waiter"
-    )}
-   </p>
+            <tr>
 
+              <td>
+                ${escapeHtml(
+                  x.table_number || "-"
+                )}
+              </td>
 
-   <p>
-    ${
-     x.created_at
-     ? new Date(
-        x.created_at
-       ).toLocaleString()
-     : ""
-    }
-   </p>
+              <td>
+                ${escapeHtml(
+                  x.request_type || "Waiter"
+                )}
+              </td>
 
+              <td>
+                ${statusBadge(x.status)}
+              </td>
 
-   <p>
-    Status:
-    <strong>
-     ${esc(
-      x.status ||
-      "pending"
-     )}
-    </strong>
-   </p>
+              <td>
+                ${formatDate(x.created_at)}
+              </td>
 
+              <td>
 
-   ${
-    x.status==="pending"
+                ${
+                  x.status !== "completed"
+                  ? `
+                    <button
+                      class="btn green"
+                      onclick="completeWaiterCall('${x.id}')"
+                    >
+                      Complete
+                    </button>
+                  `
+                  : "✓"
+                }
 
-    ?
+              </td>
 
-    `
-     <button
-      class="green"
-      onclick="
-       completeWaiter(
-        '${x.id}'
-       )
-      "
-     >
-      ✅ Complete
-     </button>
-    `
+            </tr>
 
-    :
+          `).join("")}
 
-    ""
-   }
+        </tbody>
 
-  `;
+      </table>
 
-
-  box.appendChild(d);
-
- }
+    </div>`;
 
 }
 
 
-/* =========================================================
-   COMPLETE WAITER
-========================================================= */
+async function completeWaiterCall(id){
 
-async function completeWaiter(id){
-
- const {error} =
- await db
- .from("waiter_calls")
- .update({
-  status:"completed"
- })
- .eq(
-  "id",
-  id
- )
- .eq(
-  "restaurant_id",
-  restaurantId
- );
+  const {
+    error
+  } =
+    await db
+      .from("waiter_calls")
+      .update({
+        status:"completed"
+      })
+      .eq(
+        "id",
+        id
+      )
+      .eq(
+        "restaurant_id",
+        restaurantId
+      );
 
 
- if(error){
+  if(error){
 
-  alert(error.message);
+    toast(error.message);
+    return;
 
-  return;
- }
+  }
 
 
- await loadWaiter();
-
- await loadDashboard();
+  await loadWaiters();
 
 }
 
@@ -3610,159 +3303,100 @@ async function completeWaiter(id){
 
 async function loadComplaints(){
 
- const {
-  data,
-  error
- } =
- await db
- .from("complaints")
- .select("*")
- .eq(
-  "restaurant_id",
-  restaurantId
- )
- .order(
-  "created_at",
-  {
-   ascending:false
-  }
- );
-
-
- const box =
- document.getElementById(
-  "complaintList"
- );
-
-
- if(error){
-
-  box.innerHTML =
-  "<p>"+
-  esc(error.message)+
-  "</p>";
-
-  return;
- }
-
-
- if(!data?.length){
-
-  box.innerHTML =
-  "<div class='empty'>No complaints.</div>";
-
-  return;
- }
-
-
- box.innerHTML =
- data.map(
-  c => `
-
-   <div class="itemCard">
-
-    <h3>
-     ⚠️
-     ${esc(
-      c.complaint_type ||
-      "Complaint"
-     )}
-    </h3>
-
-
-    <p>
-     Table:
-     ${esc(
-      c.table_number ||
-      "-"
-     )}
-    </p>
-
-
-    <p>
-     ${esc(
-      c.message ||
-      ""
-     )}
-    </p>
-
-
-    <p>
-     Status:
-     ${esc(
-      c.status ||
-      ""
-     )}
-    </p>
-
-
-    <textarea
-     id="reply-${c.id}"
-     placeholder="Response"
-    >${esc(
-     c.response ||
-     ""
-    )}</textarea>
-
-
-    <button
-     class="green"
-     onclick="
-      replyComplaint(
-       '${c.id}'
+  const {
+    data,
+    error
+  } =
+    await db
+      .from("complaints")
+      .select("*")
+      .eq(
+        "restaurant_id",
+        restaurantId
       )
-     "
-    >
-     Save Response
-    </button>
-
-   </div>
-
-  `
- ).join("");
-
-}
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      );
 
 
-/* =========================================================
-   REPLY COMPLAINT
-========================================================= */
+  if(error){
 
-async function replyComplaint(id){
+    $("complaintsList").innerHTML =
+      `<div class="empty">
+        ${escapeHtml(error.message)}
+      </div>`;
 
- const response =
- document.getElementById(
-  "reply-"+id
- ).value;
+    return;
 
-
- const {error} =
- await db
- .from("complaints")
- .update({
-
-  response:response,
-
-  status:"resolved"
-
- })
- .eq(
-  "id",
-  id
- );
+  }
 
 
- if(error){
+  if(!data?.length){
 
-  alert(error.message);
+    $("complaintsList").innerHTML =
+      `<div class="empty">
+        No complaints.
+      </div>`;
 
- }else{
+    return;
 
-  await loadComplaints();
+  }
 
-  await loadDashboard();
 
- }
+  $("complaintsList").innerHTML =
+    `<div class="table-wrap">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Table</th>
+            <th>Complaint</th>
+            <th>Status</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          ${data.map(x=>`
+
+            <tr>
+
+              <td>
+                ${escapeHtml(
+                  x.table_number || "-"
+                )}
+              </td>
+
+              <td>
+                ${escapeHtml(
+                  x.message ||
+                  x.complaint ||
+                  "-"
+                )}
+              </td>
+
+              <td>
+                ${statusBadge(x.status)}
+              </td>
+
+              <td>
+                ${formatDate(x.created_at)}
+              </td>
+
+            </tr>
+
+          `).join("")}
+
+        </tbody>
+
+      </table>
+
+    </div>`;
 
 }
 
@@ -3773,808 +3407,433 @@ async function replyComplaint(id){
 
 async function loadFeedback(){
 
- const {
-  data,
-  error
- } =
- await db
- .from("feedback")
- .select("*")
- .eq(
-  "restaurant_id",
-  restaurantId
- )
- .order(
-  "created_at",
-  {
-   ascending:false
-  }
- );
-
-
- const box =
- document.getElementById(
-  "feedbackList"
- );
-
-
- if(error){
-
-  box.innerHTML =
-  "<p>"+
-  esc(error.message)+
-  "</p>";
-
-  return;
- }
-
-
- if(!data?.length){
-
-  document.getElementById(
-   "averageRating"
-  ).innerText="0";
-
-
-  box.innerHTML =
-  "<div class='empty'>No feedback yet.</div>";
-
-  return;
- }
-
-
- const avg =
- data.reduce(
-  (a,x)=>
-   a+Number(
-    x.rating || 0
-   ),
-  0
- ) / data.length;
-
-
- document.getElementById(
-  "averageRating"
- ).innerText =
- avg.toFixed(1);
-
-
- box.innerHTML =
- data.map(
-  x => `
-
-   <div class="itemCard">
-
-    <h3>
-     ${
-      "⭐".repeat(
-       Number(
-        x.rating || 0
-       )
+  const {
+    data,
+    error
+  } =
+    await db
+      .from("feedback")
+      .select("*")
+      .eq(
+        "restaurant_id",
+        restaurantId
       )
-     }
-    </h3>
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      );
 
 
-    <p>
-     ${esc(
-      x.message || ""
-     )}
-    </p>
+  if(error){
 
+    $("feedbackList").innerHTML =
+      `<div class="empty">
+        ${escapeHtml(error.message)}
+      </div>`;
 
-    <p>
-     Table:
-     ${esc(
-      x.table_number ||
-      "-"
-     )}
-    </p>
+    return;
 
-   </div>
-
-  `
- ).join("");
-
-}
-
-
-/* =========================================================
-   PAYMENT SETTINGS
-========================================================= */
-
-function fillPayments(d){
-
- document.getElementById(
-  "upiId"
- ).value =
- d.upi_id || "";
-
-
- document.getElementById(
-  "upiQR"
- ).value =
- d.upi_qr_url || "";
-
-
- document.getElementById(
-  "tax"
- ).value =
- d.tax_percent || 0;
-
-
- document.getElementById(
-  "service"
- ).value =
- d.service_charge_percent || 0;
-
-}
-
-
-function fillPaymentsPage(){
-
- if(!restaurantId) return;
-
- loadRestaurantPaymentOnly();
-
-}
-
-
-async function loadRestaurantPaymentOnly(){
-
- const {
-  data,
-  error
- } =
- await db
- .from("restaurants")
- .select("*")
- .eq(
-  "id",
-  restaurantId
- )
- .single();
-
-
- if(
-  !error &&
-  data
- ){
-
-  fillPayments(data);
-
- }
-
-}
-
-
-/* =========================================================
-   SAVE PAYMENT SETTINGS
-========================================================= */
-
-async function savePayments(){
-
- const {error} =
- await db
- .from("restaurants")
- .update({
-
-  upi_id:
-   document.getElementById(
-    "upiId"
-   ).value,
-
-  upi_qr_url:
-   document.getElementById(
-    "upiQR"
-   ).value,
-
-  tax_percent:
-   Number(
-    document.getElementById(
-     "tax"
-    ).value || 0
-   ),
-
-  service_charge_percent:
-   Number(
-    document.getElementById(
-     "service"
-    ).value || 0
-   )
-
- })
- .eq(
-  "id",
-  restaurantId
- );
-
-
- if(error){
-
-  alert(
-   error.message
-  );
-
- }else{
-
-  alert(
-   "✅ Payment settings saved!"
-  );
-
- }
-
-}
-
-
-/* =========================================================
-   PROFILE
-========================================================= */
-
-function fillProfile(d){
-
- document.getElementById(
-  "pName"
- ).value =
- d.name || "";
-
-
- document.getElementById(
-  "pLogo"
- ).value =
- d.logo_url || "";
-
-
- document.getElementById(
-  "pCover"
- ).value =
- d.cover_url || "";
-
-
- document.getElementById(
-  "pAddress"
- ).value =
- d.address || "";
-
-
- document.getElementById(
-  "pPhone"
- ).value =
- d.phone || "";
-
-
- document.getElementById(
-  "pOpen"
- ).value =
- d.opening_time || "";
-
-
- document.getElementById(
-  "pClose"
- ).value =
- d.closing_time || "";
-
-
- document.getElementById(
-  "pMaps"
- ).value =
- d.maps_url || "";
-
-
- document.getElementById(
-  "pAbout"
- ).value =
- d.about || "";
-
-}
-
-
-/* =========================================================
-   LOAD PROFILE
-========================================================= */
-
-async function loadProfile(){
-
- const {
-  data,
-  error
- } =
- await db
- .from("restaurants")
- .select("*")
- .eq(
-  "id",
-  restaurantId
- )
- .single();
-
-
- if(!error && data){
-
-  fillProfile(data);
-
- }
-
-}
-
-
-/* =========================================================
-   SAVE PROFILE
-========================================================= */
-
-async function saveProfile(){
-
- const name =
- document.getElementById(
-  "pName"
- ).value.trim();
-
-
- if(!name){
-
-  alert(
-   "Restaurant name डालो."
-  );
-
-  return;
- }
-
-
- const {error} =
- await db
- .from("restaurants")
- .update({
-
-  name:name,
-
-  logo_url:
-   document.getElementById(
-    "pLogo"
-   ).value,
-
-  cover_url:
-   document.getElementById(
-    "pCover"
-   ).value,
-
-  address:
-   document.getElementById(
-    "pAddress"
-   ).value,
-
-  phone:
-   document.getElementById(
-    "pPhone"
-   ).value,
-
-  opening_time:
-   document.getElementById(
-    "pOpen"
-   ).value || null,
-
-  closing_time:
-   document.getElementById(
-    "pClose"
-   ).value || null,
-
-  maps_url:
-   document.getElementById(
-    "pMaps"
-   ).value,
-
-  about:
-   document.getElementById(
-    "pAbout"
-   ).value
-
- })
- .eq(
-  "id",
-  restaurantId
- );
-
-
- if(error){
-
-  alert(error.message);
-
- }else{
-
-  document.getElementById(
-   "restaurantTitle"
-  ).innerText=name;
-
-
-  alert(
-   "✅ Restaurant profile saved!"
-  );
-
- }
-
-}
-
-
-/* =========================================================
-   STAFF
-========================================================= */
-
-async function loadStaff(){
-
- const {
-  data,
-  error
- } =
- await db
- .from("staff")
- .select("*")
- .eq(
-  "restaurant_id",
-  restaurantId
- )
- .order(
-  "created_at",
-  {
-   ascending:false
   }
- );
 
 
- const box =
- document.getElementById(
-  "staffList"
- );
+  if(!data?.length){
+
+    $("feedbackList").innerHTML =
+      `<div class="empty">
+        No feedback yet.
+      </div>`;
+
+    return;
+
+  }
 
 
- if(error){
+  $("feedbackList").innerHTML =
+    `<div class="table-wrap">
 
-  box.innerHTML =
-  "<p>"+
-  esc(error.message)+
-  "</p>";
+      <table>
 
-  return;
- }
+        <thead>
+          <tr>
+            <th>Rating</th>
+            <th>Message</th>
+            <th>Order</th>
+            <th>Time</th>
+          </tr>
+        </thead>
 
+        <tbody>
 
- if(!data?.length){
+          ${data.map(x=>`
 
-  box.innerHTML =
-  "<div class='empty'>No staff added.</div>";
+            <tr>
 
-  return;
- }
+              <td>
+                ${
+                  "⭐".repeat(
+                    Math.max(
+                      0,
+                      Math.min(
+                        5,
+                        Number(x.rating || 0)
+                      )
+                    )
+                  )
+                }
+              </td>
 
+              <td>
+                ${escapeHtml(
+                  x.message || "-"
+                )}
+              </td>
 
- box.innerHTML =
- data.map(
-  s => `
+              <td>
+                ${escapeHtml(
+                  x.order_id
+                  ? String(x.order_id).slice(0,8)
+                  : "-"
+                )}
+              </td>
 
-   <div class="itemCard">
+              <td>
+                ${formatDate(x.created_at)}
+              </td>
 
-    <h3>
-     ${esc(
-      s.name ||
-      "Staff"
-     )}
-    </h3>
+            </tr>
 
+          `).join("")}
 
-    <p>
-     ${esc(
-      s.email ||
-      ""
-     )}
-    </p>
+        </tbody>
 
+      </table>
 
-    <p>
-     Role:
-     <strong>
-      ${esc(
-       s.role ||
-       ""
-      )}
-     </strong>
-    </p>
-
-   </div>
-
-  `
- ).join("");
-
-}
-
-
-/* =========================================================
-   ADD STAFF
-========================================================= */
-
-async function addStaff(){
-
- const name =
- document.getElementById(
-  "staffName"
- ).value.trim();
-
-
- const email =
- document.getElementById(
-  "staffEmail"
- ).value.trim();
-
-
- const role =
- document.getElementById(
-  "staffRole"
- ).value;
-
-
- if(!name || !email){
-
-  alert(
-   "Name और email डालो."
-  );
-
-  return;
- }
-
-
- const {error} =
- await db
- .from("staff")
- .insert({
-
-  restaurant_id:
-   restaurantId,
-
-  name:name,
-
-  email:email,
-
-  role:role,
-
-  active:true
-
- });
-
-
- if(error){
-
-  alert(error.message);
-
- }else{
-
-  alert(
-   "✅ Staff added!"
-  );
-
-  await loadStaff();
-
- }
+    </div>`;
 
 }
 
 
 /* =========================================================
-   ANALYTICS
-   ALL ORDERS
+   BILLING
 ========================================================= */
 
-async function loadAnalytics(){
+async function loadBilling(){
 
- const orders =
- await getAllOrders();
-
-
- const sales =
- orders.reduce(
-  (a,x)=>
-   a + Number(
-    x.total || 0
-   ),
-  0
- );
+  const orders =
+    await getAllOrders();
 
 
- document.getElementById(
-  "aOrders"
- ).innerText =
- orders.length;
+  if(!orders.length){
+
+    $("billingList").innerHTML =
+      `<div class="empty">
+        No orders found.
+      </div>`;
+
+    return;
+
+  }
 
 
- document.getElementById(
-  "aSales"
- ).innerText =
- sales.toFixed(0);
+  $("billingList").innerHTML =
+    `<div class="table-wrap">
 
+      <table>
 
- document.getElementById(
-  "aAverage"
- ).innerText =
- orders.length
- ? (sales/orders.length).toFixed(0)
- : "0";
+        <thead>
+          <tr>
+            <th>Order</th>
+            <th>Table</th>
+            <th>Date</th>
+            <th>Total</th>
+            <th>Payment</th>
+            <th>Status</th>
+            <th>Bill</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          ${orders.map(o=>`
+
+            <tr>
+
+              <td>
+                #${escapeHtml(
+                  String(o.id).slice(0,8)
+                )}
+              </td>
+
+              <td>
+                ${escapeHtml(
+                  o.table_number || "-"
+                )}
+              </td>
+
+              <td>
+                ${formatDate(o.created_at)}
+              </td>
+
+              <td>
+                <strong>
+                  ${money(o.total)}
+                </strong>
+              </td>
+
+              <td>
+                ${escapeHtml(
+                  o.payment_method ||
+                  "cash"
+                )}
+              </td>
+
+              <td>
+                ${statusBadge(
+                  o.payment_status ||
+                  "pending"
+                )}
+              </td>
+
+              <td>
+
+                <button
+                  class="btn dark"
+                  onclick="printBill('${o.id}')"
+                >
+                  🧾 Print
+                </button>
+
+              </td>
+
+            </tr>
+
+          `).join("")}
+
+        </tbody>
+
+      </table>
+
+    </div>`;
 
 }
 
 
 /* =========================================================
-   SETTINGS
+   PRINT BILL WITH ITEMS
 ========================================================= */
 
-function fillSettings(d){
+async function printBill(orderId){
 
- document.getElementById(
-  "settingTime"
- ).value =
- d.default_preparation_minutes ??
- 15;
-
-
- document.getElementById(
-  "settingMinimum"
- ).value =
- d.minimum_order ??
- 0;
-
-
- document.getElementById(
-  "settingOpen"
- ).value =
- d.is_open === false
- ? "false"
- : "true";
-
-}
+  const {
+    data:order,
+    error:orderError
+  } =
+    await db
+      .from("orders")
+      .select("*")
+      .eq(
+        "id",
+        orderId
+      )
+      .eq(
+        "restaurant_id",
+        restaurantId
+      )
+      .single();
 
 
-async function loadSettings(){
+  if(orderError){
 
- const {
-  data,
-  error
- } =
- await db
- .from("restaurants")
- .select("*")
- .eq(
-  "id",
-  restaurantId
- )
- .single();
+    toast(orderError.message);
+    return;
+
+  }
 
 
- if(!error && data){
-
-  fillSettings(data);
-
- }
-
-}
-
-
-/* =========================================================
-   SAVE SETTINGS
-========================================================= */
-
-async function saveSettings(){
-
- const time =
- Number(
-  document.getElementById(
-   "settingTime"
-  ).value || 15
- );
+  const {
+    data:items,
+    error:itemError
+  } =
+    await db
+      .from("order_items")
+      .select(`
+        quantity,
+        price,
+        menu_items(name)
+      `)
+      .eq(
+        "order_id",
+        orderId
+      );
 
 
- const minimum =
- Number(
-  document.getElementById(
-   "settingMinimum"
-  ).value || 0
- );
+  if(itemError){
+
+    toast(itemError.message);
+    return;
+
+  }
 
 
- const isOpen =
- document.getElementById(
-  "settingOpen"
- ).value === "true";
+  const rows =
+    (items || [])
+      .map(item=>`
+
+        <tr>
+
+          <td>
+            ${escapeHtml(
+              item.menu_items?.name ||
+              "Item"
+            )}
+          </td>
+
+          <td>
+            ${item.quantity}
+          </td>
+
+          <td>
+            ${money(item.price)}
+          </td>
+
+          <td>
+            ${money(
+              Number(item.price || 0) *
+              Number(item.quantity || 0)
+            )}
+          </td>
+
+        </tr>
+
+      `)
+      .join("");
 
 
- const {error} =
- await db
- .from("restaurants")
- .update({
-
-  default_preparation_minutes:
-   time,
-
-  minimum_order:
-   minimum,
-
-  is_open:
-   isOpen
-
- })
- .eq(
-  "id",
-  restaurantId
- );
+  const w =
+    window.open(
+      "",
+      "_blank"
+    );
 
 
- if(error){
+  w.document.write(`
 
-  alert(
-   "Settings error:\n"+
-   error.message
-  );
+    <html>
 
- }else{
+    <head>
 
-  alert(
-   "✅ Settings saved!"
-  );
+      <title>
+        Bill #${String(order.id).slice(0,8)}
+      </title>
 
- }
+      <style>
 
-}
+        body{
+          font-family:Arial;
+          padding:25px;
+          max-width:700px;
+          margin:auto;
+        }
 
+        h1{
+          text-align:center;
+        }
 
-/* =========================================================
-   SIDEBAR
-========================================================= */
+        .center{
+          text-align:center;
+        }
 
-function toggleSidebar(){
+        table{
+          width:100%;
+          border-collapse:collapse;
+          margin-top:20px;
+        }
 
- document.getElementById(
-  "sidebar"
- ).classList.toggle(
-  "open"
- );
+        th,td{
+          padding:9px;
+          border-bottom:1px solid #ddd;
+          text-align:left;
+        }
 
-}
+        .total{
+          text-align:right;
+          font-size:20px;
+          font-weight:bold;
+          margin-top:20px;
+        }
 
+        .line{
+          border-top:1px dashed #777;
+          margin:15px 0;
+        }
 
-/* =========================================================
-   ESCAPE HTML
-========================================================= */
+      </style>
 
-function esc(v){
+    </head>
 
- return String(
-  v ?? ""
- )
- .replace(
-  /&/g,
-  "&amp;"
- )
- .replace(
-  /</g,
-  "&lt;"
- )
- .replace(
-  />/g,
-  "&gt;"
- )
- .replace(
-  /"/g,
-  "&quot;"
- )
- .replace(
-  /'/g,
-  "&#039;"
- );
+    <body>
 
-}
+      <h1>
+        ${escapeHtml(
+          restaurant.name ||
+          "Restaurant"
+        )}
+      </h1>
 
+      <div class="center">
+        ${escapeHtml(
+          restaurant.address || ""
+        )}
+      </div>
 
-/* =========================================================
-   START
-========================================================= */
+      <div class="center">
+        ${escapeHtml(
+          restaurant.phone || ""
+        )}
+      </div>
 
-start();
+      <div class="line"></div>
 
-</script>
+      <p>
+        <strong>Order:</strong>
+        #${String(order.id).slice(0,8)}
+      </p>
 
-</body>
-</html>
+      <p>
+        <strong>Table:</strong>
+        ${escapeHtml(
+          order.table_number || "-"
+        )}
+      </p>
+
+      <p>
+        <strong>Date:</strong>
+        ${formatDate(order.created_at)}
+      </p>
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Item</th>
+            <th>Qty</th>
+            <th>Price</th>
+            <th>Total</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          ${rows}
+
+        </tbody>
+
+      </table>
+
+      <div class="line"></div>
+
+      <div class="total
