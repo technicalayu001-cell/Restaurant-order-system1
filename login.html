@@ -94,6 +94,10 @@
 
 <script>
 
+  // ==============================
+  // SUPABASE CONFIG
+  // ==============================
+
   const SUPABASE_URL =
     "https://ltpjjckiaaonpetbzfvn.supabase.co";
 
@@ -107,6 +111,14 @@
     );
 
 
+  // ==============================
+  // ADMIN PAGE URL
+  // ==============================
+
+  const ADMIN_URL =
+    "https://technicalayu001-cell.github.io/Restaurant-order-system1/admin.html";
+
+
   const loginButton =
     document.getElementById("googleLogin");
 
@@ -114,12 +126,19 @@
     document.getElementById("message");
 
 
+  // ==============================
+  // GOOGLE LOGIN
+  // ==============================
+
   loginButton.addEventListener("click", async () => {
 
     loginButton.disabled = true;
-    loginButton.textContent = "Opening Google...";
+
+    loginButton.textContent =
+      "Opening Google...";
 
     message.textContent = "";
+
 
     const { error } =
       await supabaseClient.auth.signInWithOAuth({
@@ -127,7 +146,7 @@
         provider: "google",
 
         options: {
-          redirectTo: "http://localhost:3000/login.html"
+          redirectTo: ADMIN_URL
         }
 
       });
@@ -141,6 +160,7 @@
         "Login error: " + error.message;
 
       loginButton.disabled = false;
+
       loginButton.textContent =
         "Continue with Google";
 
@@ -149,23 +169,25 @@
   });
 
 
-  // Check whether the user is already logged in
+  // ==============================
+  // CHECK EXISTING LOGIN
+  // ==============================
 
   async function checkLogin() {
 
     const { data } =
       await supabaseClient.auth.getSession();
 
+
     if (data.session) {
 
-      console.log(
-        "Logged in:",
-        data.session.user.email
-      );
+      window.location.href =
+        ADMIN_URL;
 
     }
 
   }
+
 
   checkLogin();
 
