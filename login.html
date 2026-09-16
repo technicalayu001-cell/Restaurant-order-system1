@@ -1,90 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-  <title>Restaurant SaaS - Login</title>
+<title>Restaurant SaaS - Login</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #f5f7fb;
-      font-family: Arial, sans-serif;
-    }
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  min-height:100vh;
+  background:#f5f7fb;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
 
-    .card {
-      width: 92%;
-      max-width: 390px;
-      background: white;
-      padding: 32px 24px;
-      border-radius: 20px;
-      box-shadow: 0 10px 35px rgba(0,0,0,0.10);
-      text-align: center;
-    }
+.card{
+  width:100%;
+  max-width:420px;
+  background:white;
+  padding:35px 25px;
+  border-radius:20px;
+  text-align:center;
+  box-shadow:0 15px 45px rgba(0,0,0,.12);
+}
 
-    .logo {
-      font-size: 48px;
-      margin-bottom: 8px;
-    }
+.logo{
+  font-size:55px;
+  margin-bottom:10px;
+}
 
-    h1 {
-      margin: 5px 0 8px;
-      color: #111827;
-      font-size: 26px;
-    }
+h1{
+  font-size:26px;
+  color:#111827;
+  margin-bottom:10px;
+}
 
-    p {
-      color: #6b7280;
-      font-size: 14px;
-      line-height: 1.5;
-    }
+p{
+  color:#6b7280;
+  margin-bottom:25px;
+}
 
-    button {
-      width: 100%;
-      padding: 14px;
-      margin-top: 20px;
-      border: 0;
-      border-radius: 12px;
-      background: #111827;
-      color: white;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-    }
+.google-btn{
+  width:100%;
+  padding:14px;
+  border:0;
+  border-radius:10px;
+  background:#111827;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+}
 
-    button:disabled {
-      opacity: 0.6;
-    }
+.google-btn:disabled{
+  opacity:.6;
+}
 
-    .error {
-      display: none;
-      margin-top: 15px;
-      padding: 12px;
-      border-radius: 10px;
-      background: #fee2e2;
-      color: #b91c1c;
-      font-size: 13px;
-      text-align: left;
-    }
+.status{
+  margin-top:18px;
+  color:#6b7280;
+  font-size:14px;
+}
 
-    .loading {
-      display: none;
-      margin-top: 15px;
-      color: #6b7280;
-      font-size: 14px;
-    }
-  </style>
+.error{
+  margin-top:15px;
+  color:#dc2626;
+  font-size:14px;
+  line-height:1.5;
+}
+</style>
 </head>
 
 <body>
@@ -96,239 +91,176 @@
   <h1>Restaurant SaaS</h1>
 
   <p>
-    Manage your restaurant, orders, menu, tables and billing
-    from one place.
+    Manage your restaurant easily
   </p>
 
-  <button id="googleBtn" onclick="loginWithGoogle()">
+  <button
+    id="googleBtn"
+    class="google-btn"
+    onclick="loginWithGoogle()">
     Continue with Google
   </button>
 
-  <div id="loading" class="loading">
-    Opening Google Login...
-  </div>
+  <div id="status" class="status"></div>
 
   <div id="error" class="error"></div>
 
 </div>
 
+
 <script>
 
-  // ==============================
-  // SUPABASE
-  // ==============================
+const SUPABASE_URL =
+"https://ltpjjckiaaonpetbzfvn.supabase.co";
 
-  const SUPABASE_URL =
-    "https://ltpjjckiaaonpetbzfvn.supabase.co";
-
-  const SUPABASE_KEY =
-    "sb_publishable_skzmVVxdVcKTQaUbwEaIg_-KDmA-3L";
+const SUPABASE_KEY =
+"sb_publishable_skzmVVxdVcKTQaUbwEaIg_-KDmA-3L";
 
 
-  // ==============================
-  // ADMIN URL
-  // ==============================
-
-  const ADMIN_URL =
-    "https://technicalayu001-cell.github.io/Restaurant-order-system1/admin/index.html";
+const ADMIN_URL =
+"https://technicalayu001-cell.github.io/Restaurant-order-system1/admin/index.html";
 
 
-  // ==============================
-  // CREATE SUPABASE CLIENT
-  // ==============================
+const db =
+supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  {
+    auth:{
+      persistSession:true,
+      autoRefreshToken:true,
+      detectSessionInUrl:true,
 
-  const db = supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY,
-    {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true,
-
-        // IMPORTANT:
-        // GitHub Pages browser app ke liye
-        // implicit OAuth flow.
-        flowType: "implicit"
-      }
+      /*
+        LOGIN + ADMIN dono PKCE use karenge.
+      */
+      flowType:"pkce"
     }
-  );
+  }
+);
 
 
-  // ==============================
-  // SHOW ERROR
-  // ==============================
+/* Existing session check */
 
-  function showError(message) {
+async function checkExistingSession(){
 
-    const box = document.getElementById("error");
+  try{
 
-    box.style.display = "block";
+    const {data,error} =
+      await db.auth.getSession();
 
-    box.textContent = message;
+    if(error){
+      console.error(error);
+      return;
+    }
+
+    if(data?.session){
+
+      $("status").textContent =
+        "Already logged in...";
+
+      window.location.replace(
+        ADMIN_URL
+      );
+
+    }
+
+  }catch(error){
+
+    console.error(error);
 
   }
 
-
-  // ==============================
-  // GOOGLE LOGIN
-  // ==============================
-
-  async function loginWithGoogle() {
-
-    const button =
-      document.getElementById("googleBtn");
-
-    const loading =
-      document.getElementById("loading");
-
-    const error =
-      document.getElementById("error");
+}
 
 
-    error.style.display = "none";
+/* Google Login */
 
-    button.disabled = true;
+async function loginWithGoogle(){
 
-    loading.style.display = "block";
+  const btn=$("googleBtn");
+
+  const status=$("status");
+
+  const errorBox=$("error");
+
+  btn.disabled=true;
+
+  errorBox.textContent="";
+
+  status.textContent=
+    "Google login open ho raha hai...";
 
 
-    try {
+  try{
 
-      const { error } =
-        await db.auth.signInWithOAuth({
+    const {data,error} =
+      await db.auth.signInWithOAuth({
 
-          provider: "google",
+        provider:"google",
 
-          options: {
+        options:{
 
-            redirectTo: ADMIN_URL
+          redirectTo:ADMIN_URL,
 
+          /*
+            PKCE flow ke saath Supabase
+            callback se session automatically
+            handle karega.
+          */
+
+          queryParams:{
+            access_type:"offline",
+            prompt:"select_account"
           }
 
-        });
+        }
+
+      });
 
 
-      if (error) {
-
-        throw error;
-
-      }
-
-    } catch (err) {
-
-      console.error("Google Login Error:", err);
-
-      button.disabled = false;
-
-      loading.style.display = "none";
-
-      showError(
-        "Google login failed: " +
-        (err.message || "Unknown error")
-      );
-
+    if(error){
+      throw error;
     }
+
+    console.log(
+      "OAuth started:",
+      data
+    );
+
+  }catch(error){
+
+    console.error(
+      "Google login error:",
+      error
+    );
+
+    status.textContent="";
+
+    errorBox.textContent=
+      error.message ||
+      "Google login failed.";
+
+    btn.disabled=false;
 
   }
 
-
-  // ==============================
-  // CHECK EXISTING SESSION
-  // ==============================
-
-  let redirected = false;
+}
 
 
-  async function checkExistingSession() {
+function $(id){
 
-    try {
+  return document.getElementById(id);
 
-      const {
-        data: { session },
-        error
-      } = await db.auth.getSession();
+}
 
 
-      if (error) {
+/* Start */
 
-        console.error(
-          "Session Error:",
-          error
-        );
-
-        return;
-
-      }
-
-
-      if (session && session.user) {
-
-        if (redirected) return;
-
-        redirected = true;
-
-        window.location.replace(
-          ADMIN_URL
-        );
-
-      }
-
-    } catch (err) {
-
-      console.error(
-        "Session Check Error:",
-        err
-      );
-
-    }
-
-  }
-
-
-  // ==============================
-  // AUTH STATE LISTENER
-  // ==============================
-
-  db.auth.onAuthStateChange(
-    (event, session) => {
-
-      console.log(
-        "Auth Event:",
-        event
-      );
-
-
-      if (
-        session &&
-        session.user &&
-        !redirected
-      ) {
-
-        redirected = true;
-
-        window.location.replace(
-          ADMIN_URL
-        );
-
-      }
-
-    }
-  );
-
-
-  // ==============================
-  // PAGE LOAD
-  // ==============================
-
-  window.addEventListener(
-    "load",
-    () => {
-
-      checkExistingSession();
-
-    }
-  );
+document.addEventListener(
+  "DOMContentLoaded",
+  checkExistingSession
+);
 
 </script>
 
