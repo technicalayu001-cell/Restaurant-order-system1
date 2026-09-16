@@ -9,105 +9,80 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-    *{
-      box-sizing:border-box;
-      margin:0;
-      padding:0;
+    * {
+      box-sizing: border-box;
     }
 
-    body{
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:20px;
-      font-family:Arial,Helvetica,sans-serif;
-      background:linear-gradient(135deg,#fff7ed,#ffedd5,#fed7aa);
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f5f7fb;
+      font-family: Arial, sans-serif;
     }
 
-    .card{
-      width:100%;
-      max-width:420px;
-      background:#fff;
-      border-radius:24px;
-      padding:32px 24px;
-      box-shadow:0 20px 60px rgba(0,0,0,.15);
-      text-align:center;
+    .card {
+      width: 92%;
+      max-width: 390px;
+      background: white;
+      padding: 32px 24px;
+      border-radius: 20px;
+      box-shadow: 0 10px 35px rgba(0,0,0,0.10);
+      text-align: center;
     }
 
-    .logo{
-      width:72px;
-      height:72px;
-      border-radius:20px;
-      background:#f97316;
-      color:white;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:38px;
-      margin:0 auto 18px;
+    .logo {
+      font-size: 48px;
+      margin-bottom: 8px;
     }
 
-    h1{
-      font-size:28px;
-      color:#111827;
-      margin-bottom:8px;
+    h1 {
+      margin: 5px 0 8px;
+      color: #111827;
+      font-size: 26px;
     }
 
-    .subtitle{
-      color:#6b7280;
-      line-height:1.5;
-      margin-bottom:28px;
+    p {
+      color: #6b7280;
+      font-size: 14px;
+      line-height: 1.5;
     }
 
-    .google-btn{
-      width:100%;
-      border:1px solid #d1d5db;
-      background:white;
-      color:#111827;
-      padding:15px;
-      border-radius:12px;
-      font-size:16px;
-      font-weight:700;
-      cursor:pointer;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:12px;
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 20px;
+      border: 0;
+      border-radius: 12px;
+      background: #111827;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
     }
 
-    .google-btn:disabled{
-      cursor:not-allowed;
-      opacity:.6;
+    button:disabled {
+      opacity: 0.6;
     }
 
-    .google-icon{
-      font-size:20px;
-      font-weight:900;
+    .error {
+      display: none;
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #fee2e2;
+      color: #b91c1c;
+      font-size: 13px;
+      text-align: left;
     }
 
-    .status{
-      margin-top:18px;
-      min-height:24px;
-      color:#6b7280;
-      font-size:14px;
-      line-height:1.5;
-    }
-
-    .trial{
-      margin-top:22px;
-      padding:14px;
-      border-radius:12px;
-      background:#fff7ed;
-      color:#9a3412;
-      font-size:13px;
-      line-height:1.5;
-    }
-
-    .footer{
-      margin-top:22px;
-      color:#9ca3af;
-      font-size:12px;
+    .loading {
+      display: none;
+      margin-top: 15px;
+      color: #6b7280;
+      font-size: 14px;
     }
   </style>
 </head>
@@ -120,248 +95,240 @@
 
   <h1>Restaurant SaaS</h1>
 
-  <p class="subtitle">
-    Manage your restaurant orders, menu, tables, billing and QR ordering
+  <p>
+    Manage your restaurant, orders, menu, tables and billing
     from one place.
   </p>
 
-  <button id="googleBtn" class="google-btn">
-    <span class="google-icon">G</span>
-    <span>Continue with Google</span>
+  <button id="googleBtn" onclick="loginWithGoogle()">
+    Continue with Google
   </button>
 
-  <div id="status" class="status"></div>
-
-  <div class="trial">
-    🎁 <b>1-Day Free Trial</b><br>
-    Try the restaurant management system free for 24 hours.
+  <div id="loading" class="loading">
+    Opening Google Login...
   </div>
 
-  <div class="footer">
-    Secure login powered by Supabase
-  </div>
+  <div id="error" class="error"></div>
 
 </div>
 
 <script>
 
-const SUPABASE_URL =
-  "https://ltpjjckiaaonpetbzfvn.supabase.co";
+  // ==============================
+  // SUPABASE
+  // ==============================
 
-/*
- IMPORTANT:
- Supabase Dashboard → Settings → API
- se apni CURRENT Publishable key copy karo
- aur neeche paste karo.
-*/
-const SUPABASE_KEY =
-  "sb_publishable_skzmVVxdVcKTQaUbwqEaIg_-KDmA-3L"
+  const SUPABASE_URL =
+    "https://ltpjjckiaaonpetbzfvn.supabase.co";
+
+  const SUPABASE_KEY =
+    "sb_publishable_skzmVVxdVcKTQaUbwEaIg_-KDmA-3L";
 
 
-const ADMIN_URL =
-  "https://technicalayu001-cell.github.io/Restaurant-order-system1/admin/index.html";
+  // ==============================
+  // ADMIN URL
+  // ==============================
+
+  const ADMIN_URL =
+    "https://technicalayu001-cell.github.io/Restaurant-order-system1/admin/index.html";
 
 
-const { createClient } = supabase;
+  // ==============================
+  // CREATE SUPABASE CLIENT
+  // ==============================
 
+  const db = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY,
+    {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
 
-/*
- Browser/GitHub Pages ke liye
- Implicit Flow use kar rahe hain.
-
- IMPORTANT:
- PKCE nahi.
- exchangeCodeForSession() nahi.
-*/
-const db = createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY,
-  {
-    auth:{
-      persistSession:true,
-      autoRefreshToken:true,
-      detectSessionInUrl:true,
-      flowType:"implicit"
+        // IMPORTANT:
+        // GitHub Pages browser app ke liye
+        // implicit OAuth flow.
+        flowType: "implicit"
+      }
     }
-  }
-);
-
-
-const googleBtn =
-  document.getElementById("googleBtn");
-
-const statusBox =
-  document.getElementById("status");
-
-
-function setStatus(message){
-  statusBox.textContent = message;
-}
-
-
-/*
- Existing session check
-*/
-async function checkExistingLogin(){
-
-  try{
-
-    const {
-      data,
-      error
-    } = await db.auth.getSession();
-
-    if(error){
-
-      console.error(
-        "Session check error:",
-        error
-      );
-
-      return;
-    }
-
-
-    if(data && data.session){
-
-      setStatus(
-        "Already logged in. Opening Admin..."
-      );
-
-      window.location.replace(
-        ADMIN_URL
-      );
-
-    }
-
-  }catch(error){
-
-    console.error(
-      "Existing login error:",
-      error
-    );
-
-  }
-
-}
-
-
-/*
- Google Login
-*/
-async function googleLogin(){
-
-  googleBtn.disabled = true;
-
-  setStatus(
-    "Opening Google login..."
   );
 
-  try{
 
-    const {
-      error
-    } = await db.auth.signInWithOAuth({
+  // ==============================
+  // SHOW ERROR
+  // ==============================
 
-      provider:"google",
+  function showError(message) {
 
-      options:{
-        redirectTo:ADMIN_URL
-      }
+    const box = document.getElementById("error");
 
-    });
+    box.style.display = "block";
 
-
-    if(error){
-
-      console.error(
-        "Google login error:",
-        error
-      );
-
-      setStatus(
-        "Login error: " +
-        error.message
-      );
-
-      googleBtn.disabled = false;
-
-      return;
-    }
-
-
-    /*
-     Normally browser Google page par
-     redirect ho jayega.
-    */
-
-  }catch(error){
-
-    console.error(
-      "Google login exception:",
-      error
-    );
-
-    setStatus(
-      "Something went wrong. Please try again."
-    );
-
-    googleBtn.disabled = false;
+    box.textContent = message;
 
   }
 
-}
+
+  // ==============================
+  // GOOGLE LOGIN
+  // ==============================
+
+  async function loginWithGoogle() {
+
+    const button =
+      document.getElementById("googleBtn");
+
+    const loading =
+      document.getElementById("loading");
+
+    const error =
+      document.getElementById("error");
 
 
-/*
- Auth state listener
+    error.style.display = "none";
 
- OAuth ke baad Supabase session detect karega.
-*/
-db.auth.onAuthStateChange(
-  (event, session) => {
+    button.disabled = true;
 
-    console.log(
-      "AUTH EVENT:",
-      event,
-      "SESSION:",
-      !!session
-    );
+    loading.style.display = "block";
 
-    if(session){
 
-      setStatus(
-        "Login successful. Opening Admin..."
+    try {
+
+      const { error } =
+        await db.auth.signInWithOAuth({
+
+          provider: "google",
+
+          options: {
+
+            redirectTo: ADMIN_URL
+
+          }
+
+        });
+
+
+      if (error) {
+
+        throw error;
+
+      }
+
+    } catch (err) {
+
+      console.error("Google Login Error:", err);
+
+      button.disabled = false;
+
+      loading.style.display = "none";
+
+      showError(
+        "Google login failed: " +
+        (err.message || "Unknown error")
       );
 
-      /*
-       Small delay so Supabase session
-       storage complete ho jaye.
-      */
-      setTimeout(() => {
+    }
+
+  }
+
+
+  // ==============================
+  // CHECK EXISTING SESSION
+  // ==============================
+
+  let redirected = false;
+
+
+  async function checkExistingSession() {
+
+    try {
+
+      const {
+        data: { session },
+        error
+      } = await db.auth.getSession();
+
+
+      if (error) {
+
+        console.error(
+          "Session Error:",
+          error
+        );
+
+        return;
+
+      }
+
+
+      if (session && session.user) {
+
+        if (redirected) return;
+
+        redirected = true;
 
         window.location.replace(
           ADMIN_URL
         );
 
-      }, 700);
+      }
+
+    } catch (err) {
+
+      console.error(
+        "Session Check Error:",
+        err
+      );
 
     }
 
   }
-);
 
 
-googleBtn.addEventListener(
-  "click",
-  googleLogin
-);
+  // ==============================
+  // AUTH STATE LISTENER
+  // ==============================
+
+  db.auth.onAuthStateChange(
+    (event, session) => {
+
+      console.log(
+        "Auth Event:",
+        event
+      );
 
 
-/*
- Page open hote hi existing session check
-*/
-checkExistingLogin();
+      if (
+        session &&
+        session.user &&
+        !redirected
+      ) {
+
+        redirected = true;
+
+        window.location.replace(
+          ADMIN_URL
+        );
+
+      }
+
+    }
+  );
+
+
+  // ==============================
+  // PAGE LOAD
+  // ==============================
+
+  window.addEventListener(
+    "load",
+    () => {
+
+      checkExistingSession();
+
+    }
+  );
 
 </script>
 
